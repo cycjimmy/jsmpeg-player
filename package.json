@@ -1,22 +1,30 @@
 {
   "name": "jsmpeg-player",
-  "version": "0.0.1",
-  "description": "MPEG1 Video UI",
-  "main": "index.js",
+  "version": "0.0.2",
+  "description": "MPEG1 Video Player Based On JSMpeg",
+  "main": "lib/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "babel src --out-dir lib --source-maps",
+    "prepublish": "npm run build"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/cycjimmy/jsmpeg-player.git"
   },
   "keywords": [
-    "mpeg"
+    "jsmpeg"
   ],
   "author": "cycjimmy <cycjimmy@gmail.com> (https://github.com/cycjimmy)",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/cycjimmy/jsmpeg-player/issues"
   },
-  "homepage": "https://github.com/cycjimmy/jsmpeg-player#readme"
+  "homepage": "https://github.com/cycjimmy/jsmpeg-player#readme",
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-plugin-syntax-dynamic-import": "^6.18.0",
+    "babel-preset-env": "^1.6.0",
+    "uglify-js": "^3.0.28"
+  }
 }

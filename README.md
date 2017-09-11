@@ -1,5 +1,7 @@
 # jsmpeg-player
 
+[![Build Status](https://travis-ci.org/cycjimmy/jsmpeg-player.svg?branch=master)](https://travis-ci.org/cycjimmy/jsmpeg-player)
+
 * The player is based on [jsmpeg](https://github.com/phoboslab/jsmpeg).
 * The video must be compressed into the TS format of MPEG1 / MP2.
 * Apple device automatically plays without sound, you need to guide the user to click on the video in the lower right corner of the video icon to unlock the sound.(no similar problem in non-autoplay mode)
