@@ -1,0 +1,22 @@
+{
+  "name": "jsmpeg-player",
+  "version": "0.0.1",
+  "description": "MPEG1 Video UI",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cycjimmy/jsmpeg-player.git"
+  },
+  "keywords": [
+    "mpeg"
+  ],
+  "author": "cycjimmy <cycjimmy@gmail.com> (https://github.com/cycjimmy)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cycjimmy/jsmpeg-player/issues"
+  },
+  "homepage": "https://github.com/cycjimmy/jsmpeg-player#readme"
+}
