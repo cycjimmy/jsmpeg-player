@@ -1,6 +1,26 @@
 # JSMpeg Player
 
-[![Build Status](https://travis-ci.org/cycjimmy/jsmpeg-player.svg?branch=master)](https://travis-ci.org/cycjimmy/jsmpeg-player)
+[![NPM version][npm-image]][npm-url]
+[![build status][travis-image]][travis-url]
+[![David deps][david-image]][david-url]
+[![devDependencies Status][david-dev-image]][david-dev-url]
+[![node version][node-image]][node-url]
+[![npm download][download-image]][download-url]
+[![npm license][license-image]][download-url]
+
+[npm-image]: https://img.shields.io/npm/v/jsmpeg-player.svg?style=flat-square
+[npm-url]: https://npmjs.org/package/jsmpeg-player
+[travis-image]: https://img.shields.io/travis/cycjimmy/jsmpeg-player.svg?style=flat-square
+[travis-url]: https://travis-ci.org/cycjimmy/jsmpeg-player
+[david-image]: https://img.shields.io/david/cycjimmy/jsmpeg-player.svg?style=flat-square
+[david-url]: https://david-dm.org/cycjimmy/jsmpeg-player
+[david-dev-image]: https://david-dm.org/cycjimmy/jsmpeg-player/dev-status.svg?style=flat-square
+[david-dev-url]: https://david-dm.org/cycjimmy/jsmpeg-player?type=dev
+[node-image]: https://img.shields.io/badge/node.js-%3E=_4.0-green.svg?style=flat-square
+[node-url]: http://nodejs.org/download/
+[download-image]: https://img.shields.io/npm/dm/jsmpeg-player.svg?style=flat-square
+[download-url]: https://npmjs.org/package/jsmpeg-player
+[license-image]: https://img.shields.io/npm/l/jsmpeg-player.svg?style=flat-square
 
 * JSMpeg player is based on [jsmpeg](https://github.com/phoboslab/jsmpeg).
 * The video must be compressed into the TS format of MPEG1 / MP2.
