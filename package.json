@@ -1,6 +1,6 @@
 {
   "name": "jsmpeg-player",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "MPEG1 Video Player Based On JSMpeg",
   "main": "dist/index.js",
   "scripts": {
