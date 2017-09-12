@@ -1,11 +1,11 @@
 {
   "name": "jsmpeg-player",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "MPEG1 Video Player Based On JSMpeg",
-  "main": "lib/index.js",
+  "main": "dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "babel src --out-dir lib --source-maps",
+    "build": "babel src --out-dir dist --source-maps",
     "prepublish": "npm run build"
   },
   "repository": {
@@ -24,7 +24,6 @@
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-plugin-syntax-dynamic-import": "^6.18.0",
-    "babel-preset-env": "^1.6.0",
-    "uglify-js": "^3.0.28"
+    "babel-preset-env": "^1.6.0"
   }
 }

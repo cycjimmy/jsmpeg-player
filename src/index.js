@@ -1,3 +1,3 @@
-import jsmpeg from './jsmpeg';
+import jsmpeg from './lib/jsmpeg';
 
 export default jsmpeg;

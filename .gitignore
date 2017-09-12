@@ -46,7 +46,6 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
-
 # IDE
 .idea/
 
@@ -56,4 +55,4 @@ npm-debug.log
 yarn-error.log
 
 # project
-temp/
+dist/

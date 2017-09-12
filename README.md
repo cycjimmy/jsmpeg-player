@@ -1,12 +1,12 @@
-# jsmpeg-player
+# JSMpeg Player
 
 [![Build Status](https://travis-ci.org/cycjimmy/jsmpeg-player.svg?branch=master)](https://travis-ci.org/cycjimmy/jsmpeg-player)
 
-* The player is based on [jsmpeg](https://github.com/phoboslab/jsmpeg).
+* JSMpeg player is based on [jsmpeg](https://github.com/phoboslab/jsmpeg).
 * The video must be compressed into the TS format of MPEG1 / MP2.
 * Apple device automatically plays without sound, you need to guide the user to click on the video in the lower right corner of the video icon to unlock the sound.(no similar problem in non-autoplay mode)
 
-## Encoding Video/Audio for [jsmpeg](https://github.com/phoboslab/jsmpeg) by [ffmpeg](https://ffmpeg.org/)
+## Encoding Video/Audio for [jsmpeg](https://github.com/phoboslab/jsmpeg) by [ffmpeg](https://ffmpeg.org/). E.g:
 ```shell
 $ ffmpeg -i input.mp4 -f mpegts
          -codec:v mpeg1video -s 640x360 -b:v 600k -r 25 -bf 0
@@ -23,17 +23,17 @@ $ ffmpeg -i input.mp4 -f mpegts
   * `-b:a`: audio bit rate
 
 ## How to use
-1. Install
+* Install
   ```shell
   $ npm install jsmpeg-player
   ```
 
-2. Use ES6 import. E.g:
+* Use ES6 import. E.g:
   ```javascript
   import JSMpeg from 'jsmpeg-player';
   ```
 
-3. Init JSMpeg
+* Init JSMpeg
   ```javascript
   let
     // Html Element for videoWrapper.
