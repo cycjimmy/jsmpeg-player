@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>video test</title>
+  <style>
+    #testVideo {
+      width: 640px;
+      height: 360px;
+    }
+  </style>
+</head>
+
+<body>
+<div id="testVideo"></div>
+
+<script src="../dist/JSMpeg.js"></script>
+<script>
+  var
+    videoWrapper = document.getElementById('testVideo')
+    , videoUrl = 'https://cycjimmy.github.io/staticFiles/media/big_buck_bunny_640x360.ts'
+  ;
+
+  new JSMpeg.VideoElement(videoWrapper, videoUrl,{});
+</script>
+
+</body>
+</html>

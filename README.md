@@ -43,17 +43,22 @@ $ ffmpeg -i input.mp4 -f mpegts
   * `-b:a`: audio bit rate
 
 ## How to use
-* Install
+### Install
   ```shell
-  $ npm install jsmpeg-player
+  $ npm install jsmpeg-player --save
+  # or
+  $ yarn add jsmpeg-player
   ```
 
-* Use ES6 import. E.g:
+### How To Use
   ```javascript
-  import JSMpeg from 'jsmpeg-player';
+  import * as JSMpeg from 'jsmpeg-player';
   ```
 
-* Init JSMpeg
+  ```javascript
+  let JSMpeg = require('jsmpeg-player');
+  ```
+
   ```javascript
   let
     // Html Element for videoWrapper.
@@ -83,4 +88,17 @@ $ ffmpeg -i input.mp4 -f mpegts
     // https://github.com/phoboslab/jsmpeg
   })
   ```
+
+### Use in browser
+```html
+<script src="../dist/JSMpeg.js"></script>
+<script>
+  var
+    videoWrapper = document.getElementById('testVideo')
+    , videoUrl = '../static/media/test_video.ts'
+  ;
+
+  new JSMpeg.VideoElement(videoWrapper, videoUrl, {});
+</script>
+```
 

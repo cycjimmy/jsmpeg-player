@@ -1,4 +1,6 @@
-import Player from './player';
+import {
+  Player
+} from '../index';
 
 let VideoElement = function (wrapper, videoUrl, options) {
   // Setup the div container, canvas and play button

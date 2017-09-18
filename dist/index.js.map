@@ -1,1 +1,0 @@
-{"version":3,"sources":["../src/index.js"],"names":["jsmpeg"],"mappings":"AAAA,OAAOA,MAAP,MAAmB,cAAnB;;AAEA,eAAeA,MAAf","file":"index.js","sourcesContent":["import jsmpeg from './lib/jsmpeg';\r\n\r\nexport default jsmpeg;"]}

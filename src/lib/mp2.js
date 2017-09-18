@@ -1,19 +1,23 @@
 // Based on kjmp2 by Martin J. Fiedler
 // http://keyj.emphy.de/kjmp2/
 
-import JSMpeg from './jsmpeg';
-import BitBuffer from './buffer';
+import {
+  BitBuffer,
+  Decoder,
+	Fill,
+} from '../index';
+
 import BaseDecoder from './decoder';
 
 let MP2 = function(options) {
-  BaseDecoder.call(this, options);
+  Decoder.Base.call(this, options);
 
 	var bufferSize = options.audioBufferSize || 128*1024;
 	var bufferMode = options.streaming
 		? BitBuffer.MODE.EVICT
 		: BitBuffer.MODE.EXPAND;
 
-	this.bits = new JSMpeg.BitBuffer(bufferSize, bufferMode);
+	this.bits = new BitBuffer(bufferSize, bufferMode);
 
 	this.left = new Float32Array(1152);
 	this.right = new Float32Array(1152);
@@ -239,7 +243,7 @@ MP2.prototype.decodeFrame = function(left, right) {
 					MP2.MatrixTransform(this.sample[ch], p, this.V, this.VPos);
 
 					// Build U, windowing, calculate output
-					JSMpeg.Fill(this.U, 0);
+					Fill(this.U, 0);
 
 					var dIndex = 512 - (this.VPos >> 1);
 					var vIndex = (this.VPos % 128) >> 1;
