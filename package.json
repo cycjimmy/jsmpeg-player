@@ -1,20 +1,22 @@
 {
   "name": "jsmpeg-player",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "MPEG1 Video Player Based On JSMpeg",
   "main": "dist/JSMpeg.js",
   "module": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack",
-    "prepublish": "npm run build"
+    "build": "webpack --progress --display-modules --display-reasons --display-error-details --color",
+    "build:production": "cross-env NODE_ENV=production webpack --progress --optimize-minimize",
+    "prepublish": "npm run build && npm run build:production"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/cycjimmy/jsmpeg-player.git"
   },
   "keywords": [
-    "jsmpeg"
+    "jsmpeg",
+    "TS"
   ],
   "author": "cycjimmy <cycjimmy@gmail.com> (https://github.com/cycjimmy)",
   "license": "MIT",
@@ -27,6 +29,13 @@
     "babel-loader": "^7.1.2",
     "babel-plugin-syntax-dynamic-import": "^6.18.0",
     "babel-preset-env": "^1.6.0",
+    "clean-webpack-plugin": "^0.1.16",
+    "cross-env": "^5.0.5",
+    "uglify-js": "^3.1.1",
+    "uglifyjs-webpack-plugin": "^0.4.6",
     "webpack": "^3.6.0"
+  },
+  "engines": {
+    "node": ">=6"
   }
 }

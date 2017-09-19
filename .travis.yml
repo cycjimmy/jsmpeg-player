@@ -4,7 +4,7 @@ node_js:
   - "node"
   - "lts/*"
   - "7"
-  - "4"
+  - "6"
 
 notifications:
   email: false
@@ -27,4 +27,4 @@ cache:
 
 script:
   - yarn --version
-  - npm run build
+  - npm run prepublish
