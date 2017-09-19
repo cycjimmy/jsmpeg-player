@@ -1,4 +1,4 @@
-let
+var
   path = require('path')
 
   // webpack plugin
@@ -6,11 +6,11 @@ let
   , CleanWebpackPlugin = require('clean-webpack-plugin')
 ;
 
-const
+var
   IS_PRODUCTION = process.env.NODE_ENV === 'production'
 ;
 
-let config = {
+var config = {
   devtool: 'source-map',
   entry: path.resolve('src', 'index.js'),
 
@@ -26,9 +26,9 @@ let config = {
   resolve: {
     modules: [
       path.resolve('src'),
-      path.resolve('node_modules'),
+      path.resolve('node_modules')
     ],
-    'extensions': ['.js'],
+    'extensions': ['.js']
   },
 
   module: {
@@ -43,8 +43,8 @@ let config = {
           path.resolve('node_modules'),
         ],
         loader: 'babel-loader',
-      },
-    ],
+      }
+    ]
   },
 
   plugins: [],
@@ -56,8 +56,8 @@ if (!IS_PRODUCTION) {
     new CleanWebpackPlugin(['dist'], {
       root: path.resolve('./'),
       verbose: true,
-      dry: false,
-    }),
+      dry: false
+    })
   );
 }
 
@@ -73,17 +73,17 @@ if (IS_PRODUCTION) {
         drop_debugger: true,
         drop_console: true,
         collapse_vars: true,
-        reduce_vars: true,
+        reduce_vars: true
       },
       mangle: {
-        screw_ie8: true,
+        screw_ie8: true
       },
       output: {
         comments: false,
-        screw_ie8: true,
+        screw_ie8: true
       },
-      sourceMap: true,
-    }),
+      sourceMap: true
+    })
   );
 }
 
