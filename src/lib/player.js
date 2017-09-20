@@ -25,7 +25,7 @@ let Player = function (url, options, cbUI) {
     this.source = new Source.WebSocket(url, options);
     options.streaming = true;
   }
-  else if (options.progressive !== false) {
+  else if (options.progressive) {
     this.source = new Source.AjaxProgressive(url, options);
     options.streaming = false;
   }

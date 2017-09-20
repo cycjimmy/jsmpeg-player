@@ -53,52 +53,36 @@ $ ffmpeg -i input.mp4 -f mpegts
 ### How To Use
   ```javascript
   import * as JSMpeg from 'jsmpeg-player';
-  ```
-
-  ```javascript
+  # OR
   let JSMpeg = require('jsmpeg-player');
   ```
 
   ```javascript
-  let
-    // Html Element for videoWrapper.
-    videoWrapper = document.getElementById('videoWrapper')
-    , videoUrl = '../static/media/test_video.ts'
-  ;
-
-  new JSMpeg.VideoElement(videoWrapper, videoUrl, {
-    // the poster of video(Recommended to set it manually)
-    poster: '../static/images/screenshot_test.jpg',
-
-    // Aspect ratio converted to percentage.
-    // E.g: '16:9' => '56.25%'
-    // default: '56.25%'
-    aspectPercent: '56.25%',
-
-    // picture node (no playButton)
-    // default: false
-    picMode: true,
-
-    // The player sets the hook when playing/pause/stop
-    hookInPlay: () => {},
-    hookInPause: () => {},
-    hookInStop: () => {},
-
-    // other options are the same as JSMpeg.Player
-    // https://github.com/phoboslab/jsmpeg
-  })
+  new JSMpeg.VideoElement(videoWrapper, videoUrl, [, options])
   ```
+* `videoWrapper`: [string|element] the wrapper of video. Height and width of wrapper must be initialized
+* `videoUrl`: [string] a url to an MPEG .ts file
+* The `options` supports:
+  * `poster`: [string] URL to an image to use as the poster to show before the video plays.(Recommended to set it manually)
+  * `autoplay`: [boolean] whether to start playing immediately. Default `false`.
+  * `loop`: [boolean] whether to loop the video (static files only). Default `false`.**[overwrite]**
+  * `aspectPercent`: [string] Aspect ratio converted to percentage. E.g: '16:9' => `'56.25%'`. Default `'56.25%'`.
+  * `picMode`: [boolean] picture node (no playButton). Default `false`.
+  * `chunkSize` the chunk size in bytes to load at a time. Default `1024*1024` (1mb).
+  * `hookInPlay`: [function] The hook function when the video play.
+  * `hookInPause`: [function] The hook function when the video pause.
+  * `hookInStop`: [function] The hook function when the video stop.
+
+More options can view the [jsmpeg options](https://github.com/phoboslab/jsmpeg#usage)
 
 ### Use in browser
 ```html
-<script src="../dist/JSMpeg.min.js"></script>
+<div id="videoWrapper"></div>
+<script src="dist/JSMpeg.min.js"></script>
 <script>
-  var
-    videoWrapper = document.getElementById('testVideo')
-    , videoUrl = '../static/media/test_video.ts'
-  ;
-
-  new JSMpeg.VideoElement(videoWrapper, videoUrl, {});
+  var videoUrl = '../static/media/test_video.ts';
+  new JSMpeg.VideoElement('#videoWrapper', videoUrl);
 </script>
 ```
 
+###

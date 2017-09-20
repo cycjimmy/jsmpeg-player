@@ -1,6 +1,6 @@
 {
   "name": "jsmpeg-player",
-  "version": "0.0.8",
+  "version": "1.0.0-alpha.1",
   "description": "MPEG1 Video Player Based On JSMpeg",
   "main": "dist/JSMpeg.js",
   "module": "src/index.js",
@@ -26,11 +26,14 @@
   "homepage": "https://github.com/cycjimmy/jsmpeg-player#readme",
   "devDependencies": {
     "babel-core": "^6.26.0",
+    "babel-jest": "^21.0.2",
     "babel-loader": "^7.1.2",
     "babel-plugin-syntax-dynamic-import": "^6.18.0",
     "babel-preset-env": "^1.6.0",
     "clean-webpack-plugin": "^0.1.16",
     "cross-env": "^5.0.5",
+    "jest": "^21.1.0",
+    "regenerator-runtime": "^0.11.0",
     "uglify-js": "^3.1.1",
     "uglifyjs-webpack-plugin": "^0.4.6",
     "webpack": "^3.6.0"
