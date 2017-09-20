@@ -15,60 +15,9 @@ import WebGLRenderer from './lib/webgl';
 import CanvasRenderer from './lib/canvas2d';
 import WebAudioOut from './lib/webaudio';
 
-let
-  Source = {
-    Ajax: AjaxSource,
-    AjaxProgressive: AjaxProgressiveSource,
-    WebSocket: WSSource,
-  }
-
-  , Demuxer = {
-    TS: TS,
-  }
-
-  , Decoder = {
-    Base: BaseDecoder,
-    MPEG1Video: MPEG1,
-    MP2Audio: MP2,
-  }
-
-  , Renderer = {
-    WebGL: WebGLRenderer,
-    Canvas2D: CanvasRenderer,
-  }
-
-  , AudioOutput = {
-    WebAudio: WebAudioOut,
-  }
-
-  , Now = () => {
-    return window.performance
-      ? window.performance.now() / 1000
-      : Date.now() / 1000;
-  }
-  , CreateVideoElements = () => {
-    let elements = document.querySelectorAll('.jsmpeg');
-    for (let i = 0; i < elements.length; i++) {
-      new VideoElement(elements[i]);
-    }
-  }
-
-  , Fill = (array, value) => {
-    if (array.fill) {
-      array.fill(value);
-    }
-    else {
-      for (let i = 0; i < array.length; i++) {
-        array[i] = value;
-      }
-    }
-  }
-;
-
-
 // This sets up the JSMpeg "Namespace". The object is empty apart from the Now()
 // utility function and the automatic CreateVideoElements() after DOMReady.
-export {
+let JSMpeg = {
   // The Player sets up the connections between source, demuxer, decoders,
   // renderer and audio output. It ties everything together, is responsible
   // of scheduling decoding and provides some convenience methods for
@@ -94,7 +43,11 @@ export {
   //   .established - boolean, true after connection is established
   //   .completed - boolean, true if the source is completely loaded
   //   .progress - float 0-1
-  Source,
+  Source: {
+    Ajax: AjaxSource,
+    AjaxProgressive: AjaxProgressiveSource,
+    WebSocket: WSSource,
+  },
 
   // A Demuxer may sit between a Source and a Decoder. It separates the
   // incoming raw data into Video, Audio and other Streams. API:
@@ -102,7 +55,9 @@ export {
   //   .write(buffer)
   //   .currentTime – float, in seconds
   //   .startTime - float, in seconds
-  Demuxer,
+  Demuxer: {
+    TS: TS,
+  },
 
   // A Decoder accepts an incoming Stream of raw Audio or Video data, buffers
   // it and upon `.decode()` decodes a single frame of data. Video decoders
@@ -115,7 +70,11 @@ export {
   //   .seek(time)
   //   .currentTime - float, in seconds
   //   .startTime - float, in seconds
-  Decoder,
+  Decoder: {
+    Base: BaseDecoder,
+    MPEG1Video: MPEG1,
+    MP2Audio: MP2,
+  },
 
   // A Renderer accepts raw YCrCb data in 3 separate buffers via the render()
   // method. Renderers typically convert the data into the RGBA color space
@@ -123,7 +82,10 @@ export {
   // be conceivable. API:
   //   .render(y, cr, cb) - pixel data as Uint8Arrays
   //   .enabled - wether the renderer does anything upon receiving data
-  Renderer,
+  Renderer: {
+    WebGL: WebGLRenderer,
+    Canvas2D: CanvasRenderer,
+  },
 
   // Audio Outputs accept raw Stero PCM data in 2 separate buffers via the
   // play() method. Outputs typically play the audio on the user's device.
@@ -132,10 +94,32 @@ export {
   //   .stop()
   //   .enqueuedTime - float, in seconds
   //   .enabled - wether the output does anything upon receiving data
-  AudioOutput,
+  AudioOutput: {
+    WebAudio: WebAudioOut,
+  },
 
   // functions
-  Now,
-  CreateVideoElements,
-  Fill,
+  Now: () => {
+    return window.performance
+      ? window.performance.now() / 1000
+      : Date.now() / 1000;
+  },
+  CreateVideoElements: () => {
+    let elements = document.querySelectorAll('.jsmpeg');
+    for (let i = 0; i < elements.length; i++) {
+      new VideoElement(elements[i]);
+    }
+  },
+  Fill: (array, value) => {
+    if (array.fill) {
+      array.fill(value);
+    }
+    else {
+      for (let i = 0; i < array.length; i++) {
+        array[i] = value;
+      }
+    }
+  },
 };
+
+export default JSMpeg;

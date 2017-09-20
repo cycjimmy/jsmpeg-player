@@ -8,6 +8,15 @@
       }
     ]
   ],
+  "env": {
+    "test": {
+      "presets": [
+        [
+          "env"
+        ]
+      ]
+    }
+  },
   "plugins": [
     "syntax-dynamic-import"
   ],

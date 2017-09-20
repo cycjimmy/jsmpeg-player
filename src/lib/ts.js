@@ -1,6 +1,4 @@
-import {
-  BitBuffer,
-} from '../index';
+import JSMpeg from '../';
 
 let TS = function (options) {
   this.bits = null;
@@ -27,11 +25,11 @@ TS.prototype.connect = function (streamId, destination) {
 TS.prototype.write = function (buffer) {
   if (this.leftoverBytes) {
     var totalLength = buffer.byteLength + this.leftoverBytes.byteLength;
-    this.bits = new BitBuffer(totalLength);
+    this.bits = new JSMpeg.BitBuffer(totalLength);
     this.bits.write([this.leftoverBytes, buffer]);
   }
   else {
-    this.bits = new BitBuffer(buffer);
+    this.bits = new JSMpeg.BitBuffer(buffer);
   }
 
   while (this.bits.has(188 << 3) && this.parsePacket()) {
