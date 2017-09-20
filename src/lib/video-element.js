@@ -1,7 +1,4 @@
-import {
-  Player
-} from '../index';
-
+import JSMpeg from '../';
 
 export default class VideoElement {
   constructor(wrapper, videoUrl, options) {
@@ -74,7 +71,7 @@ export default class VideoElement {
     });
 
     // Create the player instance
-    this.player = new Player(this.options.videoUrl, this.options, {
+    this.player = new JSMpeg.Player(this.options.videoUrl, this.options, {
       play: () => {
         this.playButton.style.display = 'none';
         if (this.poster) {

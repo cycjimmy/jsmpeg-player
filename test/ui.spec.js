@@ -1,4 +1,4 @@
-import * as JSMpeg from '../dist/JSMpeg';
+import JSMpeg from '../dist/JSMpeg';
 
 describe('ui spec', () => {
   const

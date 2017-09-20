@@ -1,6 +1,4 @@
-import {
-  Fill,
-} from '../index';
+import JSMpeg from '../';
 
 let CanvasRenderer = function (options) {
   this.canvas = options.canvas || document.createElement('canvas');
@@ -23,7 +21,7 @@ CanvasRenderer.prototype.resize = function (width, height) {
   this.canvas.height = this.height;
 
   this.imageData = this.context.getImageData(0, 0, this.width, this.height);
-  Fill(this.imageData.data, 255);
+  JSMpeg.Fill(this.imageData.data, 255);
 };
 
 CanvasRenderer.prototype.renderProgress = function (progress) {

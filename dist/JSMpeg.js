@@ -79,14 +79,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Source", function() { return Source; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Demuxer", function() { return Demuxer; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Decoder", function() { return Decoder; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Renderer", function() { return Renderer; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AudioOutput", function() { return AudioOutput; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Now", function() { return Now; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CreateVideoElements", function() { return CreateVideoElements; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Fill", function() { return Fill; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__lib_player__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__lib_video_element__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__lib_buffer__ = __webpack_require__(4);
@@ -100,9 +92,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__lib_webgl__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__lib_canvas2d__ = __webpack_require__(12);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__lib_webaudio__ = __webpack_require__(13);
-/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "Player", function() { return __WEBPACK_IMPORTED_MODULE_0__lib_player__["a"]; });
-/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "VideoElement", function() { return __WEBPACK_IMPORTED_MODULE_1__lib_video_element__["a"]; });
-/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "BitBuffer", function() { return __WEBPACK_IMPORTED_MODULE_2__lib_buffer__["a"]; });
 /* According to jsmpeg project(https://github.com/phoboslab/jsmpeg) modified */
 
 // ES6 modular
@@ -120,48 +109,111 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
 
-var Source = {
-  Ajax: __WEBPACK_IMPORTED_MODULE_3__lib_ajax__["a" /* default */],
-  AjaxProgressive: __WEBPACK_IMPORTED_MODULE_4__lib_ajax_progressive__["a" /* default */],
-  WebSocket: __WEBPACK_IMPORTED_MODULE_5__lib_websocket__["a" /* default */]
-},
-    Demuxer = {
-  TS: __WEBPACK_IMPORTED_MODULE_6__lib_ts__["a" /* default */]
-},
-    Decoder = {
-  Base: __WEBPACK_IMPORTED_MODULE_7__lib_decoder__["a" /* default */],
-  MPEG1Video: __WEBPACK_IMPORTED_MODULE_8__lib_mpeg1__["a" /* default */],
-  MP2Audio: __WEBPACK_IMPORTED_MODULE_9__lib_mp2__["a" /* default */]
-},
-    Renderer = {
-  WebGL: __WEBPACK_IMPORTED_MODULE_10__lib_webgl__["a" /* default */],
-  Canvas2D: __WEBPACK_IMPORTED_MODULE_11__lib_canvas2d__["a" /* default */]
-},
-    AudioOutput = {
-  WebAudio: __WEBPACK_IMPORTED_MODULE_12__lib_webaudio__["a" /* default */]
-},
-    Now = function Now() {
-  return window.performance ? window.performance.now() / 1000 : Date.now() / 1000;
-},
-    CreateVideoElements = function CreateVideoElements() {
-  var elements = document.querySelectorAll('.jsmpeg');
-  for (var i = 0; i < elements.length; i++) {
-    new __WEBPACK_IMPORTED_MODULE_1__lib_video_element__["a" /* default */](elements[i]);
-  }
-},
-    Fill = function Fill(array, value) {
-  if (array.fill) {
-    array.fill(value);
-  } else {
-    for (var i = 0; i < array.length; i++) {
-      array[i] = value;
+// This sets up the JSMpeg "Namespace". The object is empty apart from the Now()
+// utility function and the automatic CreateVideoElements() after DOMReady.
+var JSMpeg = {
+  // The Player sets up the connections between source, demuxer, decoders,
+  // renderer and audio output. It ties everything together, is responsible
+  // of scheduling decoding and provides some convenience methods for
+  // external users.
+  Player: __WEBPACK_IMPORTED_MODULE_0__lib_player__["a" /* default */],
+
+  // A Video Element wraps the Player, shows HTML controls to start/pause
+  // the video and handles Audio unlocking on iOS. VideoElements can be
+  // created directly in HTML using the <div class="jsmpeg"/> tag.
+  VideoElement: __WEBPACK_IMPORTED_MODULE_1__lib_video_element__["a" /* default */],
+
+  // The BitBuffer wraps a Uint8Array and allows reading an arbitrary number
+  // of bits at a time. On writing, the BitBuffer either expands its
+  // internal buffer (for static files) or deletes old data (for streaming).
+  BitBuffer: __WEBPACK_IMPORTED_MODULE_2__lib_buffer__["a" /* default */],
+
+  // A Source provides raw data from HTTP, a WebSocket connection or any
+  // other mean. Sources must support the following API:
+  //   .connect(destinationNode)
+  //   .write(buffer)
+  //   .start() - start reading
+  //   .resume(headroom) - continue reading; headroom to play pos in seconds
+  //   .established - boolean, true after connection is established
+  //   .completed - boolean, true if the source is completely loaded
+  //   .progress - float 0-1
+  Source: {
+    Ajax: __WEBPACK_IMPORTED_MODULE_3__lib_ajax__["a" /* default */],
+    AjaxProgressive: __WEBPACK_IMPORTED_MODULE_4__lib_ajax_progressive__["a" /* default */],
+    WebSocket: __WEBPACK_IMPORTED_MODULE_5__lib_websocket__["a" /* default */]
+  },
+
+  // A Demuxer may sit between a Source and a Decoder. It separates the
+  // incoming raw data into Video, Audio and other Streams. API:
+  //   .connect(streamId, destinationNode)
+  //   .write(buffer)
+  //   .currentTime – float, in seconds
+  //   .startTime - float, in seconds
+  Demuxer: {
+    TS: __WEBPACK_IMPORTED_MODULE_6__lib_ts__["a" /* default */]
+  },
+
+  // A Decoder accepts an incoming Stream of raw Audio or Video data, buffers
+  // it and upon `.decode()` decodes a single frame of data. Video decoders
+  // call `destinationNode.render(Y, Cr, CB)` with the decoded pixel data;
+  // Audio decoders call `destinationNode.play(left, right)` with the decoded
+  // PCM data. API:
+  //   .connect(destinationNode)
+  //   .write(pts, buffer)
+  //   .decode()
+  //   .seek(time)
+  //   .currentTime - float, in seconds
+  //   .startTime - float, in seconds
+  Decoder: {
+    Base: __WEBPACK_IMPORTED_MODULE_7__lib_decoder__["a" /* default */],
+    MPEG1Video: __WEBPACK_IMPORTED_MODULE_8__lib_mpeg1__["a" /* default */],
+    MP2Audio: __WEBPACK_IMPORTED_MODULE_9__lib_mp2__["a" /* default */]
+  },
+
+  // A Renderer accepts raw YCrCb data in 3 separate buffers via the render()
+  // method. Renderers typically convert the data into the RGBA color space
+  // and draw it on a Canvas, but other output - such as writing PNGs - would
+  // be conceivable. API:
+  //   .render(y, cr, cb) - pixel data as Uint8Arrays
+  //   .enabled - wether the renderer does anything upon receiving data
+  Renderer: {
+    WebGL: __WEBPACK_IMPORTED_MODULE_10__lib_webgl__["a" /* default */],
+    Canvas2D: __WEBPACK_IMPORTED_MODULE_11__lib_canvas2d__["a" /* default */]
+  },
+
+  // Audio Outputs accept raw Stero PCM data in 2 separate buffers via the
+  // play() method. Outputs typically play the audio on the user's device.
+  // API:
+  //   .play(sampleRate, left, right) - rate in herz; PCM data as Uint8Arrays
+  //   .stop()
+  //   .enqueuedTime - float, in seconds
+  //   .enabled - wether the output does anything upon receiving data
+  AudioOutput: {
+    WebAudio: __WEBPACK_IMPORTED_MODULE_12__lib_webaudio__["a" /* default */]
+  },
+
+  // functions
+  Now: function Now() {
+    return window.performance ? window.performance.now() / 1000 : Date.now() / 1000;
+  },
+  CreateVideoElements: function CreateVideoElements() {
+    var elements = document.querySelectorAll('.jsmpeg');
+    for (var i = 0; i < elements.length; i++) {
+      new __WEBPACK_IMPORTED_MODULE_1__lib_video_element__["a" /* default */](elements[i]);
+    }
+  },
+  Fill: function Fill(array, value) {
+    if (array.fill) {
+      array.fill(value);
+    } else {
+      for (var i = 0; i < array.length; i++) {
+        array[i] = value;
+      }
     }
   }
 };
 
-// This sets up the JSMpeg "Namespace". The object is empty apart from the Now()
-// utility function and the automatic CreateVideoElements() after DOMReady.
-
+/* harmony default export */ __webpack_exports__["default"] = (JSMpeg);
 
 /***/ }),
 /* 1 */
@@ -260,7 +312,7 @@ BaseDecoder.prototype.getCurrentTime = function () {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__index__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0____ = __webpack_require__(0);
 
 
 /**
@@ -277,13 +329,13 @@ var Player = function Player(url, options, cbUI) {
     this.source = new options.source(url, options);
     options.streaming = !!this.source.streaming;
   } else if (url.match(/^wss?:\/\//)) {
-    this.source = new __WEBPACK_IMPORTED_MODULE_0__index__["Source"].WebSocket(url, options);
+    this.source = new __WEBPACK_IMPORTED_MODULE_0____["default"].Source.WebSocket(url, options);
     options.streaming = true;
   } else if (options.progressive) {
-    this.source = new __WEBPACK_IMPORTED_MODULE_0__index__["Source"].AjaxProgressive(url, options);
+    this.source = new __WEBPACK_IMPORTED_MODULE_0____["default"].Source.AjaxProgressive(url, options);
     options.streaming = false;
   } else {
-    this.source = new __WEBPACK_IMPORTED_MODULE_0__index__["Source"].Ajax(url, options);
+    this.source = new __WEBPACK_IMPORTED_MODULE_0____["default"].Source.Ajax(url, options);
     options.streaming = false;
   }
 
@@ -291,20 +343,20 @@ var Player = function Player(url, options, cbUI) {
   this.loop = options.loop !== false;
   this.autoplay = !!options.autoplay || options.streaming;
 
-  this.demuxer = new __WEBPACK_IMPORTED_MODULE_0__index__["Demuxer"].TS(options);
+  this.demuxer = new __WEBPACK_IMPORTED_MODULE_0____["default"].Demuxer.TS(options);
   this.source.connect(this.demuxer);
 
   if (options.video !== false) {
-    this.video = new __WEBPACK_IMPORTED_MODULE_0__index__["Decoder"].MPEG1Video(options);
-    this.renderer = !options.disableGl && __WEBPACK_IMPORTED_MODULE_0__index__["Renderer"].WebGL.IsSupported() ? new __WEBPACK_IMPORTED_MODULE_0__index__["Renderer"].WebGL(options) : new __WEBPACK_IMPORTED_MODULE_0__index__["Renderer"].Canvas2D(options);
-    this.demuxer.connect(__WEBPACK_IMPORTED_MODULE_0__index__["Demuxer"].TS.STREAM.VIDEO_1, this.video);
+    this.video = new __WEBPACK_IMPORTED_MODULE_0____["default"].Decoder.MPEG1Video(options);
+    this.renderer = !options.disableGl && __WEBPACK_IMPORTED_MODULE_0____["default"].Renderer.WebGL.IsSupported() ? new __WEBPACK_IMPORTED_MODULE_0____["default"].Renderer.WebGL(options) : new __WEBPACK_IMPORTED_MODULE_0____["default"].Renderer.Canvas2D(options);
+    this.demuxer.connect(__WEBPACK_IMPORTED_MODULE_0____["default"].Demuxer.TS.STREAM.VIDEO_1, this.video);
     this.video.connect(this.renderer);
   }
 
-  if (options.audio !== false && __WEBPACK_IMPORTED_MODULE_0__index__["AudioOutput"].WebAudio.IsSupported()) {
-    this.audio = new __WEBPACK_IMPORTED_MODULE_0__index__["Decoder"].MP2Audio(options);
-    this.audioOut = new __WEBPACK_IMPORTED_MODULE_0__index__["AudioOutput"].WebAudio(options);
-    this.demuxer.connect(__WEBPACK_IMPORTED_MODULE_0__index__["Demuxer"].TS.STREAM.AUDIO_1, this.audio);
+  if (options.audio !== false && __WEBPACK_IMPORTED_MODULE_0____["default"].AudioOutput.WebAudio.IsSupported()) {
+    this.audio = new __WEBPACK_IMPORTED_MODULE_0____["default"].Decoder.MP2Audio(options);
+    this.audioOut = new __WEBPACK_IMPORTED_MODULE_0____["default"].AudioOutput.WebAudio(options);
+    this.demuxer.connect(__WEBPACK_IMPORTED_MODULE_0____["default"].Demuxer.TS.STREAM.AUDIO_1, this.audio);
     this.audio.connect(this.audioOut);
   }
 
@@ -403,7 +455,7 @@ Player.prototype.seek = function (time) {
     this.audio.seek(time + startOffset);
   }
 
-  this.startTime = Object(__WEBPACK_IMPORTED_MODULE_0__index__["Now"])() - time;
+  this.startTime = __WEBPACK_IMPORTED_MODULE_0____["default"].Now() - time;
 };
 
 Player.prototype.getCurrentTime = function () {
@@ -426,7 +478,7 @@ Player.prototype.update = function () {
 
   if (!this.isPlaying) {
     this.isPlaying = true;
-    this.startTime = Object(__WEBPACK_IMPORTED_MODULE_0__index__["Now"])() - this.currentTime;
+    this.startTime = __WEBPACK_IMPORTED_MODULE_0____["default"].Now() - this.currentTime;
   }
 
   if (this.options.streaming) {
@@ -480,7 +532,7 @@ Player.prototype.updateForStaticFile = function () {
     headroom = this.demuxer.currentTime - this.audio.currentTime;
   } else if (this.video) {
     // Video only - sync it to player's wallclock
-    var targetTime = Object(__WEBPACK_IMPORTED_MODULE_0__index__["Now"])() - this.startTime + this.video.startTime,
+    var targetTime = __WEBPACK_IMPORTED_MODULE_0____["default"].Now() - this.startTime + this.video.startTime,
         lateTime = targetTime - this.video.currentTime,
         frameTime = 1 / this.video.frameRate;
 
@@ -520,7 +572,7 @@ Player.prototype.updateForStaticFile = function () {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__index__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0____ = __webpack_require__(0);
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 
@@ -598,7 +650,7 @@ var VideoElement = function () {
     });
 
     // Create the player instance
-    this.player = new __WEBPACK_IMPORTED_MODULE_0__index__["Player"](this.options.videoUrl, this.options, {
+    this.player = new __WEBPACK_IMPORTED_MODULE_0____["default"].Player(this.options.videoUrl, this.options, {
       play: function play() {
         _this2.playButton.style.display = 'none';
         if (_this2.poster) {
@@ -972,7 +1024,7 @@ AjaxSource.prototype.onLoad = function (data) {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__index__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0____ = __webpack_require__(0);
 
 
 var AjaxProgressiveSource = function AjaxProgressiveSource(url, options) {
@@ -1041,7 +1093,7 @@ AjaxProgressiveSource.prototype.loadNextChunk = function () {
 	}
 
 	this.isLoading = true;
-	this.loadStartTime = Object(__WEBPACK_IMPORTED_MODULE_0__index__["Now"])();
+	this.loadStartTime = __WEBPACK_IMPORTED_MODULE_0____["default"].Now();
 	this.request = new XMLHttpRequest();
 
 	this.request.onreadystatechange = function () {
@@ -1080,7 +1132,7 @@ AjaxProgressiveSource.prototype.onChunkLoad = function (data) {
 		this.destination.write(data);
 	}
 
-	this.loadTime = Object(__WEBPACK_IMPORTED_MODULE_0__index__["Now"])() - this.loadStartTime;
+	this.loadTime = __WEBPACK_IMPORTED_MODULE_0____["default"].Now() - this.loadStartTime;
 	if (!this.throttled) {
 		this.loadNextChunk();
 	}
@@ -1165,7 +1217,7 @@ WSSource.prototype.onMessage = function (ev) {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__index__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0____ = __webpack_require__(0);
 
 
 var TS = function TS(options) {
@@ -1193,10 +1245,10 @@ TS.prototype.connect = function (streamId, destination) {
 TS.prototype.write = function (buffer) {
   if (this.leftoverBytes) {
     var totalLength = buffer.byteLength + this.leftoverBytes.byteLength;
-    this.bits = new __WEBPACK_IMPORTED_MODULE_0__index__["BitBuffer"](totalLength);
+    this.bits = new __WEBPACK_IMPORTED_MODULE_0____["default"].BitBuffer(totalLength);
     this.bits.write([this.leftoverBytes, buffer]);
   } else {
-    this.bits = new __WEBPACK_IMPORTED_MODULE_0__index__["BitBuffer"](buffer);
+    this.bits = new __WEBPACK_IMPORTED_MODULE_0____["default"].BitBuffer(buffer);
   }
 
   while (this.bits.has(188 << 3) && this.parsePacket()) {}
@@ -1390,7 +1442,7 @@ TS.STREAM = {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__index__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0____ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__decoder__ = __webpack_require__(1);
 // Inspired by Java MPEG-1 Video Decoder and Player by Zoltan Korandi
 // https://sourceforge.net/projects/javampeg1video/
@@ -1398,14 +1450,13 @@ TS.STREAM = {
 
 
 
-
 var MPEG1 = function MPEG1(options) {
-	__WEBPACK_IMPORTED_MODULE_0__index__["Decoder"].Base.call(this, options);
+	__WEBPACK_IMPORTED_MODULE_0____["default"].Decoder.Base.call(this, options);
 
 	var bufferSize = options.videoBufferSize || 512 * 1024;
-	var bufferMode = options.streaming ? __WEBPACK_IMPORTED_MODULE_0__index__["BitBuffer"].MODE.EVICT : __WEBPACK_IMPORTED_MODULE_0__index__["BitBuffer"].MODE.EXPAND;
+	var bufferMode = options.streaming ? __WEBPACK_IMPORTED_MODULE_0____["default"].BitBuffer.MODE.EVICT : __WEBPACK_IMPORTED_MODULE_0____["default"].BitBuffer.MODE.EXPAND;
 
-	this.bits = new __WEBPACK_IMPORTED_MODULE_0__index__["BitBuffer"](bufferSize, bufferMode);
+	this.bits = new __WEBPACK_IMPORTED_MODULE_0____["default"].BitBuffer(bufferSize, bufferMode);
 
 	this.customIntraQuantMatrix = new Uint8Array(64);
 	this.customNonIntraQuantMatrix = new Uint8Array(64);
@@ -1419,7 +1470,7 @@ MPEG1.prototype = Object.create(__WEBPACK_IMPORTED_MODULE_1__decoder__["a" /* de
 MPEG1.prototype.constructor = MPEG1;
 
 MPEG1.prototype.write = function (pts, buffers) {
-	__WEBPACK_IMPORTED_MODULE_0__index__["Decoder"].Base.prototype.write.call(this, pts, buffers);
+	__WEBPACK_IMPORTED_MODULE_0____["default"].Decoder.Base.prototype.write.call(this, pts, buffers);
 
 	if (!this.hasSequenceHeader) {
 		if (this.bits.findStartCode(MPEG1.START.SEQUENCE) === -1) {
@@ -2174,7 +2225,7 @@ MPEG1.prototype.decodeBlock = function (block) {
 		} else {
 			MPEG1.IDCT(this.blockData);
 			MPEG1.CopyBlockToDestination(this.blockData, destArray, destIndex, scan);
-			Object(__WEBPACK_IMPORTED_MODULE_0__index__["Fill"])(this.blockData, 0);
+			__WEBPACK_IMPORTED_MODULE_0____["default"].Fill(this.blockData, 0);
 		}
 	} else {
 		// Add data to the predicted macroblock
@@ -2184,7 +2235,7 @@ MPEG1.prototype.decodeBlock = function (block) {
 		} else {
 			MPEG1.IDCT(this.blockData);
 			MPEG1.AddBlockToDestination(this.blockData, destArray, destIndex, scan);
-			Object(__WEBPACK_IMPORTED_MODULE_0__index__["Fill"])(this.blockData, 0);
+			__WEBPACK_IMPORTED_MODULE_0____["default"].Fill(this.blockData, 0);
 		}
 	}
 
@@ -2958,7 +3009,7 @@ MPEG1.START = {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__index__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0____ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__decoder__ = __webpack_require__(1);
 // Based on kjmp2 by Martin J. Fiedler
 // http://keyj.emphy.de/kjmp2/
@@ -2966,14 +3017,13 @@ MPEG1.START = {
 
 
 
-
 var MP2 = function MP2(options) {
-	__WEBPACK_IMPORTED_MODULE_0__index__["Decoder"].Base.call(this, options);
+	__WEBPACK_IMPORTED_MODULE_0____["default"].Decoder.Base.call(this, options);
 
 	var bufferSize = options.audioBufferSize || 128 * 1024;
-	var bufferMode = options.streaming ? __WEBPACK_IMPORTED_MODULE_0__index__["BitBuffer"].MODE.EVICT : __WEBPACK_IMPORTED_MODULE_0__index__["BitBuffer"].MODE.EXPAND;
+	var bufferMode = options.streaming ? __WEBPACK_IMPORTED_MODULE_0____["default"].BitBuffer.MODE.EVICT : __WEBPACK_IMPORTED_MODULE_0____["default"].BitBuffer.MODE.EXPAND;
 
-	this.bits = new __WEBPACK_IMPORTED_MODULE_0__index__["BitBuffer"](bufferSize, bufferMode);
+	this.bits = new __WEBPACK_IMPORTED_MODULE_0____["default"].BitBuffer(bufferSize, bufferMode);
 
 	this.left = new Float32Array(1152);
 	this.right = new Float32Array(1152);
@@ -3186,7 +3236,7 @@ MP2.prototype.decodeFrame = function (left, right) {
 					MP2.MatrixTransform(this.sample[ch], p, this.V, this.VPos);
 
 					// Build U, windowing, calculate output
-					Object(__WEBPACK_IMPORTED_MODULE_0__index__["Fill"])(this.U, 0);
+					__WEBPACK_IMPORTED_MODULE_0____["default"].Fill(this.U, 0);
 
 					var dIndex = 512 - (this.VPos >> 1);
 					var vIndex = this.VPos % 128 >> 1;
@@ -3707,7 +3757,7 @@ WebGLRenderer.SHADER = {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__index__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0____ = __webpack_require__(0);
 
 
 var CanvasRenderer = function CanvasRenderer(options) {
@@ -3731,7 +3781,7 @@ CanvasRenderer.prototype.resize = function (width, height) {
   this.canvas.height = this.height;
 
   this.imageData = this.context.getImageData(0, 0, this.width, this.height);
-  Object(__WEBPACK_IMPORTED_MODULE_0__index__["Fill"])(this.imageData.data, 255);
+  __WEBPACK_IMPORTED_MODULE_0____["default"].Fill(this.imageData.data, 255);
 };
 
 CanvasRenderer.prototype.renderProgress = function (progress) {
@@ -3828,7 +3878,7 @@ CanvasRenderer.prototype.YCbCrToRGBA = function (y, cb, cr, rgba) {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__index__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0____ = __webpack_require__(0);
 
 
 var WebAudioOut = function WebAudioOut(options) {
@@ -3871,7 +3921,7 @@ WebAudioOut.prototype.play = function (sampleRate, left, right) {
 	// If the context is not unlocked yet, we simply advance the start time
 	// to "fake" actually playing audio. This will keep the video in sync.
 	if (!this.unlocked) {
-		var ts = Object(__WEBPACK_IMPORTED_MODULE_0__index__["Now"])();
+		var ts = __WEBPACK_IMPORTED_MODULE_0____["default"].Now();
 		if (this.wallclockStartTime < ts) {
 			this.wallclockStartTime = ts;
 		}
@@ -3893,7 +3943,7 @@ WebAudioOut.prototype.play = function (sampleRate, left, right) {
 	var duration = buffer.duration;
 	if (this.startTime < now) {
 		this.startTime = now;
-		this.wallclockStartTime = Object(__WEBPACK_IMPORTED_MODULE_0__index__["Now"])();
+		this.wallclockStartTime = __WEBPACK_IMPORTED_MODULE_0____["default"].Now();
 	}
 
 	source.start(this.startTime);
@@ -3912,12 +3962,12 @@ WebAudioOut.prototype.stop = function () {
 WebAudioOut.prototype.getEnqueuedTime = function () {
 	// The AudioContext.currentTime is only updated every so often, so if we
 	// want to get exact timing, we need to rely on the system time.
-	return Math.max(this.wallclockStartTime - Object(__WEBPACK_IMPORTED_MODULE_0__index__["Now"])(), 0);
+	return Math.max(this.wallclockStartTime - __WEBPACK_IMPORTED_MODULE_0____["default"].Now(), 0);
 };
 
 WebAudioOut.prototype.resetEnqueuedTime = function () {
 	this.startTime = this.context.currentTime;
-	this.wallclockStartTime = Object(__WEBPACK_IMPORTED_MODULE_0__index__["Now"])();
+	this.wallclockStartTime = __WEBPACK_IMPORTED_MODULE_0____["default"].Now();
 };
 
 WebAudioOut.prototype.unlock = function (callback) {
@@ -3973,6 +4023,6 @@ WebAudioOut.CachedContext = null;
 /* harmony default export */ __webpack_exports__["a"] = (WebAudioOut);
 
 /***/ })
-/******/ ]);
+/******/ ])["default"];
 });
 //# sourceMappingURL=JSMpeg.js.map

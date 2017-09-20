@@ -20,7 +20,8 @@ var config = {
       ? 'JSMpeg.min.js'
       : 'JSMpeg.js',
     library: 'JSMpeg',
-    libraryTarget: 'umd'
+    libraryTarget: 'umd',
+    libraryExport: 'default'
   },
 
   resolve: {

@@ -36,7 +36,7 @@
 
 ### Usage
   ```javascript
-  import * as JSMpeg from 'jsmpeg-player';
+  import JSMpeg from 'jsmpeg-player';
   # OR
   let JSMpeg = require('jsmpeg-player');
   ```

@@ -1,11 +1,4 @@
-import {
-  Demuxer,
-  Source,
-  Decoder,
-  Renderer,
-  AudioOutput,
-  Now,
-} from '../index';
+import JSMpeg from '../';
 
 /**
  * @param url
@@ -22,15 +15,15 @@ let Player = function (url, options, cbUI) {
     options.streaming = !!this.source.streaming;
   }
   else if (url.match(/^wss?:\/\//)) {
-    this.source = new Source.WebSocket(url, options);
+    this.source = new JSMpeg.Source.WebSocket(url, options);
     options.streaming = true;
   }
   else if (options.progressive) {
-    this.source = new Source.AjaxProgressive(url, options);
+    this.source = new JSMpeg.Source.AjaxProgressive(url, options);
     options.streaming = false;
   }
   else {
-    this.source = new Source.Ajax(url, options);
+    this.source = new JSMpeg.Source.Ajax(url, options);
     options.streaming = false;
   }
 
@@ -38,22 +31,22 @@ let Player = function (url, options, cbUI) {
   this.loop = options.loop !== false;
   this.autoplay = !!options.autoplay || options.streaming;
 
-  this.demuxer = new Demuxer.TS(options);
+  this.demuxer = new JSMpeg.Demuxer.TS(options);
   this.source.connect(this.demuxer);
 
   if (options.video !== false) {
-    this.video = new Decoder.MPEG1Video(options);
-    this.renderer = !options.disableGl && Renderer.WebGL.IsSupported()
-      ? new Renderer.WebGL(options)
-      : new Renderer.Canvas2D(options);
-    this.demuxer.connect(Demuxer.TS.STREAM.VIDEO_1, this.video);
+    this.video = new JSMpeg.Decoder.MPEG1Video(options);
+    this.renderer = !options.disableGl && JSMpeg.Renderer.WebGL.IsSupported()
+      ? new JSMpeg.Renderer.WebGL(options)
+      : new JSMpeg.Renderer.Canvas2D(options);
+    this.demuxer.connect(JSMpeg.Demuxer.TS.STREAM.VIDEO_1, this.video);
     this.video.connect(this.renderer);
   }
 
-  if (options.audio !== false && AudioOutput.WebAudio.IsSupported()) {
-    this.audio = new Decoder.MP2Audio(options);
-    this.audioOut = new AudioOutput.WebAudio(options);
-    this.demuxer.connect(Demuxer.TS.STREAM.AUDIO_1, this.audio);
+  if (options.audio !== false && JSMpeg.AudioOutput.WebAudio.IsSupported()) {
+    this.audio = new JSMpeg.Decoder.MP2Audio(options);
+    this.audioOut = new JSMpeg.AudioOutput.WebAudio(options);
+    this.demuxer.connect(JSMpeg.Demuxer.TS.STREAM.AUDIO_1, this.audio);
     this.audio.connect(this.audioOut);
   }
 
@@ -155,7 +148,7 @@ Player.prototype.seek = function (time) {
     this.audio.seek(time + startOffset);
   }
 
-  this.startTime = Now() - time;
+  this.startTime = JSMpeg.Now() - time;
 };
 
 Player.prototype.getCurrentTime = function () {
@@ -180,7 +173,7 @@ Player.prototype.update = function () {
 
   if (!this.isPlaying) {
     this.isPlaying = true;
-    this.startTime = Now() - this.currentTime;
+    this.startTime = JSMpeg.Now() - this.currentTime;
   }
 
   if (this.options.streaming) {
@@ -241,7 +234,7 @@ Player.prototype.updateForStaticFile = function () {
 
   else if (this.video) {
     // Video only - sync it to player's wallclock
-    var targetTime = (Now() - this.startTime) + this.video.startTime,
+    var targetTime = (JSMpeg.Now() - this.startTime) + this.video.startTime,
       lateTime = targetTime - this.video.currentTime,
       frameTime = 1 / this.video.frameRate;
 
