@@ -26,22 +26,6 @@
 * The video must be compressed into the TS format of MPEG1 / MP2.
 * Apple device automatically plays without sound, you need to guide the user to click on the video in the lower right corner of the video icon to unlock the sound.(no similar problem in non-autoplay mode)
 
-## Encoding Video/Audio for [jsmpeg](https://github.com/phoboslab/jsmpeg) by [ffmpeg](https://ffmpeg.org/). E.g:
-```shell
-$ ffmpeg -i input.mp4 -f mpegts
-         -codec:v mpeg1video -s 640x360 -b:v 600k -r 25 -bf 0
-         -codec:a mp2 -ar 44100 -ac 1 -b:a 64k
-         output.ts
-```
-
-* options
-  * `-s`: video size
-  * `-b:v`: video bit rate
-  * `-r`: frame rate
-  * `-ar`: sampling rate
-  * `-ac`: number of audio channels
-  * `-b:a`: audio bit rate
-
 ## How to use
 ### Install
   ```shell
@@ -50,7 +34,7 @@ $ ffmpeg -i input.mp4 -f mpegts
   $ yarn add jsmpeg-player
   ```
 
-### How To Use
+### Usage
   ```javascript
   import * as JSMpeg from 'jsmpeg-player';
   # OR
@@ -60,6 +44,7 @@ $ ffmpeg -i input.mp4 -f mpegts
   ```javascript
   new JSMpeg.VideoElement(videoWrapper, videoUrl, [, options])
   ```
+
 * `videoWrapper`: [string|element] the wrapper of video. Height and width of wrapper must be initialized
 * `videoUrl`: [string] a url to an MPEG .ts file
 * The `options` supports:
@@ -72,8 +57,11 @@ $ ffmpeg -i input.mp4 -f mpegts
   * `hookInPlay`: [function] The hook function when the video play.
   * `hookInPause`: [function] The hook function when the video pause.
   * `hookInStop`: [function] The hook function when the video stop.
+  * More options can view the [jsmpeg options](https://github.com/phoboslab/jsmpeg#usage)
 
-More options can view the [jsmpeg options](https://github.com/phoboslab/jsmpeg#usage)
+* `JSMpeg.VideoElement` instance supports the following methods:
+  * `destroy()`: Empty videoWrapper.
+* `JSMpeg.VideoElement.player` instance API can view the [JSMpeg.Player API](https://github.com/phoboslab/jsmpeg#jsmpegplayer-api)
 
 ### Use in browser
 ```html
@@ -85,4 +73,18 @@ More options can view the [jsmpeg options](https://github.com/phoboslab/jsmpeg#u
 </script>
 ```
 
-###
+## Encoding Video/Audio for [jsmpeg](https://github.com/phoboslab/jsmpeg) by [ffmpeg](https://ffmpeg.org/). E.g:
+```shell
+$ ffmpeg -i input.mp4 -f mpegts
+         -codec:v mpeg1video -s 640x360 -b:v 700k -r 25 -bf 0
+         -codec:a mp2 -ar 44100 -ac 1 -b:a 64k
+         output.ts
+```
+
+* options
+  * `-s`: video size
+  * `-b:v`: video bit rate
+  * `-r`: frame rate
+  * `-ar`: sampling rate
+  * `-ac`: number of audio channels
+  * `-b:a`: audio bit rate

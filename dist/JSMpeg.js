@@ -526,45 +526,26 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 
 var VideoElement = function () {
-  function VideoElement(wrapper, videoUrl, _ref) {
+  function VideoElement(wrapper, videoUrl, options) {
     var _this = this;
-
-    var poster = _ref.poster,
-        _ref$aspectPercent = _ref.aspectPercent,
-        aspectPercent = _ref$aspectPercent === undefined ? '56.25%' : _ref$aspectPercent,
-        _ref$picMode = _ref.picMode,
-        picMode = _ref$picMode === undefined ? false : _ref$picMode,
-        _ref$autoplay = _ref.autoplay,
-        autoplay = _ref$autoplay === undefined ? false : _ref$autoplay,
-        _ref$loop = _ref.loop,
-        loop = _ref$loop === undefined ? false : _ref$loop,
-        _ref$decodeFirstFrame = _ref.decodeFirstFrame,
-        decodeFirstFrame = _ref$decodeFirstFrame === undefined ? true : _ref$decodeFirstFrame,
-        _ref$progressive = _ref.progressive,
-        progressive = _ref$progressive === undefined ? true : _ref$progressive,
-        _ref$hookInPlay = _ref.hookInPlay,
-        hookInPlay = _ref$hookInPlay === undefined ? function () {} : _ref$hookInPlay,
-        _ref$hookInPause = _ref.hookInPause,
-        hookInPause = _ref$hookInPause === undefined ? function () {} : _ref$hookInPause,
-        _ref$hookInStop = _ref.hookInStop,
-        hookInStop = _ref$hookInStop === undefined ? function () {} : _ref$hookInStop;
 
     _classCallCheck(this, VideoElement);
 
     // Setup the div container, canvas and play button
-    this.options = {
+    this.options = Object.assign({
       videoUrl: videoUrl,
-      poster: poster,
-      aspectPercent: aspectPercent,
-      picMode: picMode,
-      autoplay: autoplay,
-      loop: loop,
-      decodeFirstFrame: decodeFirstFrame,
-      progressive: progressive,
-      hookInPlay: hookInPlay,
-      hookInPause: hookInPause,
-      hookInStop: hookInStop
-    };
+      poster: '',
+      aspectPercent: '56.25%',
+      picMode: false,
+      autoplay: false,
+      loop: false,
+      decodeFirstFrame: true,
+      progressive: true,
+      hookInPlay: function hookInPlay() {},
+      hookInPause: function hookInPause() {},
+      hookInStop: function hookInStop() {}
+    }, options);
+
     this.wrapper = isString(wrapper) ? document.querySelector(wrapper) : wrapper;
     this.container = document.createElement('div');
     this.canvas = document.createElement('canvas');
@@ -995,114 +976,114 @@ AjaxSource.prototype.onLoad = function (data) {
 
 
 var AjaxProgressiveSource = function AjaxProgressiveSource(url, options) {
-  this.url = url;
-  this.destination = null;
-  this.request = null;
+	this.url = url;
+	this.destination = null;
+	this.request = null;
 
-  this.completed = false;
-  this.established = false;
-  this.progress = 0;
+	this.completed = false;
+	this.established = false;
+	this.progress = 0;
 
-  this.fileSize = 0;
-  this.loadedSize = 0;
-  this.chunkSize = options.chunkSize || 1024 * 1024;
+	this.fileSize = 0;
+	this.loadedSize = 0;
+	this.chunkSize = options.chunkSize || 1024 * 1024;
 
-  this.isLoading = false;
-  this.loadStartTime = 0;
-  this.throttled = options.throttled !== false;
-  this.aborted = false;
+	this.isLoading = false;
+	this.loadStartTime = 0;
+	this.throttled = options.throttled !== false;
+	this.aborted = false;
 };
 
 AjaxProgressiveSource.prototype.connect = function (destination) {
-  this.destination = destination;
+	this.destination = destination;
 };
 
 AjaxProgressiveSource.prototype.start = function () {
-  this.request = new XMLHttpRequest();
+	this.request = new XMLHttpRequest();
 
-  this.request.onreadystatechange = function () {
-    if (this.request.readyState === this.request.DONE) {
-      this.fileSize = parseInt(this.request.getResponseHeader("Content-Length"));
-      this.loadNextChunk();
-    }
-  }.bind(this);
+	this.request.onreadystatechange = function () {
+		if (this.request.readyState === this.request.DONE) {
+			this.fileSize = parseInt(this.request.getResponseHeader("Content-Length"));
+			this.loadNextChunk();
+		}
+	}.bind(this);
 
-  this.request.onprogress = this.onProgress.bind(this);
-  this.request.open('HEAD', this.url);
-  this.request.send();
+	this.request.onprogress = this.onProgress.bind(this);
+	this.request.open('HEAD', this.url);
+	this.request.send();
 };
 
 AjaxProgressiveSource.prototype.resume = function (secondsHeadroom) {
-  if (this.isLoading || !this.throttled) {
-    return;
-  }
+	if (this.isLoading || !this.throttled) {
+		return;
+	}
 
-  // Guess the worst case loading time with lots of safety margin. This is
-  // somewhat arbitrary...
-  var worstCaseLoadingTime = this.loadTime * 8 + 2;
-  if (worstCaseLoadingTime > secondsHeadroom) {
-    this.loadNextChunk();
-  }
+	// Guess the worst case loading time with lots of safety margin. This is
+	// somewhat arbitrary...
+	var worstCaseLoadingTime = this.loadTime * 8 + 2;
+	if (worstCaseLoadingTime > secondsHeadroom) {
+		this.loadNextChunk();
+	}
 };
 
 AjaxProgressiveSource.prototype.destroy = function () {
-  this.request.abort();
-  this.aborted = true;
+	this.request.abort();
+	this.aborted = true;
 };
 
 AjaxProgressiveSource.prototype.loadNextChunk = function () {
-  var start = this.loadedSize,
-      end = Math.min(this.loadedSize + this.chunkSize - 1, this.fileSize - 1);
+	var start = this.loadedSize,
+	    end = Math.min(this.loadedSize + this.chunkSize - 1, this.fileSize - 1);
 
-  if (start >= this.fileSize || this.aborted) {
-    this.completed = true;
-    return;
-  }
+	if (start >= this.fileSize || this.aborted) {
+		this.completed = true;
+		return;
+	}
 
-  this.isLoading = true;
-  this.loadStartTime = JSMpeg.Now();
-  this.request = new XMLHttpRequest();
+	this.isLoading = true;
+	this.loadStartTime = Object(__WEBPACK_IMPORTED_MODULE_0__index__["Now"])();
+	this.request = new XMLHttpRequest();
 
-  this.request.onreadystatechange = function () {
-    if (this.request.readyState === this.request.DONE && this.request.status >= 200 && this.request.status < 300) {
-      this.onChunkLoad(this.request.response);
-    } else if (this.request.readyState === this.request.DONE) {
-      // Retry?
-      if (this.loadFails++ < 3) {
-        this.loadNextChunk();
-      }
-    }
-  }.bind(this);
+	this.request.onreadystatechange = function () {
+		if (this.request.readyState === this.request.DONE && this.request.status >= 200 && this.request.status < 300) {
+			this.onChunkLoad(this.request.response);
+		} else if (this.request.readyState === this.request.DONE) {
+			// Retry?
+			if (this.loadFails++ < 3) {
+				this.loadNextChunk();
+			}
+		}
+	}.bind(this);
 
-  if (start === 0) {
-    this.request.onprogress = this.onProgress.bind(this);
-  }
+	if (start === 0) {
+		this.request.onprogress = this.onProgress.bind(this);
+	}
 
-  this.request.open('GET', this.url + '?' + start + "-" + end);
-  this.request.setRequestHeader("Range", "bytes=" + start + "-" + end);
-  this.request.responseType = "arraybuffer";
-  this.request.send();
+	this.request.open('GET', this.url + '?' + start + "-" + end);
+	this.request.setRequestHeader("Range", "bytes=" + start + "-" + end);
+	this.request.responseType = "arraybuffer";
+	this.request.send();
 };
 
 AjaxProgressiveSource.prototype.onProgress = function (ev) {
-  this.progress = ev.loaded / ev.total;
+	this.progress = ev.loaded / ev.total;
 };
 
 AjaxProgressiveSource.prototype.onChunkLoad = function (data) {
-  this.established = true;
-  this.progress = 1;
-  this.loadedSize += data.byteLength;
-  this.loadFails = 0;
-  this.isLoading = false;
+	this.established = true;
+	this.progress = 1;
+	this.loadedSize += data.byteLength;
+	this.loadFails = 0;
+	this.isLoading = false;
 
-  if (this.destination) {
-    this.destination.write(data);
-  }
+	if (this.destination) {
+		this.destination.write(data);
+	}
 
-  this.loadTime = JSMpeg.Now() - this.loadStartTime;
-  if (!this.throttled) {
-    this.loadNextChunk();
-  }
+	this.loadTime = Object(__WEBPACK_IMPORTED_MODULE_0__index__["Now"])() - this.loadStartTime;
+	if (!this.throttled) {
+		this.loadNextChunk();
+	}
 };
 
 /* harmony default export */ __webpack_exports__["a"] = (AjaxProgressiveSource);

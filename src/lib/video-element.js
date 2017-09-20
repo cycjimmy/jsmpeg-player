@@ -4,35 +4,26 @@ import {
 
 
 export default class VideoElement {
-  constructor(wrapper, videoUrl, {
-    poster,
-    aspectPercent = '56.25%',
-    picMode = false,
-    autoplay = false,
-    loop = false,
-    decodeFirstFrame = true,
-    progressive = true,
-    hookInPlay = () => {
-    },
-    hookInPause = () => {
-    },
-    hookInStop = () => {
-    },
-  }) {
+  constructor(wrapper, videoUrl, options) {
     // Setup the div container, canvas and play button
-    this.options = {
+    this.options = Object.assign({
       videoUrl: videoUrl,
-      poster: poster,
-      aspectPercent: aspectPercent,
-      picMode: picMode,
-      autoplay: autoplay,
-      loop: loop,
-      decodeFirstFrame: decodeFirstFrame,
-      progressive: progressive,
-      hookInPlay: hookInPlay,
-      hookInPause: hookInPause,
-      hookInStop: hookInStop,
-    };
+      poster: '',
+      aspectPercent: '56.25%',
+      picMode: false,
+      autoplay: false,
+      loop: false,
+      decodeFirstFrame: true,
+      progressive: true,
+      hookInPlay: () => {
+      },
+      hookInPause: () => {
+      },
+      hookInStop: () => {
+      },
+    }, options);
+
+
     this.wrapper = isString(wrapper)
       ? document.querySelector(wrapper)
       : wrapper;
