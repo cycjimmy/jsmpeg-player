@@ -1,6 +1,6 @@
 {
   "name": "jsmpeg-player",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "MPEG1 Video Player Based On JSMpeg",
   "main": "dist/JSMpeg.js",
   "module": "src/index.js",
@@ -8,7 +8,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack --progress --display-modules --display-reasons --display-error-details --color",
     "build:production": "cross-env NODE_ENV=production webpack --progress --optimize-minimize",
-    "prepublish": "npm run build && npm run build:production"
+    "deploy": "gulp deploy",
+    "prepublish": "npm run build && npm run build:production && gulp copy"
   },
   "repository": {
     "type": "git",
@@ -32,6 +33,9 @@
     "babel-preset-env": "^1.6.0",
     "clean-webpack-plugin": "^0.1.16",
     "cross-env": "^5.0.5",
+    "gulp": "^3.9.1",
+    "gulp-copy": "^1.0.1",
+    "gulp-gh-pages": "^0.5.4",
     "jest": "^21.1.0",
     "regenerator-runtime": "^0.11.0",
     "uglify-js": "^3.1.1",
