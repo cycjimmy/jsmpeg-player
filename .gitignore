@@ -56,3 +56,4 @@ yarn-error.log
 
 # project
 .publish
+dist

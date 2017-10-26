@@ -1,0 +1,45 @@
+doctype html
+html(lang='en')
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no")
+    title JSMpeg Video Test
+    base(href="./")
+
+    style.
+      #videoWrapper {
+        margin: 0 auto;
+        width: 640px;
+        height: 360px;
+      }
+
+  body
+    #videoWrapper
+
+    each _js in htmlWebpackPlugin.files.js
+      script(src=_js)
+
+    //- copy medias into dist dir
+    - require('../media/big_buck_bunny_640x360.ts');
+    - require('../media/Sony_test_video_640x360.ts');
+
+    script.
+      var
+        poster = 'https://raw.githubusercontent.com/cycjimmy/staticFiles/storage/images/screenshot/big_buck_bunny_640x360.jpg'
+        , videoUrl = './media/big_buck_bunny_640x360.ts'
+      ;
+
+      var
+        video = new JSMpeg.VideoElement('#videoWrapper', videoUrl, {
+          poster: poster
+        })
+      ;
+
+      console.log(video);
+
+
+
+
+
+
+
