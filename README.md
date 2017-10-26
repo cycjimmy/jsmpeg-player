@@ -16,7 +16,7 @@
 [david-url]: https://david-dm.org/cycjimmy/jsmpeg-player
 [david-dev-image]: https://david-dm.org/cycjimmy/jsmpeg-player/dev-status.svg?style=flat-square
 [david-dev-url]: https://david-dm.org/cycjimmy/jsmpeg-player?type=dev
-[node-image]: https://img.shields.io/badge/node.js-%3E=_4.0-green.svg?style=flat-square
+[node-image]: https://img.shields.io/badge/node.js-%3E=_6.0-green.svg?style=flat-square
 [node-url]: http://nodejs.org/download/
 [download-image]: https://img.shields.io/npm/dm/jsmpeg-player.svg?style=flat-square
 [download-url]: https://npmjs.org/package/jsmpeg-player
