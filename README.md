@@ -26,7 +26,7 @@
 * The video must be compressed into the TS format of MPEG1 / MP2.
 * Apple device automatically plays without sound, you need to guide the user to click on the video in the lower right corner of the video icon to unlock the sound.(no similar problem in non-autoplay mode)
 
-[Demo](https://cycjimmy.github.io/jsmpeg-player/)
+[Releases](https://github.com/cycjimmy/jsmpeg-player/releases) | [Demo](https://cycjimmy.github.io/jsmpeg-player/)
 
 ## How to use
 ### Install
