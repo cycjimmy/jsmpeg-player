@@ -1,9 +1,8 @@
 {
   "name": "jsmpeg-player",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "MPEG1 Video Player Based On JSMpeg",
-  "main": "build/H5VideoPlayer.js",
-  "module": "src/index.js",
+  "main": "build/JSMpeg.js",
   "scripts": {
     "start": "cross-env NODE_ENV=development webpack --display-modules --display-reasons --display-error-details --watch --color",
     "build": "cross-env NODE_ENV=production webpack --progress --optimize-minimize && webpack --progress --display-modules --display-reasons --display-error-details --color",
