@@ -1,6 +1,6 @@
 {
   "name": "jsmpeg-player",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "MPEG1 Video Player Based On JSMpeg",
   "main": "build/JSMpeg.js",
   "scripts": {
@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/cycjimmy/jsmpeg-player.git"
+    "url": "git+https://github.com/cycdpo/jsmpeg-player.git"
   },
   "keywords": [
     "jsmpeg",
@@ -20,9 +20,9 @@
   "author": "cycjimmy <cycjimmy@gmail.com> (https://github.com/cycjimmy)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/cycjimmy/jsmpeg-player/issues"
+    "url": "https://github.com/cycdpo/jsmpeg-player/issues"
   },
-  "homepage": "https://github.com/cycjimmy/jsmpeg-player#readme",
+  "homepage": "https://github.com/cycdpo/jsmpeg-player#readme",
   "devDependencies": {
     "autoprefixer": "^7.1.6",
     "babel-core": "^6.26.0",
