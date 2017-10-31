@@ -10,12 +10,12 @@
 
 [npm-image]: https://img.shields.io/npm/v/jsmpeg-player.svg?style=flat-square
 [npm-url]: https://npmjs.org/package/jsmpeg-player
-[travis-image]: https://img.shields.io/travis/cycjimmy/jsmpeg-player.svg?style=flat-square
-[travis-url]: https://travis-ci.org/cycjimmy/jsmpeg-player
-[david-image]: https://img.shields.io/david/cycjimmy/jsmpeg-player.svg?style=flat-square
-[david-url]: https://david-dm.org/cycjimmy/jsmpeg-player
-[david-dev-image]: https://david-dm.org/cycjimmy/jsmpeg-player/dev-status.svg?style=flat-square
-[david-dev-url]: https://david-dm.org/cycjimmy/jsmpeg-player?type=dev
+[travis-image]: https://img.shields.io/travis/cycdpo/jsmpeg-player.svg?style=flat-square
+[travis-url]: https://travis-ci.org/cycdpo/jsmpeg-player
+[david-image]: https://img.shields.io/david/cycdpo/jsmpeg-player.svg?style=flat-square
+[david-url]: https://david-dm.org/cycdpo/jsmpeg-player
+[david-dev-image]: https://david-dm.org/cycdpo/jsmpeg-player/dev-status.svg?style=flat-square
+[david-dev-url]: https://david-dm.org/cycdpo/jsmpeg-player?type=dev
 [node-image]: https://img.shields.io/badge/node.js-%3E=_6.0-green.svg?style=flat-square
 [node-url]: http://nodejs.org/download/
 [download-image]: https://img.shields.io/npm/dm/jsmpeg-player.svg?style=flat-square
@@ -26,7 +26,7 @@
 * The video must be compressed into the TS format of MPEG1 / MP2.
 * Apple device automatically plays without sound, you need to guide the user to click on the video in the lower right corner of the video icon to unlock the sound.(no similar problem in non-autoplay mode)
 
-[Releases](https://github.com/cycjimmy/jsmpeg-player/releases) | [Demo](https://cycjimmy.github.io/jsmpeg-player/)
+[Releases](https://github.com/cycdpo/jsmpeg-player/releases) | [Demo](https://cycdpo.github.io/jsmpeg-player/)
 
 ## How to use
 ### Install
