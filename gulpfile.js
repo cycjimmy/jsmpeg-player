@@ -1,12 +1,17 @@
 var
   gulp = require('gulp')
-  , ghPages = require('gulp-gh-pages')
+  , ghPages = require('gh-pages')
 ;
-
 
 // Deploy to ghPages
 gulp.task('deploy', function () {
-  return gulp
-    .src(['dist/**/*', '!dist/**/*.map'])
-    .pipe(ghPages());
+  return ghPages.publish('dist', {
+    src: [
+      '**/*',
+      '!**/*.map'
+    ]
+  }, function (err) {
+    console.error(err);
+  });
 });
+

@@ -1,2 +1,13 @@
+# IDE
+.idea
+
+# test
+test
+.travis.yml
+
+# project
+src
 static
 dist
+yarn.lock
+

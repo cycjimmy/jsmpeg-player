@@ -57,3 +57,5 @@ yarn-error.log
 # project
 .publish
 dist
+yarn.lock
+
