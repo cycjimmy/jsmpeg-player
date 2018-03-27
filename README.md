@@ -6,6 +6,7 @@
 [![devDependencies Status][david-dev-image]][david-dev-url]
 [![node version][node-image]][node-url]
 [![npm download][download-image]][download-url]
+[![jsdelivr][jsdelivr-image]][jsdelivr-url]
 [![npm license][license-image]][download-url]
 
 [npm-image]: https://img.shields.io/npm/v/jsmpeg-player.svg?style=flat-square
@@ -20,6 +21,8 @@
 [node-url]: http://nodejs.org/download/
 [download-image]: https://img.shields.io/npm/dm/jsmpeg-player.svg?style=flat-square
 [download-url]: https://npmjs.org/package/jsmpeg-player
+[jsdelivr-image]: https://data.jsdelivr.com/v1/package/npm/jsmpeg-player/badge
+[jsdelivr-url]: https://www.jsdelivr.com/package/npm/jsmpeg-player
 [license-image]: https://img.shields.io/npm/l/jsmpeg-player.svg?style=flat-square
 
 * JSMpeg player is based on [jsmpeg](https://github.com/phoboslab/jsmpeg).
@@ -73,6 +76,12 @@
   var videoUrl = '../static/media/test_video.ts';
   new JSMpeg.VideoElement('#videoWrapper', videoUrl);
 </script>
+```
+
+## CDN
+To use via a CDN include this in your html:
+```text
+<script src="https://cdn.jsdelivr.net/npm/jsmpeg-player@1.1.3/build/JSMpeg.min.js"></script>
 ```
 
 ## Encoding Video/Audio for [jsmpeg](https://github.com/phoboslab/jsmpeg) by [ffmpeg](https://ffmpeg.org/). E.g:
