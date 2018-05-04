@@ -81,7 +81,7 @@
 ## CDN
 To use via a CDN include this in your html:
 ```text
-<script src="https://cdn.jsdelivr.net/npm/jsmpeg-player@1.1.3/build/JSMpeg.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsmpeg-player@1/build/JSMpeg.min.js"></script>
 ```
 
 ## Encoding Video/Audio for [jsmpeg](https://github.com/phoboslab/jsmpeg) by [ffmpeg](https://ffmpeg.org/). E.g:
