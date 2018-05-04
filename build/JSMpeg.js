@@ -7,7 +7,7 @@
 		exports["JSMpeg"] = factory();
 	else
 		root["JSMpeg"] = factory();
-})(typeof self !== 'undefined' ? self : this, function() {
+})(window, function() {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -54,6 +54,11 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 		}
 /******/ 	};
 /******/
+/******/ 	// define __esModule on exports
+/******/ 	__webpack_require__.r = function(exports) {
+/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 	};
+/******/
 /******/ 	// getDefaultExport function for compatibility with non-harmony modules
 /******/ 	__webpack_require__.n = function(module) {
 /******/ 		var getter = module && module.__esModule ?
@@ -69,6 +74,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// __webpack_public_path__
 /******/ 	__webpack_require__.p = "";
 /******/
+/******/
 /******/ 	// Load entry module and return exports
 /******/ 	return __webpack_require__(__webpack_require__.s = 0);
 /******/ })
@@ -78,20 +84,20 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__lib_player__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__lib_video_element__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__lib_buffer__ = __webpack_require__(13);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__lib_ajax__ = __webpack_require__(14);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__lib_ajax_progressive__ = __webpack_require__(15);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__lib_websocket__ = __webpack_require__(16);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__lib_ts__ = __webpack_require__(17);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__lib_decoder__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__lib_mpeg1__ = __webpack_require__(18);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__lib_mp2__ = __webpack_require__(19);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__lib_webgl__ = __webpack_require__(20);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__lib_canvas2d__ = __webpack_require__(21);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__lib_webaudio__ = __webpack_require__(22);
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _lib_player__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
+/* harmony import */ var _lib_video_element__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(2);
+/* harmony import */ var _lib_buffer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(12);
+/* harmony import */ var _lib_ajax__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(13);
+/* harmony import */ var _lib_ajax_progressive__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(14);
+/* harmony import */ var _lib_websocket__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(15);
+/* harmony import */ var _lib_ts__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(16);
+/* harmony import */ var _lib_decoder__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(17);
+/* harmony import */ var _lib_mpeg1__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(18);
+/* harmony import */ var _lib_mp2__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(19);
+/* harmony import */ var _lib_webgl__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(20);
+/* harmony import */ var _lib_canvas2d__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(21);
+/* harmony import */ var _lib_webaudio__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(22);
 /* According to jsmpeg project(https://github.com/phoboslab/jsmpeg) modified */
 
 // ES6 modular
@@ -116,17 +122,17 @@ var JSMpeg = {
   // renderer and audio output. It ties everything together, is responsible
   // of scheduling decoding and provides some convenience methods for
   // external users.
-  Player: __WEBPACK_IMPORTED_MODULE_0__lib_player__["a" /* default */],
+  Player: _lib_player__WEBPACK_IMPORTED_MODULE_0__["default"],
 
   // A Video Element wraps the Player, shows HTML controls to start/pause
   // the video and handles Audio unlocking on iOS. VideoElements can be
   // created directly in HTML using the <div class="jsmpeg"/> tag.
-  VideoElement: __WEBPACK_IMPORTED_MODULE_1__lib_video_element__["a" /* default */],
+  VideoElement: _lib_video_element__WEBPACK_IMPORTED_MODULE_1__["default"],
 
   // The BitBuffer wraps a Uint8Array and allows reading an arbitrary number
   // of bits at a time. On writing, the BitBuffer either expands its
   // internal buffer (for static files) or deletes old data (for streaming).
-  BitBuffer: __WEBPACK_IMPORTED_MODULE_2__lib_buffer__["a" /* default */],
+  BitBuffer: _lib_buffer__WEBPACK_IMPORTED_MODULE_2__["default"],
 
   // A Source provides raw data from HTTP, a WebSocket connection or any
   // other mean. Sources must support the following API:
@@ -138,9 +144,9 @@ var JSMpeg = {
   //   .completed - boolean, true if the source is completely loaded
   //   .progress - float 0-1
   Source: {
-    Ajax: __WEBPACK_IMPORTED_MODULE_3__lib_ajax__["a" /* default */],
-    AjaxProgressive: __WEBPACK_IMPORTED_MODULE_4__lib_ajax_progressive__["a" /* default */],
-    WebSocket: __WEBPACK_IMPORTED_MODULE_5__lib_websocket__["a" /* default */]
+    Ajax: _lib_ajax__WEBPACK_IMPORTED_MODULE_3__["default"],
+    AjaxProgressive: _lib_ajax_progressive__WEBPACK_IMPORTED_MODULE_4__["default"],
+    WebSocket: _lib_websocket__WEBPACK_IMPORTED_MODULE_5__["default"]
   },
 
   // A Demuxer may sit between a Source and a Decoder. It separates the
@@ -150,7 +156,7 @@ var JSMpeg = {
   //   .currentTime – float, in seconds
   //   .startTime - float, in seconds
   Demuxer: {
-    TS: __WEBPACK_IMPORTED_MODULE_6__lib_ts__["a" /* default */]
+    TS: _lib_ts__WEBPACK_IMPORTED_MODULE_6__["default"]
   },
 
   // A Decoder accepts an incoming Stream of raw Audio or Video data, buffers
@@ -165,9 +171,9 @@ var JSMpeg = {
   //   .currentTime - float, in seconds
   //   .startTime - float, in seconds
   Decoder: {
-    Base: __WEBPACK_IMPORTED_MODULE_7__lib_decoder__["a" /* default */],
-    MPEG1Video: __WEBPACK_IMPORTED_MODULE_8__lib_mpeg1__["a" /* default */],
-    MP2Audio: __WEBPACK_IMPORTED_MODULE_9__lib_mp2__["a" /* default */]
+    Base: _lib_decoder__WEBPACK_IMPORTED_MODULE_7__["default"],
+    MPEG1Video: _lib_mpeg1__WEBPACK_IMPORTED_MODULE_8__["default"],
+    MP2Audio: _lib_mp2__WEBPACK_IMPORTED_MODULE_9__["default"]
   },
 
   // A Renderer accepts raw YCrCb data in 3 separate buffers via the render()
@@ -177,8 +183,8 @@ var JSMpeg = {
   //   .render(y, cr, cb) - pixel data as Uint8Arrays
   //   .enabled - wether the renderer does anything upon receiving data
   Renderer: {
-    WebGL: __WEBPACK_IMPORTED_MODULE_10__lib_webgl__["a" /* default */],
-    Canvas2D: __WEBPACK_IMPORTED_MODULE_11__lib_canvas2d__["a" /* default */]
+    WebGL: _lib_webgl__WEBPACK_IMPORTED_MODULE_10__["default"],
+    Canvas2D: _lib_canvas2d__WEBPACK_IMPORTED_MODULE_11__["default"]
   },
 
   // Audio Outputs accept raw Stero PCM data in 2 separate buffers via the
@@ -189,7 +195,7 @@ var JSMpeg = {
   //   .enqueuedTime - float, in seconds
   //   .enabled - wether the output does anything upon receiving data
   AudioOutput: {
-    WebAudio: __WEBPACK_IMPORTED_MODULE_12__lib_webaudio__["a" /* default */]
+    WebAudio: _lib_webaudio__WEBPACK_IMPORTED_MODULE_12__["default"]
   },
 
   // functions
@@ -199,7 +205,7 @@ var JSMpeg = {
   CreateVideoElements: function CreateVideoElements() {
     var elements = document.querySelectorAll('.jsmpeg');
     for (var i = 0; i < elements.length; i++) {
-      new __WEBPACK_IMPORTED_MODULE_1__lib_video_element__["a" /* default */](elements[i]);
+      new _lib_video_element__WEBPACK_IMPORTED_MODULE_1__["default"](elements[i]);
     }
   },
   Fill: function Fill(array, value) {
@@ -220,95 +226,1091 @@ var JSMpeg = {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-var BaseDecoder = function BaseDecoder(options) {
-	this.destination = null;
-	this.canPlay = false;
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var ___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(0);
 
-	this.collectTimestamps = !options.streaming;
-	this.timestamps = [];
-	this.timestampIndex = 0;
 
-	this.startTime = 0;
-	this.decodedTime = 0;
+/**
+ * @param url
+ * @param options
+ * @param cbUI {play: function, pause: function, stop: function} 插入UI回调
+ * @constructor
+ */
+var Player = function Player(url, options, cbUI) {
+  this.options = options || {};
+  this.cbUI = cbUI || {};
 
-	Object.defineProperty(this, 'currentTime', { get: this.getCurrentTime });
+  if (options.source) {
+    this.source = new options.source(url, options);
+    options.streaming = !!this.source.streaming;
+  } else if (url.match(/^wss?:\/\//)) {
+    this.source = new ___WEBPACK_IMPORTED_MODULE_0__["default"].Source.WebSocket(url, options);
+    options.streaming = true;
+  } else if (options.progressive) {
+    this.source = new ___WEBPACK_IMPORTED_MODULE_0__["default"].Source.AjaxProgressive(url, options);
+    options.streaming = false;
+  } else {
+    this.source = new ___WEBPACK_IMPORTED_MODULE_0__["default"].Source.Ajax(url, options);
+    options.streaming = false;
+  }
+
+  this.maxAudioLag = options.maxAudioLag || 0.25;
+  this.loop = options.loop !== false;
+  this.autoplay = !!options.autoplay || options.streaming;
+
+  this.demuxer = new ___WEBPACK_IMPORTED_MODULE_0__["default"].Demuxer.TS(options);
+  this.source.connect(this.demuxer);
+
+  if (options.video !== false) {
+    this.video = new ___WEBPACK_IMPORTED_MODULE_0__["default"].Decoder.MPEG1Video(options);
+    this.renderer = !options.disableGl && ___WEBPACK_IMPORTED_MODULE_0__["default"].Renderer.WebGL.IsSupported() ? new ___WEBPACK_IMPORTED_MODULE_0__["default"].Renderer.WebGL(options) : new ___WEBPACK_IMPORTED_MODULE_0__["default"].Renderer.Canvas2D(options);
+    this.demuxer.connect(___WEBPACK_IMPORTED_MODULE_0__["default"].Demuxer.TS.STREAM.VIDEO_1, this.video);
+    this.video.connect(this.renderer);
+  }
+
+  if (options.audio !== false && ___WEBPACK_IMPORTED_MODULE_0__["default"].AudioOutput.WebAudio.IsSupported()) {
+    this.audio = new ___WEBPACK_IMPORTED_MODULE_0__["default"].Decoder.MP2Audio(options);
+    this.audioOut = new ___WEBPACK_IMPORTED_MODULE_0__["default"].AudioOutput.WebAudio(options);
+    this.demuxer.connect(___WEBPACK_IMPORTED_MODULE_0__["default"].Demuxer.TS.STREAM.AUDIO_1, this.audio);
+    this.audio.connect(this.audioOut);
+  }
+
+  Object.defineProperty(this, 'currentTime', {
+    get: this.getCurrentTime,
+    set: this.setCurrentTime
+  });
+  Object.defineProperty(this, 'volume', {
+    get: this.getVolume,
+    set: this.setVolume
+  });
+
+  this.unpauseOnShow = false;
+  if (options.pauseWhenHidden !== false) {
+    document.addEventListener('visibilitychange', this.showHide.bind(this));
+  }
+
+  this.source.start();
+
+  if (this.autoplay) {
+    this.play();
+  }
 };
 
-BaseDecoder.prototype.connect = function (destination) {
-	this.destination = destination;
+Player.prototype.showHide = function (ev) {
+  if (document.visibilityState === 'hidden') {
+    this.unpauseOnShow = this.wantsToPlay;
+    this.pause();
+  } else if (this.unpauseOnShow) {
+    this.play();
+  }
 };
 
-BaseDecoder.prototype.write = function (pts, buffers) {
-	if (this.collectTimestamps) {
-		if (this.timestamps.length === 0) {
-			this.startTime = pts;
-			this.decodedTime = pts;
-		}
-		this.timestamps.push({ index: this.bits.byteLength << 3, time: pts });
-	}
+Player.prototype.play = function (ev) {
+  this.animationId = requestAnimationFrame(this.update.bind(this));
+  this.wantsToPlay = true;
 
-	this.bits.write(buffers);
-	this.canPlay = true;
+  if (this.cbUI.play) {
+    this.cbUI.play();
+  }
 };
 
-BaseDecoder.prototype.seek = function (time) {
-	if (!this.collectTimestamps) {
-		return;
-	}
+Player.prototype.pause = function (ev) {
+  cancelAnimationFrame(this.animationId);
+  this.wantsToPlay = false;
+  this.isPlaying = false;
 
-	this.timestampIndex = 0;
-	for (var i = 0; i < this.timestamps.length; i++) {
-		if (this.timestamps[i].time > time) {
-			break;
-		}
-		this.timestampIndex = i;
-	}
+  if (this.audio && this.audio.canPlay) {
+    // Seek to the currentTime again - audio may already be enqueued a bit
+    // further, so we have to rewind it.
+    this.audioOut.stop();
+    this.seek(this.currentTime);
+  }
 
-	var ts = this.timestamps[this.timestampIndex];
-	if (ts) {
-		this.bits.index = ts.index;
-		this.decodedTime = ts.time;
-	} else {
-		this.bits.index = 0;
-		this.decodedTime = this.startTime;
-	}
+  if (this.cbUI.pause) {
+    this.cbUI.pause();
+  }
 };
 
-BaseDecoder.prototype.decode = function () {
-	this.advanceDecodedTime(0);
+Player.prototype.getVolume = function () {
+  return this.audioOut ? this.audioOut.volume : 0;
 };
 
-BaseDecoder.prototype.advanceDecodedTime = function (seconds) {
-	if (this.collectTimestamps) {
-		var newTimestampIndex = -1;
-		for (var i = this.timestampIndex; i < this.timestamps.length; i++) {
-			if (this.timestamps[i].index > this.bits.index) {
-				break;
-			}
-			newTimestampIndex = i;
-		}
-
-		// Did we find a new PTS, different from the last? If so, we don't have
-		// to advance the decoded time manually and can instead sync it exactly
-		// to the PTS.
-		if (newTimestampIndex !== -1 && newTimestampIndex !== this.timestampIndex) {
-			this.timestampIndex = newTimestampIndex;
-			this.decodedTime = this.timestamps[this.timestampIndex].time;
-			return;
-		}
-	}
-
-	this.decodedTime += seconds;
+Player.prototype.setVolume = function (volume) {
+  if (this.audioOut) {
+    this.audioOut.volume = volume;
+  }
 };
 
-BaseDecoder.prototype.getCurrentTime = function () {
-	return this.decodedTime;
+Player.prototype.stop = function (ev) {
+  this.pause();
+  this.seek(0);
+  if (this.video && this.options.decodeFirstFrame !== false) {
+    this.video.decode();
+  }
+
+  if (this.cbUI.stop) {
+    this.cbUI.stop();
+  }
 };
 
-/* harmony default export */ __webpack_exports__["a"] = (BaseDecoder);
+Player.prototype.destroy = function () {
+  this.pause();
+  this.source.destroy();
+  this.renderer.destroy();
+  this.audioOut.destroy();
+};
+
+Player.prototype.seek = function (time) {
+  var startOffset = this.audio && this.audio.canPlay ? this.audio.startTime : this.video.startTime;
+
+  if (this.video) {
+    this.video.seek(time + startOffset);
+  }
+  if (this.audio) {
+    this.audio.seek(time + startOffset);
+  }
+
+  this.startTime = ___WEBPACK_IMPORTED_MODULE_0__["default"].Now() - time;
+};
+
+Player.prototype.getCurrentTime = function () {
+  return this.audio && this.audio.canPlay ? this.audio.currentTime - this.audio.startTime : this.video.currentTime - this.video.startTime;
+};
+
+Player.prototype.setCurrentTime = function (time) {
+  this.seek(time);
+};
+
+Player.prototype.update = function () {
+  this.animationId = requestAnimationFrame(this.update.bind(this));
+
+  if (!this.source.established) {
+    if (this.renderer) {
+      this.renderer.renderProgress(this.source.progress);
+    }
+    return;
+  }
+
+  if (!this.isPlaying) {
+    this.isPlaying = true;
+    this.startTime = ___WEBPACK_IMPORTED_MODULE_0__["default"].Now() - this.currentTime;
+  }
+
+  if (this.options.streaming) {
+    this.updateForStreaming();
+  } else {
+    this.updateForStaticFile();
+  }
+};
+
+Player.prototype.updateForStreaming = function () {
+  // When streaming, immediately decode everything we have buffered up until
+  // now to minimize playback latency.
+
+  if (this.video) {
+    this.video.decode();
+  }
+
+  if (this.audio) {
+    var decoded = false;
+    do {
+      // If there's a lot of audio enqueued already, disable output and
+      // catch up with the encoding.
+      if (this.audioOut.enqueuedTime > this.maxAudioLag) {
+        this.audioOut.resetEnqueuedTime();
+        this.audioOut.enabled = false;
+      }
+      decoded = this.audio.decode();
+    } while (decoded);
+    this.audioOut.enabled = true;
+  }
+};
+
+Player.prototype.updateForStaticFile = function () {
+  var notEnoughData = false,
+      headroom = 0;
+
+  // If we have an audio track, we always try to sync the video to the audio.
+  // Gaps and discontinuities are far more percetable in audio than in video.
+
+  if (this.audio && this.audio.canPlay) {
+    // Do we have to decode and enqueue some more audio data?
+    while (!notEnoughData && this.audio.decodedTime - this.audio.currentTime < 0.25) {
+      notEnoughData = !this.audio.decode();
+    }
+
+    // Sync video to audio
+    if (this.video && this.video.currentTime < this.audio.currentTime) {
+      notEnoughData = !this.video.decode();
+    }
+
+    headroom = this.demuxer.currentTime - this.audio.currentTime;
+  } else if (this.video) {
+    // Video only - sync it to player's wallclock
+    var targetTime = ___WEBPACK_IMPORTED_MODULE_0__["default"].Now() - this.startTime + this.video.startTime,
+        lateTime = targetTime - this.video.currentTime,
+        frameTime = 1 / this.video.frameRate;
+
+    if (this.video && lateTime > 0) {
+      // If the video is too far behind (>2 frames), simply reset the
+      // target time to the next frame instead of trying to catch up.
+      if (lateTime > frameTime * 2) {
+        this.startTime += lateTime;
+      }
+
+      notEnoughData = !this.video.decode();
+    }
+
+    headroom = this.demuxer.currentTime - targetTime;
+  }
+
+  // Notify the source of the playhead headroom, so it can decide whether to
+  // continue loading further data.
+  this.source.resume(headroom);
+
+  // If we failed to decode and the source is complete, it means we reached
+  // the end of our data. We may want to loop.
+  if (notEnoughData && this.source.completed) {
+    if (this.loop) {
+      this.seek(0);
+    } else {
+      // this.pause();
+      this.stop();
+    }
+  }
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (Player);
 
 /***/ }),
 /* 2 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var ___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(0);
+/* harmony import */ var _static_theme_style_scss__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(3);
+/* harmony import */ var _static_theme_style_scss__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_static_theme_style_scss__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _static_view_playButton_pug__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(8);
+/* harmony import */ var _static_view_playButton_pug__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_static_view_playButton_pug__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _static_view_unmuteButton_pug__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(11);
+/* harmony import */ var _static_view_unmuteButton_pug__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_static_view_unmuteButton_pug__WEBPACK_IMPORTED_MODULE_3__);
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+
+
+// style
+
+
+// template
+
+
+
+var VideoElement = function () {
+  function VideoElement(wrapper, videoUrl, options) {
+    var _this = this;
+
+    _classCallCheck(this, VideoElement);
+
+    // Setup the div container, canvas and play button
+    this.options = Object.assign({
+      videoUrl: videoUrl,
+      poster: '',
+      aspectPercent: '56.25%',
+      picMode: false,
+      autoplay: false,
+      loop: false,
+      decodeFirstFrame: true,
+      progressive: true,
+      hookInPlay: function hookInPlay() {},
+      hookInPause: function hookInPause() {},
+      hookInStop: function hookInStop() {}
+    }, options);
+
+    this.wrapper = isString(wrapper) ? document.querySelector(wrapper) : wrapper;
+    this.container = document.createElement('div');
+    this.canvas = document.createElement('canvas');
+    this.player = null;
+    this.playButton = document.createElement('div');
+
+    this.containerInit();
+    this.canvasInit();
+    this.playButtonInit();
+    this.playerInit();
+
+    // Assignment height of wrapper. prevent page shake when destroyed.
+    this.setWrapperHeight();
+    window.addEventListener('resize', function () {
+      return _this.setWrapperHeight();
+    });
+  }
+
+  VideoElement.prototype.containerInit = function containerInit() {
+    this.container.classList.add(_static_theme_style_scss__WEBPACK_IMPORTED_MODULE_1___default.a.container);
+    addStyles(this.container, {
+      paddingBottom: this.options.aspectPercent
+    });
+    this.wrapper.appendChild(this.container);
+  };
+
+  VideoElement.prototype.canvasInit = function canvasInit() {
+    this.canvas.classList.add(_static_theme_style_scss__WEBPACK_IMPORTED_MODULE_1___default.a.canvas);
+    this.container.appendChild(this.canvas);
+  };
+
+  VideoElement.prototype.playerInit = function playerInit() {
+    var _this2 = this;
+
+    // Parse the data-options - we try to decode the values as json. This way
+    // we can get proper boolean and number values. If JSON.parse() fails,
+    // treat it as a string.
+    this.options = Object.assign(this.options, {
+      canvas: this.canvas
+    });
+
+    // Create the player instance
+    this.player = new ___WEBPACK_IMPORTED_MODULE_0__["default"].Player(this.options.videoUrl, this.options, {
+      play: function play() {
+        _this2.playButton.style.display = 'none';
+        if (_this2.poster) {
+          _this2.poster.style.display = 'none';
+        }
+        _this2.options.hookInPlay();
+      },
+      pause: function pause() {
+        _this2.playButton.style.display = 'block';
+        _this2.options.hookInPause();
+      },
+      stop: function stop() {
+        if (_this2.poster) {
+          _this2.poster.style.display = 'block';
+        }
+        _this2.options.hookInStop();
+      }
+    });
+    this.wrapper.playerInstance = this.player;
+
+    // Setup the poster element, if any
+    if (this.options.poster && !this.options.autoplay && !this.player.options.streaming) {
+      this.options.decodeFirstFrame = false;
+      this.poster = new Image();
+      this.poster.src = this.options.poster;
+      this.poster.classList.add(_static_theme_style_scss__WEBPACK_IMPORTED_MODULE_1___default.a.poster);
+      this.container.appendChild(this.poster);
+    }
+
+    // Add the click handler if this video is pausable
+    if (!this.player.options.streaming) {
+      this.container.addEventListener('click', this.onClick.bind(this));
+    }
+
+    // Hide the play button if this video immediately begins playing
+    if (this.options.autoplay || this.player.options.streaming) {
+      this.playButton.style.display = 'none';
+    }
+
+    // Set up the unlock audio buton for iOS devices. iOS only allows us to
+    // play audio after a user action has initiated playing. For autoplay or
+    // streaming players we set up a muted speaker icon as the button. For all
+    // others, we can simply use the play button.
+    if (this.player.audioOut && !this.player.audioOut.unlocked) {
+      var unlockAudioElement = this.container;
+
+      if (this.options.autoplay || this.player.options.streaming) {
+        this.unmuteButton = document.createElement('div');
+        this.unmuteButton.innerHTML = _static_view_unmuteButton_pug__WEBPACK_IMPORTED_MODULE_3___default()({
+          _style: _static_theme_style_scss__WEBPACK_IMPORTED_MODULE_1___default.a
+        });
+        this.unmuteButton.classList.add(_static_theme_style_scss__WEBPACK_IMPORTED_MODULE_1___default.a.unmuteButton);
+        this.container.appendChild(this.unmuteButton);
+        unlockAudioElement = this.unmuteButton;
+      }
+
+      this.unlockAudioBound = this.onUnlockAudio.bind(this, unlockAudioElement);
+      unlockAudioElement.addEventListener('touchstart', this.unlockAudioBound, false);
+      unlockAudioElement.addEventListener('click', this.unlockAudioBound, true);
+    }
+  };
+
+  VideoElement.prototype.playButtonInit = function playButtonInit() {
+    this.playButton.innerHTML = _static_view_playButton_pug__WEBPACK_IMPORTED_MODULE_2___default()({
+      _style: _static_theme_style_scss__WEBPACK_IMPORTED_MODULE_1___default.a
+    });
+    this.playButton.classList.add(_static_theme_style_scss__WEBPACK_IMPORTED_MODULE_1___default.a.playButton);
+    if (this.options.picMode) {
+      this.playButton.style.visibility = 'hidden';
+    }
+    this.container.appendChild(this.playButton);
+  };
+
+  VideoElement.prototype.onUnlockAudio = function onUnlockAudio(element, ev) {
+    if (this.unmuteButton) {
+      ev.preventDefault();
+      ev.stopPropagation();
+    }
+    this.player.audioOut.unlock(function () {
+      if (this.unmuteButton) {
+        this.unmuteButton.style.display = 'none';
+      }
+      element.removeEventListener('touchstart', this.unlockAudioBound);
+      element.removeEventListener('click', this.unlockAudioBound);
+    }.bind(this));
+  };
+
+  VideoElement.prototype.onClick = function onClick() {
+    if (this.player.isPlaying) {
+      this.player.pause();
+    } else {
+      this.player.play();
+    }
+  };
+
+  VideoElement.prototype.setWrapperHeight = function setWrapperHeight() {
+    this.wrapper.style.height = this.container.offsetHeight + 'px';
+  };
+
+  VideoElement.prototype.destroy = function destroy() {
+    this.player.destroy();
+    this.wrapper.innerHTML = '';
+    window.removeEventListener('resize', this.setWrapperHeight);
+  };
+
+  return VideoElement;
+}();
+
+/* harmony default export */ __webpack_exports__["default"] = (VideoElement);
+;
+
+var addStyles = function addStyles(element, styles) {
+  for (var name in styles) {
+    element.style[name] = styles[name];
+  }
+},
+    isString = function isString(str) {
+  return typeof str === 'string' && str.constructor === String;
+};
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(4);
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(6)(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {}
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(5)(false);
+// imports
+
+
+// module
+exports.push([module.i, ".static-theme-style__canvas,\n.static-theme-style__poster, .static-theme-style__unmuteButton, .static-theme-style__playButton, .static-theme-style__unmuteButtonSvg {\n  position: absolute;\n  z-index: 1;\n}\n\n.static-theme-style__canvas,\n.static-theme-style__poster, .static-theme-style__unmuteButton {\n  left: 0;\n  top: 0;\n  width: 100%;\n  height: 100%;\n}\n\n.static-theme-style__playButton {\n  left: 0;\n  top: 0;\n  right: 0;\n  bottom: 0;\n  margin: auto;\n}\n\n.static-theme-style__container {\n  position: relative;\n  width: 100%;\n  min-width: 80px;\n  height: 0;\n}\n\n.static-theme-style__canvas,\n.static-theme-style__poster {\n  display: block;\n}\n\n.static-theme-style__playButton, .static-theme-style__unmuteButton {\n  opacity: .7;\n  cursor: pointer;\n}\n\n.static-theme-style__playButton, .static-theme-style__playButtonSvg {\n  max-width: 60px;\n  max-height: 60px;\n}\n\n.static-theme-style__playButton {\n  z-index: 2;\n}\n\n.static-theme-style__playButtonSvg {\n  fill: #fff;\n}\n\n.static-theme-style__unmuteButton {\n  z-index: 2;\n}\n\n.static-theme-style__unmuteButtonSvg {\n  bottom: 15px;\n  right: 15px;\n  width: 40px;\n  height: 40px;\n  fill: #fff;\n}\n", ""]);
+
+// exports
+exports.locals = {
+	"canvas": "static-theme-style__canvas",
+	"poster": "static-theme-style__poster",
+	"unmuteButton": "static-theme-style__unmuteButton",
+	"playButton": "static-theme-style__playButton",
+	"unmuteButtonSvg": "static-theme-style__unmuteButtonSvg",
+	"container": "static-theme-style__container",
+	"playButtonSvg": "static-theme-style__playButtonSvg"
+};
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports) {
+
+/*
+	MIT License http://www.opensource.org/licenses/mit-license.php
+	Author Tobias Koppers @sokra
+*/
+// css base code, injected by the css-loader
+module.exports = function(useSourceMap) {
+	var list = [];
+
+	// return the list of modules as css string
+	list.toString = function toString() {
+		return this.map(function (item) {
+			var content = cssWithMappingToString(item, useSourceMap);
+			if(item[2]) {
+				return "@media " + item[2] + "{" + content + "}";
+			} else {
+				return content;
+			}
+		}).join("");
+	};
+
+	// import a list of modules into the list
+	list.i = function(modules, mediaQuery) {
+		if(typeof modules === "string")
+			modules = [[null, modules, ""]];
+		var alreadyImportedModules = {};
+		for(var i = 0; i < this.length; i++) {
+			var id = this[i][0];
+			if(typeof id === "number")
+				alreadyImportedModules[id] = true;
+		}
+		for(i = 0; i < modules.length; i++) {
+			var item = modules[i];
+			// skip already imported module
+			// this implementation is not 100% perfect for weird media query combinations
+			//  when a module is imported multiple times with different media queries.
+			//  I hope this will never occur (Hey this way we have smaller bundles)
+			if(typeof item[0] !== "number" || !alreadyImportedModules[item[0]]) {
+				if(mediaQuery && !item[2]) {
+					item[2] = mediaQuery;
+				} else if(mediaQuery) {
+					item[2] = "(" + item[2] + ") and (" + mediaQuery + ")";
+				}
+				list.push(item);
+			}
+		}
+	};
+	return list;
+};
+
+function cssWithMappingToString(item, useSourceMap) {
+	var content = item[1] || '';
+	var cssMapping = item[3];
+	if (!cssMapping) {
+		return content;
+	}
+
+	if (useSourceMap && typeof btoa === 'function') {
+		var sourceMapping = toComment(cssMapping);
+		var sourceURLs = cssMapping.sources.map(function (source) {
+			return '/*# sourceURL=' + cssMapping.sourceRoot + source + ' */'
+		});
+
+		return [content].concat(sourceURLs).concat([sourceMapping]).join('\n');
+	}
+
+	return [content].join('\n');
+}
+
+// Adapted from convert-source-map (MIT)
+function toComment(sourceMap) {
+	// eslint-disable-next-line no-undef
+	var base64 = btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap))));
+	var data = 'sourceMappingURL=data:application/json;charset=utf-8;base64,' + base64;
+
+	return '/*# ' + data + ' */';
+}
+
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/*
+	MIT License http://www.opensource.org/licenses/mit-license.php
+	Author Tobias Koppers @sokra
+*/
+
+var stylesInDom = {};
+
+var	memoize = function (fn) {
+	var memo;
+
+	return function () {
+		if (typeof memo === "undefined") memo = fn.apply(this, arguments);
+		return memo;
+	};
+};
+
+var isOldIE = memoize(function () {
+	// Test for IE <= 9 as proposed by Browserhacks
+	// @see http://browserhacks.com/#hack-e71d8692f65334173fee715c222cb805
+	// Tests for existence of standard globals is to allow style-loader
+	// to operate correctly into non-standard environments
+	// @see https://github.com/webpack-contrib/style-loader/issues/177
+	return window && document && document.all && !window.atob;
+});
+
+var getTarget = function (target) {
+  return document.querySelector(target);
+};
+
+var getElement = (function (fn) {
+	var memo = {};
+
+	return function(target) {
+                // If passing function in options, then use it for resolve "head" element.
+                // Useful for Shadow Root style i.e
+                // {
+                //   insertInto: function () { return document.querySelector("#foo").shadowRoot }
+                // }
+                if (typeof target === 'function') {
+                        return target();
+                }
+                if (typeof memo[target] === "undefined") {
+			var styleTarget = getTarget.call(this, target);
+			// Special case to return head of iframe instead of iframe itself
+			if (window.HTMLIFrameElement && styleTarget instanceof window.HTMLIFrameElement) {
+				try {
+					// This will throw an exception if access to iframe is blocked
+					// due to cross-origin restrictions
+					styleTarget = styleTarget.contentDocument.head;
+				} catch(e) {
+					styleTarget = null;
+				}
+			}
+			memo[target] = styleTarget;
+		}
+		return memo[target]
+	};
+})();
+
+var singleton = null;
+var	singletonCounter = 0;
+var	stylesInsertedAtTop = [];
+
+var	fixUrls = __webpack_require__(7);
+
+module.exports = function(list, options) {
+	if (typeof DEBUG !== "undefined" && DEBUG) {
+		if (typeof document !== "object") throw new Error("The style-loader cannot be used in a non-browser environment");
+	}
+
+	options = options || {};
+
+	options.attrs = typeof options.attrs === "object" ? options.attrs : {};
+
+	// Force single-tag solution on IE6-9, which has a hard limit on the # of <style>
+	// tags it will allow on a page
+	if (!options.singleton && typeof options.singleton !== "boolean") options.singleton = isOldIE();
+
+	// By default, add <style> tags to the <head> element
+        if (!options.insertInto) options.insertInto = "head";
+
+	// By default, add <style> tags to the bottom of the target
+	if (!options.insertAt) options.insertAt = "bottom";
+
+	var styles = listToStyles(list, options);
+
+	addStylesToDom(styles, options);
+
+	return function update (newList) {
+		var mayRemove = [];
+
+		for (var i = 0; i < styles.length; i++) {
+			var item = styles[i];
+			var domStyle = stylesInDom[item.id];
+
+			domStyle.refs--;
+			mayRemove.push(domStyle);
+		}
+
+		if(newList) {
+			var newStyles = listToStyles(newList, options);
+			addStylesToDom(newStyles, options);
+		}
+
+		for (var i = 0; i < mayRemove.length; i++) {
+			var domStyle = mayRemove[i];
+
+			if(domStyle.refs === 0) {
+				for (var j = 0; j < domStyle.parts.length; j++) domStyle.parts[j]();
+
+				delete stylesInDom[domStyle.id];
+			}
+		}
+	};
+};
+
+function addStylesToDom (styles, options) {
+	for (var i = 0; i < styles.length; i++) {
+		var item = styles[i];
+		var domStyle = stylesInDom[item.id];
+
+		if(domStyle) {
+			domStyle.refs++;
+
+			for(var j = 0; j < domStyle.parts.length; j++) {
+				domStyle.parts[j](item.parts[j]);
+			}
+
+			for(; j < item.parts.length; j++) {
+				domStyle.parts.push(addStyle(item.parts[j], options));
+			}
+		} else {
+			var parts = [];
+
+			for(var j = 0; j < item.parts.length; j++) {
+				parts.push(addStyle(item.parts[j], options));
+			}
+
+			stylesInDom[item.id] = {id: item.id, refs: 1, parts: parts};
+		}
+	}
+}
+
+function listToStyles (list, options) {
+	var styles = [];
+	var newStyles = {};
+
+	for (var i = 0; i < list.length; i++) {
+		var item = list[i];
+		var id = options.base ? item[0] + options.base : item[0];
+		var css = item[1];
+		var media = item[2];
+		var sourceMap = item[3];
+		var part = {css: css, media: media, sourceMap: sourceMap};
+
+		if(!newStyles[id]) styles.push(newStyles[id] = {id: id, parts: [part]});
+		else newStyles[id].parts.push(part);
+	}
+
+	return styles;
+}
+
+function insertStyleElement (options, style) {
+	var target = getElement(options.insertInto)
+
+	if (!target) {
+		throw new Error("Couldn't find a style target. This probably means that the value for the 'insertInto' parameter is invalid.");
+	}
+
+	var lastStyleElementInsertedAtTop = stylesInsertedAtTop[stylesInsertedAtTop.length - 1];
+
+	if (options.insertAt === "top") {
+		if (!lastStyleElementInsertedAtTop) {
+			target.insertBefore(style, target.firstChild);
+		} else if (lastStyleElementInsertedAtTop.nextSibling) {
+			target.insertBefore(style, lastStyleElementInsertedAtTop.nextSibling);
+		} else {
+			target.appendChild(style);
+		}
+		stylesInsertedAtTop.push(style);
+	} else if (options.insertAt === "bottom") {
+		target.appendChild(style);
+	} else if (typeof options.insertAt === "object" && options.insertAt.before) {
+		var nextSibling = getElement(options.insertInto + " " + options.insertAt.before);
+		target.insertBefore(style, nextSibling);
+	} else {
+		throw new Error("[Style Loader]\n\n Invalid value for parameter 'insertAt' ('options.insertAt') found.\n Must be 'top', 'bottom', or Object.\n (https://github.com/webpack-contrib/style-loader#insertat)\n");
+	}
+}
+
+function removeStyleElement (style) {
+	if (style.parentNode === null) return false;
+	style.parentNode.removeChild(style);
+
+	var idx = stylesInsertedAtTop.indexOf(style);
+	if(idx >= 0) {
+		stylesInsertedAtTop.splice(idx, 1);
+	}
+}
+
+function createStyleElement (options) {
+	var style = document.createElement("style");
+
+	if(options.attrs.type === undefined) {
+		options.attrs.type = "text/css";
+	}
+
+	addAttrs(style, options.attrs);
+	insertStyleElement(options, style);
+
+	return style;
+}
+
+function createLinkElement (options) {
+	var link = document.createElement("link");
+
+	if(options.attrs.type === undefined) {
+		options.attrs.type = "text/css";
+	}
+	options.attrs.rel = "stylesheet";
+
+	addAttrs(link, options.attrs);
+	insertStyleElement(options, link);
+
+	return link;
+}
+
+function addAttrs (el, attrs) {
+	Object.keys(attrs).forEach(function (key) {
+		el.setAttribute(key, attrs[key]);
+	});
+}
+
+function addStyle (obj, options) {
+	var style, update, remove, result;
+
+	// If a transform function was defined, run it on the css
+	if (options.transform && obj.css) {
+	    result = options.transform(obj.css);
+
+	    if (result) {
+	    	// If transform returns a value, use that instead of the original css.
+	    	// This allows running runtime transformations on the css.
+	    	obj.css = result;
+	    } else {
+	    	// If the transform function returns a falsy value, don't add this css.
+	    	// This allows conditional loading of css
+	    	return function() {
+	    		// noop
+	    	};
+	    }
+	}
+
+	if (options.singleton) {
+		var styleIndex = singletonCounter++;
+
+		style = singleton || (singleton = createStyleElement(options));
+
+		update = applyToSingletonTag.bind(null, style, styleIndex, false);
+		remove = applyToSingletonTag.bind(null, style, styleIndex, true);
+
+	} else if (
+		obj.sourceMap &&
+		typeof URL === "function" &&
+		typeof URL.createObjectURL === "function" &&
+		typeof URL.revokeObjectURL === "function" &&
+		typeof Blob === "function" &&
+		typeof btoa === "function"
+	) {
+		style = createLinkElement(options);
+		update = updateLink.bind(null, style, options);
+		remove = function () {
+			removeStyleElement(style);
+
+			if(style.href) URL.revokeObjectURL(style.href);
+		};
+	} else {
+		style = createStyleElement(options);
+		update = applyToTag.bind(null, style);
+		remove = function () {
+			removeStyleElement(style);
+		};
+	}
+
+	update(obj);
+
+	return function updateStyle (newObj) {
+		if (newObj) {
+			if (
+				newObj.css === obj.css &&
+				newObj.media === obj.media &&
+				newObj.sourceMap === obj.sourceMap
+			) {
+				return;
+			}
+
+			update(obj = newObj);
+		} else {
+			remove();
+		}
+	};
+}
+
+var replaceText = (function () {
+	var textStore = [];
+
+	return function (index, replacement) {
+		textStore[index] = replacement;
+
+		return textStore.filter(Boolean).join('\n');
+	};
+})();
+
+function applyToSingletonTag (style, index, remove, obj) {
+	var css = remove ? "" : obj.css;
+
+	if (style.styleSheet) {
+		style.styleSheet.cssText = replaceText(index, css);
+	} else {
+		var cssNode = document.createTextNode(css);
+		var childNodes = style.childNodes;
+
+		if (childNodes[index]) style.removeChild(childNodes[index]);
+
+		if (childNodes.length) {
+			style.insertBefore(cssNode, childNodes[index]);
+		} else {
+			style.appendChild(cssNode);
+		}
+	}
+}
+
+function applyToTag (style, obj) {
+	var css = obj.css;
+	var media = obj.media;
+
+	if(media) {
+		style.setAttribute("media", media)
+	}
+
+	if(style.styleSheet) {
+		style.styleSheet.cssText = css;
+	} else {
+		while(style.firstChild) {
+			style.removeChild(style.firstChild);
+		}
+
+		style.appendChild(document.createTextNode(css));
+	}
+}
+
+function updateLink (link, options, obj) {
+	var css = obj.css;
+	var sourceMap = obj.sourceMap;
+
+	/*
+		If convertToAbsoluteUrls isn't defined, but sourcemaps are enabled
+		and there is no publicPath defined then lets turn convertToAbsoluteUrls
+		on by default.  Otherwise default to the convertToAbsoluteUrls option
+		directly
+	*/
+	var autoFixUrls = options.convertToAbsoluteUrls === undefined && sourceMap;
+
+	if (options.convertToAbsoluteUrls || autoFixUrls) {
+		css = fixUrls(css);
+	}
+
+	if (sourceMap) {
+		// http://stackoverflow.com/a/26603875
+		css += "\n/*# sourceMappingURL=data:application/json;base64," + btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap)))) + " */";
+	}
+
+	var blob = new Blob([css], { type: "text/css" });
+
+	var oldSrc = link.href;
+
+	link.href = URL.createObjectURL(blob);
+
+	if(oldSrc) URL.revokeObjectURL(oldSrc);
+}
+
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports) {
+
+
+/**
+ * When source maps are enabled, `style-loader` uses a link element with a data-uri to
+ * embed the css on the page. This breaks all relative urls because now they are relative to a
+ * bundle instead of the current page.
+ *
+ * One solution is to only use full urls, but that may be impossible.
+ *
+ * Instead, this function "fixes" the relative urls to be absolute according to the current page location.
+ *
+ * A rudimentary test suite is located at `test/fixUrls.js` and can be run via the `npm test` command.
+ *
+ */
+
+module.exports = function (css) {
+  // get current location
+  var location = typeof window !== "undefined" && window.location;
+
+  if (!location) {
+    throw new Error("fixUrls requires window.location");
+  }
+
+	// blank or null?
+	if (!css || typeof css !== "string") {
+	  return css;
+  }
+
+  var baseUrl = location.protocol + "//" + location.host;
+  var currentDir = baseUrl + location.pathname.replace(/\/[^\/]*$/, "/");
+
+	// convert each url(...)
+	/*
+	This regular expression is just a way to recursively match brackets within
+	a string.
+
+	 /url\s*\(  = Match on the word "url" with any whitespace after it and then a parens
+	   (  = Start a capturing group
+	     (?:  = Start a non-capturing group
+	         [^)(]  = Match anything that isn't a parentheses
+	         |  = OR
+	         \(  = Match a start parentheses
+	             (?:  = Start another non-capturing groups
+	                 [^)(]+  = Match anything that isn't a parentheses
+	                 |  = OR
+	                 \(  = Match a start parentheses
+	                     [^)(]*  = Match anything that isn't a parentheses
+	                 \)  = Match a end parentheses
+	             )  = End Group
+              *\) = Match anything and then a close parens
+          )  = Close non-capturing group
+          *  = Match anything
+       )  = Close capturing group
+	 \)  = Match a close parens
+
+	 /gi  = Get all matches, not the first.  Be case insensitive.
+	 */
+	var fixedCss = css.replace(/url\s*\(((?:[^)(]|\((?:[^)(]+|\([^)(]*\))*\))*)\)/gi, function(fullMatch, origUrl) {
+		// strip quotes (if they exist)
+		var unquotedOrigUrl = origUrl
+			.trim()
+			.replace(/^"(.*)"$/, function(o, $1){ return $1; })
+			.replace(/^'(.*)'$/, function(o, $1){ return $1; });
+
+		// already a full url? no change
+		if (/^(#|data:|http:\/\/|https:\/\/|file:\/\/\/|\s*$)/i.test(unquotedOrigUrl)) {
+		  return fullMatch;
+		}
+
+		// convert the url to a full url
+		var newUrl;
+
+		if (unquotedOrigUrl.indexOf("//") === 0) {
+		  	//TODO: should we add protocol?
+			newUrl = unquotedOrigUrl;
+		} else if (unquotedOrigUrl.indexOf("/") === 0) {
+			// path should be relative to the base url
+			newUrl = baseUrl + unquotedOrigUrl; // already starts with '/'
+		} else {
+			// path should be relative to current directory
+			newUrl = currentDir + unquotedOrigUrl.replace(/^\.\//, ""); // Strip leading './'
+		}
+
+		// send back the fixed url(...)
+		return "url(" + JSON.stringify(newUrl) + ")";
+	});
+
+	// send back the fixed css
+	return fixedCss;
+};
+
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var pug = __webpack_require__(9);
+
+function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;;var locals_for_with = (locals || {});(function (_style) {pug_html = pug_html + "\u003Csvg" + (pug.attr("class", pug.classes([_style.playButtonSvg], [true]), false, true)+" viewBox=\"0 0 64 64\"") + "\u003E\u003Cpath d=\"M26,45.5L44,32L26,18.6v27V45.5L26,45.5z M32,2C15.4,2,2,15.5,2,32c0,16.6,13.4,30,30,30c16.6,0,30-13.4,30-30 C62,15.4,48.5,2,32,2L32,2z M32,56c-9.7,0-18.5-5.9-22.2-14.8C6.1,32.2,8.1,21.9,15,15c6.9-6.9,17.2-8.9,26.2-5.2 C50.1,13.5,56,22.3,56,32C56,45.3,45.2,56,32,56L32,56z\"\u003E\u003C\u002Fpath\u003E\u003C\u002Fsvg\u003E";}.call(this,"_style" in locals_for_with?locals_for_with._style:typeof _style!=="undefined"?_style:undefined));;return pug_html;};
+module.exports = template;
+
+/***/ }),
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -541,7 +1543,7 @@ function pug_rethrow(err, filename, lineno, str){
     throw err;
   }
   try {
-    str = str || __webpack_require__(11).readFileSync(filename, 'utf8')
+    str = str || __webpack_require__(10).readFileSync(filename, 'utf8')
   } catch (ex) {
     pug_rethrow(err, null, lineno)
   }
@@ -568,1132 +1570,26 @@ function pug_rethrow(err, filename, lineno, str){
 
 
 /***/ }),
-/* 3 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0____ = __webpack_require__(0);
-
-
-/**
- * @param url
- * @param options
- * @param cbUI {play: function, pause: function, stop: function} 插入UI回调
- * @constructor
- */
-var Player = function Player(url, options, cbUI) {
-  this.options = options || {};
-  this.cbUI = cbUI || {};
-
-  if (options.source) {
-    this.source = new options.source(url, options);
-    options.streaming = !!this.source.streaming;
-  } else if (url.match(/^wss?:\/\//)) {
-    this.source = new __WEBPACK_IMPORTED_MODULE_0____["default"].Source.WebSocket(url, options);
-    options.streaming = true;
-  } else if (options.progressive) {
-    this.source = new __WEBPACK_IMPORTED_MODULE_0____["default"].Source.AjaxProgressive(url, options);
-    options.streaming = false;
-  } else {
-    this.source = new __WEBPACK_IMPORTED_MODULE_0____["default"].Source.Ajax(url, options);
-    options.streaming = false;
-  }
-
-  this.maxAudioLag = options.maxAudioLag || 0.25;
-  this.loop = options.loop !== false;
-  this.autoplay = !!options.autoplay || options.streaming;
-
-  this.demuxer = new __WEBPACK_IMPORTED_MODULE_0____["default"].Demuxer.TS(options);
-  this.source.connect(this.demuxer);
-
-  if (options.video !== false) {
-    this.video = new __WEBPACK_IMPORTED_MODULE_0____["default"].Decoder.MPEG1Video(options);
-    this.renderer = !options.disableGl && __WEBPACK_IMPORTED_MODULE_0____["default"].Renderer.WebGL.IsSupported() ? new __WEBPACK_IMPORTED_MODULE_0____["default"].Renderer.WebGL(options) : new __WEBPACK_IMPORTED_MODULE_0____["default"].Renderer.Canvas2D(options);
-    this.demuxer.connect(__WEBPACK_IMPORTED_MODULE_0____["default"].Demuxer.TS.STREAM.VIDEO_1, this.video);
-    this.video.connect(this.renderer);
-  }
-
-  if (options.audio !== false && __WEBPACK_IMPORTED_MODULE_0____["default"].AudioOutput.WebAudio.IsSupported()) {
-    this.audio = new __WEBPACK_IMPORTED_MODULE_0____["default"].Decoder.MP2Audio(options);
-    this.audioOut = new __WEBPACK_IMPORTED_MODULE_0____["default"].AudioOutput.WebAudio(options);
-    this.demuxer.connect(__WEBPACK_IMPORTED_MODULE_0____["default"].Demuxer.TS.STREAM.AUDIO_1, this.audio);
-    this.audio.connect(this.audioOut);
-  }
-
-  Object.defineProperty(this, 'currentTime', {
-    get: this.getCurrentTime,
-    set: this.setCurrentTime
-  });
-  Object.defineProperty(this, 'volume', {
-    get: this.getVolume,
-    set: this.setVolume
-  });
-
-  this.unpauseOnShow = false;
-  if (options.pauseWhenHidden !== false) {
-    document.addEventListener('visibilitychange', this.showHide.bind(this));
-  }
-
-  this.source.start();
-
-  if (this.autoplay) {
-    this.play();
-  }
-};
-
-Player.prototype.showHide = function (ev) {
-  if (document.visibilityState === 'hidden') {
-    this.unpauseOnShow = this.wantsToPlay;
-    this.pause();
-  } else if (this.unpauseOnShow) {
-    this.play();
-  }
-};
-
-Player.prototype.play = function (ev) {
-  this.animationId = requestAnimationFrame(this.update.bind(this));
-  this.wantsToPlay = true;
-
-  if (this.cbUI.play) {
-    this.cbUI.play();
-  }
-};
-
-Player.prototype.pause = function (ev) {
-  cancelAnimationFrame(this.animationId);
-  this.wantsToPlay = false;
-  this.isPlaying = false;
-
-  if (this.audio && this.audio.canPlay) {
-    // Seek to the currentTime again - audio may already be enqueued a bit
-    // further, so we have to rewind it.
-    this.audioOut.stop();
-    this.seek(this.currentTime);
-  }
-
-  if (this.cbUI.pause) {
-    this.cbUI.pause();
-  }
-};
-
-Player.prototype.getVolume = function () {
-  return this.audioOut ? this.audioOut.volume : 0;
-};
-
-Player.prototype.setVolume = function (volume) {
-  if (this.audioOut) {
-    this.audioOut.volume = volume;
-  }
-};
-
-Player.prototype.stop = function (ev) {
-  this.pause();
-  this.seek(0);
-  if (this.video && this.options.decodeFirstFrame !== false) {
-    this.video.decode();
-  }
-
-  if (this.cbUI.stop) {
-    this.cbUI.stop();
-  }
-};
-
-Player.prototype.destroy = function () {
-  this.pause();
-  this.source.destroy();
-  this.renderer.destroy();
-  this.audioOut.destroy();
-};
-
-Player.prototype.seek = function (time) {
-  var startOffset = this.audio && this.audio.canPlay ? this.audio.startTime : this.video.startTime;
-
-  if (this.video) {
-    this.video.seek(time + startOffset);
-  }
-  if (this.audio) {
-    this.audio.seek(time + startOffset);
-  }
-
-  this.startTime = __WEBPACK_IMPORTED_MODULE_0____["default"].Now() - time;
-};
-
-Player.prototype.getCurrentTime = function () {
-  return this.audio && this.audio.canPlay ? this.audio.currentTime - this.audio.startTime : this.video.currentTime - this.video.startTime;
-};
-
-Player.prototype.setCurrentTime = function (time) {
-  this.seek(time);
-};
-
-Player.prototype.update = function () {
-  this.animationId = requestAnimationFrame(this.update.bind(this));
-
-  if (!this.source.established) {
-    if (this.renderer) {
-      this.renderer.renderProgress(this.source.progress);
-    }
-    return;
-  }
-
-  if (!this.isPlaying) {
-    this.isPlaying = true;
-    this.startTime = __WEBPACK_IMPORTED_MODULE_0____["default"].Now() - this.currentTime;
-  }
-
-  if (this.options.streaming) {
-    this.updateForStreaming();
-  } else {
-    this.updateForStaticFile();
-  }
-};
-
-Player.prototype.updateForStreaming = function () {
-  // When streaming, immediately decode everything we have buffered up until
-  // now to minimize playback latency.
-
-  if (this.video) {
-    this.video.decode();
-  }
-
-  if (this.audio) {
-    var decoded = false;
-    do {
-      // If there's a lot of audio enqueued already, disable output and
-      // catch up with the encoding.
-      if (this.audioOut.enqueuedTime > this.maxAudioLag) {
-        this.audioOut.resetEnqueuedTime();
-        this.audioOut.enabled = false;
-      }
-      decoded = this.audio.decode();
-    } while (decoded);
-    this.audioOut.enabled = true;
-  }
-};
-
-Player.prototype.updateForStaticFile = function () {
-  var notEnoughData = false,
-      headroom = 0;
-
-  // If we have an audio track, we always try to sync the video to the audio.
-  // Gaps and discontinuities are far more percetable in audio than in video.
-
-  if (this.audio && this.audio.canPlay) {
-    // Do we have to decode and enqueue some more audio data?
-    while (!notEnoughData && this.audio.decodedTime - this.audio.currentTime < 0.25) {
-      notEnoughData = !this.audio.decode();
-    }
-
-    // Sync video to audio
-    if (this.video && this.video.currentTime < this.audio.currentTime) {
-      notEnoughData = !this.video.decode();
-    }
-
-    headroom = this.demuxer.currentTime - this.audio.currentTime;
-  } else if (this.video) {
-    // Video only - sync it to player's wallclock
-    var targetTime = __WEBPACK_IMPORTED_MODULE_0____["default"].Now() - this.startTime + this.video.startTime,
-        lateTime = targetTime - this.video.currentTime,
-        frameTime = 1 / this.video.frameRate;
-
-    if (this.video && lateTime > 0) {
-      // If the video is too far behind (>2 frames), simply reset the
-      // target time to the next frame instead of trying to catch up.
-      if (lateTime > frameTime * 2) {
-        this.startTime += lateTime;
-      }
-
-      notEnoughData = !this.video.decode();
-    }
-
-    headroom = this.demuxer.currentTime - targetTime;
-  }
-
-  // Notify the source of the playhead headroom, so it can decide whether to
-  // continue loading further data.
-  this.source.resume(headroom);
-
-  // If we failed to decode and the source is complete, it means we reached
-  // the end of our data. We may want to loop.
-  if (notEnoughData && this.source.completed) {
-    if (this.loop) {
-      this.seek(0);
-    } else {
-      // this.pause();
-      this.stop();
-    }
-  }
-};
-
-/* harmony default export */ __webpack_exports__["a"] = (Player);
-
-/***/ }),
-/* 4 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0____ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__static_theme_style_scss__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__static_theme_style_scss___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__static_theme_style_scss__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__static_view_playButton_pug__ = __webpack_require__(10);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__static_view_playButton_pug___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__static_view_playButton_pug__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__static_view_unmuteButton_pug__ = __webpack_require__(12);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__static_view_unmuteButton_pug___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__static_view_unmuteButton_pug__);
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-
-
-// style
-
-
-// template
-
-
-
-var VideoElement = function () {
-  function VideoElement(wrapper, videoUrl, options) {
-    var _this = this;
-
-    _classCallCheck(this, VideoElement);
-
-    // Setup the div container, canvas and play button
-    this.options = Object.assign({
-      videoUrl: videoUrl,
-      poster: '',
-      aspectPercent: '56.25%',
-      picMode: false,
-      autoplay: false,
-      loop: false,
-      decodeFirstFrame: true,
-      progressive: true,
-      hookInPlay: function hookInPlay() {},
-      hookInPause: function hookInPause() {},
-      hookInStop: function hookInStop() {}
-    }, options);
-
-    this.wrapper = isString(wrapper) ? document.querySelector(wrapper) : wrapper;
-    this.container = document.createElement('div');
-    this.canvas = document.createElement('canvas');
-    this.player = null;
-    this.playButton = document.createElement('div');
-
-    this.containerInit();
-    this.canvasInit();
-    this.playButtonInit();
-    this.playerInit();
-
-    // Assignment height of wrapper. prevent page shake when destroyed.
-    this.setWrapperHeight();
-    window.addEventListener('resize', function () {
-      return _this.setWrapperHeight();
-    });
-  }
-
-  VideoElement.prototype.containerInit = function containerInit() {
-    this.container.classList.add(__WEBPACK_IMPORTED_MODULE_1__static_theme_style_scss___default.a.container);
-    addStyles(this.container, {
-      paddingBottom: this.options.aspectPercent
-    });
-    this.wrapper.appendChild(this.container);
-  };
-
-  VideoElement.prototype.canvasInit = function canvasInit() {
-    this.canvas.classList.add(__WEBPACK_IMPORTED_MODULE_1__static_theme_style_scss___default.a.canvas);
-    this.container.appendChild(this.canvas);
-  };
-
-  VideoElement.prototype.playerInit = function playerInit() {
-    var _this2 = this;
-
-    // Parse the data-options - we try to decode the values as json. This way
-    // we can get proper boolean and number values. If JSON.parse() fails,
-    // treat it as a string.
-    this.options = Object.assign(this.options, {
-      canvas: this.canvas
-    });
-
-    // Create the player instance
-    this.player = new __WEBPACK_IMPORTED_MODULE_0____["default"].Player(this.options.videoUrl, this.options, {
-      play: function play() {
-        _this2.playButton.style.display = 'none';
-        if (_this2.poster) {
-          _this2.poster.style.display = 'none';
-        }
-        _this2.options.hookInPlay();
-      },
-      pause: function pause() {
-        _this2.playButton.style.display = 'block';
-        _this2.options.hookInPause();
-      },
-      stop: function stop() {
-        if (_this2.poster) {
-          _this2.poster.style.display = 'block';
-        }
-        _this2.options.hookInStop();
-      }
-    });
-    this.wrapper.playerInstance = this.player;
-
-    // Setup the poster element, if any
-    if (this.options.poster && !this.options.autoplay && !this.player.options.streaming) {
-      this.options.decodeFirstFrame = false;
-      this.poster = new Image();
-      this.poster.src = this.options.poster;
-      this.poster.classList.add(__WEBPACK_IMPORTED_MODULE_1__static_theme_style_scss___default.a.poster);
-      this.container.appendChild(this.poster);
-    }
-
-    // Add the click handler if this video is pausable
-    if (!this.player.options.streaming) {
-      this.container.addEventListener('click', this.onClick.bind(this));
-    }
-
-    // Hide the play button if this video immediately begins playing
-    if (this.options.autoplay || this.player.options.streaming) {
-      this.playButton.style.display = 'none';
-    }
-
-    // Set up the unlock audio buton for iOS devices. iOS only allows us to
-    // play audio after a user action has initiated playing. For autoplay or
-    // streaming players we set up a muted speaker icon as the button. For all
-    // others, we can simply use the play button.
-    if (this.player.audioOut && !this.player.audioOut.unlocked) {
-      var unlockAudioElement = this.container;
-
-      if (this.options.autoplay || this.player.options.streaming) {
-        this.unmuteButton = document.createElement('div');
-        this.unmuteButton.innerHTML = __WEBPACK_IMPORTED_MODULE_3__static_view_unmuteButton_pug___default()({
-          _style: __WEBPACK_IMPORTED_MODULE_1__static_theme_style_scss___default.a
-        });
-        this.unmuteButton.classList.add(__WEBPACK_IMPORTED_MODULE_1__static_theme_style_scss___default.a.unmuteButton);
-        this.container.appendChild(this.unmuteButton);
-        unlockAudioElement = this.unmuteButton;
-      }
-
-      this.unlockAudioBound = this.onUnlockAudio.bind(this, unlockAudioElement);
-      unlockAudioElement.addEventListener('touchstart', this.unlockAudioBound, false);
-      unlockAudioElement.addEventListener('click', this.unlockAudioBound, true);
-    }
-  };
-
-  VideoElement.prototype.playButtonInit = function playButtonInit() {
-    this.playButton.innerHTML = __WEBPACK_IMPORTED_MODULE_2__static_view_playButton_pug___default()({
-      _style: __WEBPACK_IMPORTED_MODULE_1__static_theme_style_scss___default.a
-    });
-    this.playButton.classList.add(__WEBPACK_IMPORTED_MODULE_1__static_theme_style_scss___default.a.playButton);
-    if (this.options.picMode) {
-      this.playButton.style.visibility = 'hidden';
-    }
-    this.container.appendChild(this.playButton);
-  };
-
-  VideoElement.prototype.onUnlockAudio = function onUnlockAudio(element, ev) {
-    if (this.unmuteButton) {
-      ev.preventDefault();
-      ev.stopPropagation();
-    }
-    this.player.audioOut.unlock(function () {
-      if (this.unmuteButton) {
-        this.unmuteButton.style.display = 'none';
-      }
-      element.removeEventListener('touchstart', this.unlockAudioBound);
-      element.removeEventListener('click', this.unlockAudioBound);
-    }.bind(this));
-  };
-
-  VideoElement.prototype.onClick = function onClick() {
-    if (this.player.isPlaying) {
-      this.player.pause();
-    } else {
-      this.player.play();
-    }
-  };
-
-  VideoElement.prototype.setWrapperHeight = function setWrapperHeight() {
-    this.wrapper.style.height = this.container.offsetHeight + 'px';
-  };
-
-  VideoElement.prototype.destroy = function destroy() {
-    this.player.destroy();
-    this.wrapper.innerHTML = '';
-    window.removeEventListener('resize', this.setWrapperHeight);
-  };
-
-  return VideoElement;
-}();
-
-/* harmony default export */ __webpack_exports__["a"] = (VideoElement);
-;
-
-var addStyles = function addStyles(element, styles) {
-  for (var name in styles) {
-    element.style[name] = styles[name];
-  }
-},
-    isString = function isString(str) {
-  return typeof str === 'string' && str.constructor === String;
-};
-
-/***/ }),
-/* 5 */
-/***/ (function(module, exports, __webpack_require__) {
-
-
-var content = __webpack_require__(6);
-
-if(typeof content === 'string') content = [[module.i, content, '']];
-
-var transform;
-var insertInto;
-
-
-
-var options = {"hmr":true}
-
-options.transform = transform
-options.insertInto = undefined;
-
-var update = __webpack_require__(8)(content, options);
-
-if(content.locals) module.exports = content.locals;
-
-if(false) {
-	module.hot.accept("!!../../node_modules/css-loader/index.js??ref--1-1!../../node_modules/sass-loader/lib/loader.js??ref--1-2!./style.scss", function() {
-		var newContent = require("!!../../node_modules/css-loader/index.js??ref--1-1!../../node_modules/sass-loader/lib/loader.js??ref--1-2!./style.scss");
-
-		if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-
-		var locals = (function(a, b) {
-			var key, idx = 0;
-
-			for(key in a) {
-				if(!b || a[key] !== b[key]) return false;
-				idx++;
-			}
-
-			for(key in b) idx--;
-
-			return idx === 0;
-		}(content.locals, newContent.locals));
-
-		if(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');
-
-		update(newContent);
-	});
-
-	module.hot.dispose(function() { update(); });
-}
-
-/***/ }),
-/* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__(7)(false);
-// imports
-
-
-// module
-exports.push([module.i, ".static-theme-style__canvas,\n.static-theme-style__poster, .static-theme-style__unmuteButton, .static-theme-style__playButton, .static-theme-style__unmuteButtonSvg {\n  position: absolute;\n  z-index: 1;\n}\n\n.static-theme-style__canvas,\n.static-theme-style__poster, .static-theme-style__unmuteButton {\n  left: 0;\n  top: 0;\n  width: 100%;\n  height: 100%;\n}\n\n.static-theme-style__playButton {\n  left: 0;\n  top: 0;\n  right: 0;\n  bottom: 0;\n  margin: auto;\n}\n\n.static-theme-style__container {\n  position: relative;\n  width: 100%;\n  min-width: 80px;\n  height: 0;\n}\n\n.static-theme-style__canvas,\n.static-theme-style__poster {\n  display: block;\n}\n\n.static-theme-style__playButton, .static-theme-style__unmuteButton {\n  opacity: .7;\n  cursor: pointer;\n}\n\n.static-theme-style__playButton, .static-theme-style__playButtonSvg {\n  max-width: 60px;\n  max-height: 60px;\n}\n\n.static-theme-style__playButton {\n  z-index: 2;\n}\n\n.static-theme-style__playButtonSvg {\n  fill: #fff;\n}\n\n.static-theme-style__unmuteButton {\n  z-index: 2;\n}\n\n.static-theme-style__unmuteButtonSvg {\n  bottom: 15px;\n  right: 15px;\n  width: 40px;\n  height: 40px;\n  fill: #fff;\n}\n", ""]);
-
-// exports
-exports.locals = {
-	"canvas": "static-theme-style__canvas",
-	"poster": "static-theme-style__poster",
-	"unmuteButton": "static-theme-style__unmuteButton",
-	"playButton": "static-theme-style__playButton",
-	"unmuteButtonSvg": "static-theme-style__unmuteButtonSvg",
-	"container": "static-theme-style__container",
-	"playButtonSvg": "static-theme-style__playButtonSvg"
-};
-
-/***/ }),
-/* 7 */
-/***/ (function(module, exports) {
-
-/*
-	MIT License http://www.opensource.org/licenses/mit-license.php
-	Author Tobias Koppers @sokra
-*/
-// css base code, injected by the css-loader
-module.exports = function(useSourceMap) {
-	var list = [];
-
-	// return the list of modules as css string
-	list.toString = function toString() {
-		return this.map(function (item) {
-			var content = cssWithMappingToString(item, useSourceMap);
-			if(item[2]) {
-				return "@media " + item[2] + "{" + content + "}";
-			} else {
-				return content;
-			}
-		}).join("");
-	};
-
-	// import a list of modules into the list
-	list.i = function(modules, mediaQuery) {
-		if(typeof modules === "string")
-			modules = [[null, modules, ""]];
-		var alreadyImportedModules = {};
-		for(var i = 0; i < this.length; i++) {
-			var id = this[i][0];
-			if(typeof id === "number")
-				alreadyImportedModules[id] = true;
-		}
-		for(i = 0; i < modules.length; i++) {
-			var item = modules[i];
-			// skip already imported module
-			// this implementation is not 100% perfect for weird media query combinations
-			//  when a module is imported multiple times with different media queries.
-			//  I hope this will never occur (Hey this way we have smaller bundles)
-			if(typeof item[0] !== "number" || !alreadyImportedModules[item[0]]) {
-				if(mediaQuery && !item[2]) {
-					item[2] = mediaQuery;
-				} else if(mediaQuery) {
-					item[2] = "(" + item[2] + ") and (" + mediaQuery + ")";
-				}
-				list.push(item);
-			}
-		}
-	};
-	return list;
-};
-
-function cssWithMappingToString(item, useSourceMap) {
-	var content = item[1] || '';
-	var cssMapping = item[3];
-	if (!cssMapping) {
-		return content;
-	}
-
-	if (useSourceMap && typeof btoa === 'function') {
-		var sourceMapping = toComment(cssMapping);
-		var sourceURLs = cssMapping.sources.map(function (source) {
-			return '/*# sourceURL=' + cssMapping.sourceRoot + source + ' */'
-		});
-
-		return [content].concat(sourceURLs).concat([sourceMapping]).join('\n');
-	}
-
-	return [content].join('\n');
-}
-
-// Adapted from convert-source-map (MIT)
-function toComment(sourceMap) {
-	// eslint-disable-next-line no-undef
-	var base64 = btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap))));
-	var data = 'sourceMappingURL=data:application/json;charset=utf-8;base64,' + base64;
-
-	return '/*# ' + data + ' */';
-}
-
-
-/***/ }),
-/* 8 */
-/***/ (function(module, exports, __webpack_require__) {
-
-/*
-	MIT License http://www.opensource.org/licenses/mit-license.php
-	Author Tobias Koppers @sokra
-*/
-
-var stylesInDom = {};
-
-var	memoize = function (fn) {
-	var memo;
-
-	return function () {
-		if (typeof memo === "undefined") memo = fn.apply(this, arguments);
-		return memo;
-	};
-};
-
-var isOldIE = memoize(function () {
-	// Test for IE <= 9 as proposed by Browserhacks
-	// @see http://browserhacks.com/#hack-e71d8692f65334173fee715c222cb805
-	// Tests for existence of standard globals is to allow style-loader
-	// to operate correctly into non-standard environments
-	// @see https://github.com/webpack-contrib/style-loader/issues/177
-	return window && document && document.all && !window.atob;
-});
-
-var getTarget = function (target) {
-  return document.querySelector(target);
-};
-
-var getElement = (function (fn) {
-	var memo = {};
-
-	return function(target) {
-                // If passing function in options, then use it for resolve "head" element.
-                // Useful for Shadow Root style i.e
-                // {
-                //   insertInto: function () { return document.querySelector("#foo").shadowRoot }
-                // }
-                if (typeof target === 'function') {
-                        return target();
-                }
-                if (typeof memo[target] === "undefined") {
-			var styleTarget = getTarget.call(this, target);
-			// Special case to return head of iframe instead of iframe itself
-			if (window.HTMLIFrameElement && styleTarget instanceof window.HTMLIFrameElement) {
-				try {
-					// This will throw an exception if access to iframe is blocked
-					// due to cross-origin restrictions
-					styleTarget = styleTarget.contentDocument.head;
-				} catch(e) {
-					styleTarget = null;
-				}
-			}
-			memo[target] = styleTarget;
-		}
-		return memo[target]
-	};
-})();
-
-var singleton = null;
-var	singletonCounter = 0;
-var	stylesInsertedAtTop = [];
-
-var	fixUrls = __webpack_require__(9);
-
-module.exports = function(list, options) {
-	if (typeof DEBUG !== "undefined" && DEBUG) {
-		if (typeof document !== "object") throw new Error("The style-loader cannot be used in a non-browser environment");
-	}
-
-	options = options || {};
-
-	options.attrs = typeof options.attrs === "object" ? options.attrs : {};
-
-	// Force single-tag solution on IE6-9, which has a hard limit on the # of <style>
-	// tags it will allow on a page
-	if (!options.singleton && typeof options.singleton !== "boolean") options.singleton = isOldIE();
-
-	// By default, add <style> tags to the <head> element
-        if (!options.insertInto) options.insertInto = "head";
-
-	// By default, add <style> tags to the bottom of the target
-	if (!options.insertAt) options.insertAt = "bottom";
-
-	var styles = listToStyles(list, options);
-
-	addStylesToDom(styles, options);
-
-	return function update (newList) {
-		var mayRemove = [];
-
-		for (var i = 0; i < styles.length; i++) {
-			var item = styles[i];
-			var domStyle = stylesInDom[item.id];
-
-			domStyle.refs--;
-			mayRemove.push(domStyle);
-		}
-
-		if(newList) {
-			var newStyles = listToStyles(newList, options);
-			addStylesToDom(newStyles, options);
-		}
-
-		for (var i = 0; i < mayRemove.length; i++) {
-			var domStyle = mayRemove[i];
-
-			if(domStyle.refs === 0) {
-				for (var j = 0; j < domStyle.parts.length; j++) domStyle.parts[j]();
-
-				delete stylesInDom[domStyle.id];
-			}
-		}
-	};
-};
-
-function addStylesToDom (styles, options) {
-	for (var i = 0; i < styles.length; i++) {
-		var item = styles[i];
-		var domStyle = stylesInDom[item.id];
-
-		if(domStyle) {
-			domStyle.refs++;
-
-			for(var j = 0; j < domStyle.parts.length; j++) {
-				domStyle.parts[j](item.parts[j]);
-			}
-
-			for(; j < item.parts.length; j++) {
-				domStyle.parts.push(addStyle(item.parts[j], options));
-			}
-		} else {
-			var parts = [];
-
-			for(var j = 0; j < item.parts.length; j++) {
-				parts.push(addStyle(item.parts[j], options));
-			}
-
-			stylesInDom[item.id] = {id: item.id, refs: 1, parts: parts};
-		}
-	}
-}
-
-function listToStyles (list, options) {
-	var styles = [];
-	var newStyles = {};
-
-	for (var i = 0; i < list.length; i++) {
-		var item = list[i];
-		var id = options.base ? item[0] + options.base : item[0];
-		var css = item[1];
-		var media = item[2];
-		var sourceMap = item[3];
-		var part = {css: css, media: media, sourceMap: sourceMap};
-
-		if(!newStyles[id]) styles.push(newStyles[id] = {id: id, parts: [part]});
-		else newStyles[id].parts.push(part);
-	}
-
-	return styles;
-}
-
-function insertStyleElement (options, style) {
-	var target = getElement(options.insertInto)
-
-	if (!target) {
-		throw new Error("Couldn't find a style target. This probably means that the value for the 'insertInto' parameter is invalid.");
-	}
-
-	var lastStyleElementInsertedAtTop = stylesInsertedAtTop[stylesInsertedAtTop.length - 1];
-
-	if (options.insertAt === "top") {
-		if (!lastStyleElementInsertedAtTop) {
-			target.insertBefore(style, target.firstChild);
-		} else if (lastStyleElementInsertedAtTop.nextSibling) {
-			target.insertBefore(style, lastStyleElementInsertedAtTop.nextSibling);
-		} else {
-			target.appendChild(style);
-		}
-		stylesInsertedAtTop.push(style);
-	} else if (options.insertAt === "bottom") {
-		target.appendChild(style);
-	} else if (typeof options.insertAt === "object" && options.insertAt.before) {
-		var nextSibling = getElement(options.insertInto + " " + options.insertAt.before);
-		target.insertBefore(style, nextSibling);
-	} else {
-		throw new Error("[Style Loader]\n\n Invalid value for parameter 'insertAt' ('options.insertAt') found.\n Must be 'top', 'bottom', or Object.\n (https://github.com/webpack-contrib/style-loader#insertat)\n");
-	}
-}
-
-function removeStyleElement (style) {
-	if (style.parentNode === null) return false;
-	style.parentNode.removeChild(style);
-
-	var idx = stylesInsertedAtTop.indexOf(style);
-	if(idx >= 0) {
-		stylesInsertedAtTop.splice(idx, 1);
-	}
-}
-
-function createStyleElement (options) {
-	var style = document.createElement("style");
-
-	options.attrs.type = "text/css";
-
-	addAttrs(style, options.attrs);
-	insertStyleElement(options, style);
-
-	return style;
-}
-
-function createLinkElement (options) {
-	var link = document.createElement("link");
-
-	options.attrs.type = "text/css";
-	options.attrs.rel = "stylesheet";
-
-	addAttrs(link, options.attrs);
-	insertStyleElement(options, link);
-
-	return link;
-}
-
-function addAttrs (el, attrs) {
-	Object.keys(attrs).forEach(function (key) {
-		el.setAttribute(key, attrs[key]);
-	});
-}
-
-function addStyle (obj, options) {
-	var style, update, remove, result;
-
-	// If a transform function was defined, run it on the css
-	if (options.transform && obj.css) {
-	    result = options.transform(obj.css);
-
-	    if (result) {
-	    	// If transform returns a value, use that instead of the original css.
-	    	// This allows running runtime transformations on the css.
-	    	obj.css = result;
-	    } else {
-	    	// If the transform function returns a falsy value, don't add this css.
-	    	// This allows conditional loading of css
-	    	return function() {
-	    		// noop
-	    	};
-	    }
-	}
-
-	if (options.singleton) {
-		var styleIndex = singletonCounter++;
-
-		style = singleton || (singleton = createStyleElement(options));
-
-		update = applyToSingletonTag.bind(null, style, styleIndex, false);
-		remove = applyToSingletonTag.bind(null, style, styleIndex, true);
-
-	} else if (
-		obj.sourceMap &&
-		typeof URL === "function" &&
-		typeof URL.createObjectURL === "function" &&
-		typeof URL.revokeObjectURL === "function" &&
-		typeof Blob === "function" &&
-		typeof btoa === "function"
-	) {
-		style = createLinkElement(options);
-		update = updateLink.bind(null, style, options);
-		remove = function () {
-			removeStyleElement(style);
-
-			if(style.href) URL.revokeObjectURL(style.href);
-		};
-	} else {
-		style = createStyleElement(options);
-		update = applyToTag.bind(null, style);
-		remove = function () {
-			removeStyleElement(style);
-		};
-	}
-
-	update(obj);
-
-	return function updateStyle (newObj) {
-		if (newObj) {
-			if (
-				newObj.css === obj.css &&
-				newObj.media === obj.media &&
-				newObj.sourceMap === obj.sourceMap
-			) {
-				return;
-			}
-
-			update(obj = newObj);
-		} else {
-			remove();
-		}
-	};
-}
-
-var replaceText = (function () {
-	var textStore = [];
-
-	return function (index, replacement) {
-		textStore[index] = replacement;
-
-		return textStore.filter(Boolean).join('\n');
-	};
-})();
-
-function applyToSingletonTag (style, index, remove, obj) {
-	var css = remove ? "" : obj.css;
-
-	if (style.styleSheet) {
-		style.styleSheet.cssText = replaceText(index, css);
-	} else {
-		var cssNode = document.createTextNode(css);
-		var childNodes = style.childNodes;
-
-		if (childNodes[index]) style.removeChild(childNodes[index]);
-
-		if (childNodes.length) {
-			style.insertBefore(cssNode, childNodes[index]);
-		} else {
-			style.appendChild(cssNode);
-		}
-	}
-}
-
-function applyToTag (style, obj) {
-	var css = obj.css;
-	var media = obj.media;
-
-	if(media) {
-		style.setAttribute("media", media)
-	}
-
-	if(style.styleSheet) {
-		style.styleSheet.cssText = css;
-	} else {
-		while(style.firstChild) {
-			style.removeChild(style.firstChild);
-		}
-
-		style.appendChild(document.createTextNode(css));
-	}
-}
-
-function updateLink (link, options, obj) {
-	var css = obj.css;
-	var sourceMap = obj.sourceMap;
-
-	/*
-		If convertToAbsoluteUrls isn't defined, but sourcemaps are enabled
-		and there is no publicPath defined then lets turn convertToAbsoluteUrls
-		on by default.  Otherwise default to the convertToAbsoluteUrls option
-		directly
-	*/
-	var autoFixUrls = options.convertToAbsoluteUrls === undefined && sourceMap;
-
-	if (options.convertToAbsoluteUrls || autoFixUrls) {
-		css = fixUrls(css);
-	}
-
-	if (sourceMap) {
-		// http://stackoverflow.com/a/26603875
-		css += "\n/*# sourceMappingURL=data:application/json;base64," + btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap)))) + " */";
-	}
-
-	var blob = new Blob([css], { type: "text/css" });
-
-	var oldSrc = link.href;
-
-	link.href = URL.createObjectURL(blob);
-
-	if(oldSrc) URL.revokeObjectURL(oldSrc);
-}
-
-
-/***/ }),
-/* 9 */
-/***/ (function(module, exports) {
-
-
-/**
- * When source maps are enabled, `style-loader` uses a link element with a data-uri to
- * embed the css on the page. This breaks all relative urls because now they are relative to a
- * bundle instead of the current page.
- *
- * One solution is to only use full urls, but that may be impossible.
- *
- * Instead, this function "fixes" the relative urls to be absolute according to the current page location.
- *
- * A rudimentary test suite is located at `test/fixUrls.js` and can be run via the `npm test` command.
- *
- */
-
-module.exports = function (css) {
-  // get current location
-  var location = typeof window !== "undefined" && window.location;
-
-  if (!location) {
-    throw new Error("fixUrls requires window.location");
-  }
-
-	// blank or null?
-	if (!css || typeof css !== "string") {
-	  return css;
-  }
-
-  var baseUrl = location.protocol + "//" + location.host;
-  var currentDir = baseUrl + location.pathname.replace(/\/[^\/]*$/, "/");
-
-	// convert each url(...)
-	/*
-	This regular expression is just a way to recursively match brackets within
-	a string.
-
-	 /url\s*\(  = Match on the word "url" with any whitespace after it and then a parens
-	   (  = Start a capturing group
-	     (?:  = Start a non-capturing group
-	         [^)(]  = Match anything that isn't a parentheses
-	         |  = OR
-	         \(  = Match a start parentheses
-	             (?:  = Start another non-capturing groups
-	                 [^)(]+  = Match anything that isn't a parentheses
-	                 |  = OR
-	                 \(  = Match a start parentheses
-	                     [^)(]*  = Match anything that isn't a parentheses
-	                 \)  = Match a end parentheses
-	             )  = End Group
-              *\) = Match anything and then a close parens
-          )  = Close non-capturing group
-          *  = Match anything
-       )  = Close capturing group
-	 \)  = Match a close parens
-
-	 /gi  = Get all matches, not the first.  Be case insensitive.
-	 */
-	var fixedCss = css.replace(/url\s*\(((?:[^)(]|\((?:[^)(]+|\([^)(]*\))*\))*)\)/gi, function(fullMatch, origUrl) {
-		// strip quotes (if they exist)
-		var unquotedOrigUrl = origUrl
-			.trim()
-			.replace(/^"(.*)"$/, function(o, $1){ return $1; })
-			.replace(/^'(.*)'$/, function(o, $1){ return $1; });
-
-		// already a full url? no change
-		if (/^(#|data:|http:\/\/|https:\/\/|file:\/\/\/|\s*$)/i.test(unquotedOrigUrl)) {
-		  return fullMatch;
-		}
-
-		// convert the url to a full url
-		var newUrl;
-
-		if (unquotedOrigUrl.indexOf("//") === 0) {
-		  	//TODO: should we add protocol?
-			newUrl = unquotedOrigUrl;
-		} else if (unquotedOrigUrl.indexOf("/") === 0) {
-			// path should be relative to the base url
-			newUrl = baseUrl + unquotedOrigUrl; // already starts with '/'
-		} else {
-			// path should be relative to current directory
-			newUrl = currentDir + unquotedOrigUrl.replace(/^\.\//, ""); // Strip leading './'
-		}
-
-		// send back the fixed url(...)
-		return "url(" + JSON.stringify(newUrl) + ")";
-	});
-
-	// send back the fixed css
-	return fixedCss;
-};
-
-
-/***/ }),
 /* 10 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var pug = __webpack_require__(2);
-
-function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;;var locals_for_with = (locals || {});(function (_style) {pug_html = pug_html + "\u003Csvg" + (pug.attr("class", pug.classes([_style.playButtonSvg], [true]), false, true)+" viewBox=\"0 0 64 64\"") + "\u003E\u003Cpath d=\"M26,45.5L44,32L26,18.6v27V45.5L26,45.5z M32,2C15.4,2,2,15.5,2,32c0,16.6,13.4,30,30,30c16.6,0,30-13.4,30-30 C62,15.4,48.5,2,32,2L32,2z M32,56c-9.7,0-18.5-5.9-22.2-14.8C6.1,32.2,8.1,21.9,15,15c6.9-6.9,17.2-8.9,26.2-5.2 C50.1,13.5,56,22.3,56,32C56,45.3,45.2,56,32,56L32,56z\"\u003E\u003C\u002Fpath\u003E\u003C\u002Fsvg\u003E";}.call(this,"_style" in locals_for_with?locals_for_with._style:typeof _style!=="undefined"?_style:undefined));;return pug_html;};
-module.exports = template;
-
-/***/ }),
-/* 11 */
 /***/ (function(module, exports) {
 
 /* (ignored) */
 
 /***/ }),
-/* 12 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var pug = __webpack_require__(2);
+var pug = __webpack_require__(9);
 
 function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;;var locals_for_with = (locals || {});(function (_style) {pug_html = pug_html + "\u003Csvg" + (pug.attr("class", pug.classes([_style.unmuteButtonSvg], [true]), false, true)+" viewBox=\"0 0 64 64\"") + "\u003E\u003Cpath d=\"M58.3,45.5l-4.8-4.3c1.4-2.9,2.2-6.2,2.2-9.6c0-11.1-8.2-20.3-18.9-21.9V3.3C50.9,4.9,62,16.9,62,31.6 C62,36.6,60.6,41.4,58.3,45.5L58.3,45.5z M30.4,5.6v15.2l-8.3-7.3L30.4,5.6L30.4,5.6z M36.7,19.9c4.6,1.9,7.9,6.4,7.9,11.7 c0,0.6-0.1,1.1-0.1,1.7l-7.8-6.9V19.9L36.7,19.9z M57.5,60.7l-7.1-6.3c-3.9,2.9-8.6,4.8-13.7,5.4v-6.4c3.2-0.5,6.2-1.7,8.8-3.4 l-8.1-7.2c-0.2,0.1-0.5,0.3-0.7,0.4v-1l-6.3-5.6v20.2L15.4,42.6H2V20.5h10.2l-9.7-8.6l4.2-4.7L61.7,56L57.5,60.7L57.5,60.7z\"\u003E\u003C\u002Fpath\u003E\u003C\u002Fsvg\u003E";}.call(this,"_style" in locals_for_with?locals_for_with._style:typeof _style!=="undefined"?_style:undefined));;return pug_html;};
 module.exports = template;
 
 /***/ }),
-/* 13 */
+/* 12 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+__webpack_require__.r(__webpack_exports__);
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 var BitBuffer = function BitBuffer(bufferOrLength, mode) {
@@ -1862,13 +1758,14 @@ BitBuffer.MODE = {
 	EXPAND: 2
 };
 
-/* harmony default export */ __webpack_exports__["a"] = (BitBuffer);
+/* harmony default export */ __webpack_exports__["default"] = (BitBuffer);
 
 /***/ }),
-/* 14 */
+/* 13 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+__webpack_require__.r(__webpack_exports__);
 var AjaxSource = function AjaxSource(url, options) {
 	this.url = url;
 	this.destination = null;
@@ -1920,14 +1817,15 @@ AjaxSource.prototype.onLoad = function (data) {
 	}
 };
 
-/* harmony default export */ __webpack_exports__["a"] = (AjaxSource);
+/* harmony default export */ __webpack_exports__["default"] = (AjaxSource);
 
 /***/ }),
-/* 15 */
+/* 14 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0____ = __webpack_require__(0);
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var ___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(0);
 
 
 var AjaxProgressiveSource = function AjaxProgressiveSource(url, options) {
@@ -1996,7 +1894,7 @@ AjaxProgressiveSource.prototype.loadNextChunk = function () {
 	}
 
 	this.isLoading = true;
-	this.loadStartTime = __WEBPACK_IMPORTED_MODULE_0____["default"].Now();
+	this.loadStartTime = ___WEBPACK_IMPORTED_MODULE_0__["default"].Now();
 	this.request = new XMLHttpRequest();
 
 	this.request.onreadystatechange = function () {
@@ -2035,19 +1933,20 @@ AjaxProgressiveSource.prototype.onChunkLoad = function (data) {
 		this.destination.write(data);
 	}
 
-	this.loadTime = __WEBPACK_IMPORTED_MODULE_0____["default"].Now() - this.loadStartTime;
+	this.loadTime = ___WEBPACK_IMPORTED_MODULE_0__["default"].Now() - this.loadStartTime;
 	if (!this.throttled) {
 		this.loadNextChunk();
 	}
 };
 
-/* harmony default export */ __webpack_exports__["a"] = (AjaxProgressiveSource);
+/* harmony default export */ __webpack_exports__["default"] = (AjaxProgressiveSource);
 
 /***/ }),
-/* 16 */
+/* 15 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+__webpack_require__.r(__webpack_exports__);
 var WSSource = function WSSource(url, options) {
 	this.url = url;
 	this.options = options;
@@ -2113,14 +2012,15 @@ WSSource.prototype.onMessage = function (ev) {
 	}
 };
 
-/* harmony default export */ __webpack_exports__["a"] = (WSSource);
+/* harmony default export */ __webpack_exports__["default"] = (WSSource);
 
 /***/ }),
-/* 17 */
+/* 16 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0____ = __webpack_require__(0);
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var ___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(0);
 
 
 var TS = function TS(options) {
@@ -2148,10 +2048,10 @@ TS.prototype.connect = function (streamId, destination) {
 TS.prototype.write = function (buffer) {
   if (this.leftoverBytes) {
     var totalLength = buffer.byteLength + this.leftoverBytes.byteLength;
-    this.bits = new __WEBPACK_IMPORTED_MODULE_0____["default"].BitBuffer(totalLength);
+    this.bits = new ___WEBPACK_IMPORTED_MODULE_0__["default"].BitBuffer(totalLength);
     this.bits.write([this.leftoverBytes, buffer]);
   } else {
-    this.bits = new __WEBPACK_IMPORTED_MODULE_0____["default"].BitBuffer(buffer);
+    this.bits = new ___WEBPACK_IMPORTED_MODULE_0__["default"].BitBuffer(buffer);
   }
 
   while (this.bits.has(188 << 3) && this.parsePacket()) {}
@@ -2338,15 +2238,109 @@ TS.STREAM = {
   DIRECTORY: 0xFF
 };
 
-/* harmony default export */ __webpack_exports__["a"] = (TS);
+/* harmony default export */ __webpack_exports__["default"] = (TS);
+
+/***/ }),
+/* 17 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+var BaseDecoder = function BaseDecoder(options) {
+	this.destination = null;
+	this.canPlay = false;
+
+	this.collectTimestamps = !options.streaming;
+	this.timestamps = [];
+	this.timestampIndex = 0;
+
+	this.startTime = 0;
+	this.decodedTime = 0;
+
+	Object.defineProperty(this, 'currentTime', { get: this.getCurrentTime });
+};
+
+BaseDecoder.prototype.connect = function (destination) {
+	this.destination = destination;
+};
+
+BaseDecoder.prototype.write = function (pts, buffers) {
+	if (this.collectTimestamps) {
+		if (this.timestamps.length === 0) {
+			this.startTime = pts;
+			this.decodedTime = pts;
+		}
+		this.timestamps.push({ index: this.bits.byteLength << 3, time: pts });
+	}
+
+	this.bits.write(buffers);
+	this.canPlay = true;
+};
+
+BaseDecoder.prototype.seek = function (time) {
+	if (!this.collectTimestamps) {
+		return;
+	}
+
+	this.timestampIndex = 0;
+	for (var i = 0; i < this.timestamps.length; i++) {
+		if (this.timestamps[i].time > time) {
+			break;
+		}
+		this.timestampIndex = i;
+	}
+
+	var ts = this.timestamps[this.timestampIndex];
+	if (ts) {
+		this.bits.index = ts.index;
+		this.decodedTime = ts.time;
+	} else {
+		this.bits.index = 0;
+		this.decodedTime = this.startTime;
+	}
+};
+
+BaseDecoder.prototype.decode = function () {
+	this.advanceDecodedTime(0);
+};
+
+BaseDecoder.prototype.advanceDecodedTime = function (seconds) {
+	if (this.collectTimestamps) {
+		var newTimestampIndex = -1;
+		for (var i = this.timestampIndex; i < this.timestamps.length; i++) {
+			if (this.timestamps[i].index > this.bits.index) {
+				break;
+			}
+			newTimestampIndex = i;
+		}
+
+		// Did we find a new PTS, different from the last? If so, we don't have
+		// to advance the decoded time manually and can instead sync it exactly
+		// to the PTS.
+		if (newTimestampIndex !== -1 && newTimestampIndex !== this.timestampIndex) {
+			this.timestampIndex = newTimestampIndex;
+			this.decodedTime = this.timestamps[this.timestampIndex].time;
+			return;
+		}
+	}
+
+	this.decodedTime += seconds;
+};
+
+BaseDecoder.prototype.getCurrentTime = function () {
+	return this.decodedTime;
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (BaseDecoder);
 
 /***/ }),
 /* 18 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0____ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__decoder__ = __webpack_require__(1);
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var ___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(0);
+/* harmony import */ var _decoder__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(17);
 // Inspired by Java MPEG-1 Video Decoder and Player by Zoltan Korandi
 // https://sourceforge.net/projects/javampeg1video/
 
@@ -2354,12 +2348,12 @@ TS.STREAM = {
 
 
 var MPEG1 = function MPEG1(options) {
-	__WEBPACK_IMPORTED_MODULE_0____["default"].Decoder.Base.call(this, options);
+	___WEBPACK_IMPORTED_MODULE_0__["default"].Decoder.Base.call(this, options);
 
 	var bufferSize = options.videoBufferSize || 512 * 1024;
-	var bufferMode = options.streaming ? __WEBPACK_IMPORTED_MODULE_0____["default"].BitBuffer.MODE.EVICT : __WEBPACK_IMPORTED_MODULE_0____["default"].BitBuffer.MODE.EXPAND;
+	var bufferMode = options.streaming ? ___WEBPACK_IMPORTED_MODULE_0__["default"].BitBuffer.MODE.EVICT : ___WEBPACK_IMPORTED_MODULE_0__["default"].BitBuffer.MODE.EXPAND;
 
-	this.bits = new __WEBPACK_IMPORTED_MODULE_0____["default"].BitBuffer(bufferSize, bufferMode);
+	this.bits = new ___WEBPACK_IMPORTED_MODULE_0__["default"].BitBuffer(bufferSize, bufferMode);
 
 	this.customIntraQuantMatrix = new Uint8Array(64);
 	this.customNonIntraQuantMatrix = new Uint8Array(64);
@@ -2369,11 +2363,11 @@ var MPEG1 = function MPEG1(options) {
 	this.decodeFirstFrame = options.decodeFirstFrame !== false;
 };
 
-MPEG1.prototype = Object.create(__WEBPACK_IMPORTED_MODULE_1__decoder__["a" /* default */].prototype);
+MPEG1.prototype = Object.create(_decoder__WEBPACK_IMPORTED_MODULE_1__["default"].prototype);
 MPEG1.prototype.constructor = MPEG1;
 
 MPEG1.prototype.write = function (pts, buffers) {
-	__WEBPACK_IMPORTED_MODULE_0____["default"].Decoder.Base.prototype.write.call(this, pts, buffers);
+	___WEBPACK_IMPORTED_MODULE_0__["default"].Decoder.Base.prototype.write.call(this, pts, buffers);
 
 	if (!this.hasSequenceHeader) {
 		if (this.bits.findStartCode(MPEG1.START.SEQUENCE) === -1) {
@@ -3128,7 +3122,7 @@ MPEG1.prototype.decodeBlock = function (block) {
 		} else {
 			MPEG1.IDCT(this.blockData);
 			MPEG1.CopyBlockToDestination(this.blockData, destArray, destIndex, scan);
-			__WEBPACK_IMPORTED_MODULE_0____["default"].Fill(this.blockData, 0);
+			___WEBPACK_IMPORTED_MODULE_0__["default"].Fill(this.blockData, 0);
 		}
 	} else {
 		// Add data to the predicted macroblock
@@ -3138,7 +3132,7 @@ MPEG1.prototype.decodeBlock = function (block) {
 		} else {
 			MPEG1.IDCT(this.blockData);
 			MPEG1.AddBlockToDestination(this.blockData, destArray, destIndex, scan);
-			__WEBPACK_IMPORTED_MODULE_0____["default"].Fill(this.blockData, 0);
+			___WEBPACK_IMPORTED_MODULE_0__["default"].Fill(this.blockData, 0);
 		}
 	}
 
@@ -3905,15 +3899,16 @@ MPEG1.START = {
 	USER_DATA: 0xB2
 };
 
-/* harmony default export */ __webpack_exports__["a"] = (MPEG1);
+/* harmony default export */ __webpack_exports__["default"] = (MPEG1);
 
 /***/ }),
 /* 19 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0____ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__decoder__ = __webpack_require__(1);
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var ___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(0);
+/* harmony import */ var _decoder__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(17);
 // Based on kjmp2 by Martin J. Fiedler
 // http://keyj.emphy.de/kjmp2/
 
@@ -3921,12 +3916,12 @@ MPEG1.START = {
 
 
 var MP2 = function MP2(options) {
-	__WEBPACK_IMPORTED_MODULE_0____["default"].Decoder.Base.call(this, options);
+	___WEBPACK_IMPORTED_MODULE_0__["default"].Decoder.Base.call(this, options);
 
 	var bufferSize = options.audioBufferSize || 128 * 1024;
-	var bufferMode = options.streaming ? __WEBPACK_IMPORTED_MODULE_0____["default"].BitBuffer.MODE.EVICT : __WEBPACK_IMPORTED_MODULE_0____["default"].BitBuffer.MODE.EXPAND;
+	var bufferMode = options.streaming ? ___WEBPACK_IMPORTED_MODULE_0__["default"].BitBuffer.MODE.EVICT : ___WEBPACK_IMPORTED_MODULE_0__["default"].BitBuffer.MODE.EXPAND;
 
-	this.bits = new __WEBPACK_IMPORTED_MODULE_0____["default"].BitBuffer(bufferSize, bufferMode);
+	this.bits = new ___WEBPACK_IMPORTED_MODULE_0__["default"].BitBuffer(bufferSize, bufferMode);
 
 	this.left = new Float32Array(1152);
 	this.right = new Float32Array(1152);
@@ -3952,7 +3947,7 @@ var MP2 = function MP2(options) {
 	}
 };
 
-MP2.prototype = Object.create(__WEBPACK_IMPORTED_MODULE_1__decoder__["a" /* default */].prototype);
+MP2.prototype = Object.create(_decoder__WEBPACK_IMPORTED_MODULE_1__["default"].prototype);
 MP2.prototype.constructor = MP2;
 
 MP2.prototype.decode = function () {
@@ -4139,7 +4134,7 @@ MP2.prototype.decodeFrame = function (left, right) {
 					MP2.MatrixTransform(this.sample[ch], p, this.V, this.VPos);
 
 					// Build U, windowing, calculate output
-					__WEBPACK_IMPORTED_MODULE_0____["default"].Fill(this.U, 0);
+					___WEBPACK_IMPORTED_MODULE_0__["default"].Fill(this.U, 0);
 
 					var dIndex = 512 - (this.VPos >> 1);
 					var vIndex = this.VPos % 128 >> 1;
@@ -4460,13 +4455,14 @@ MP2.QUANT_TAB = [{ levels: 3, group: 1, bits: 5 }, //  1
 { levels: 65535, group: 0, bits: 16 // 17
 }];
 
-/* harmony default export */ __webpack_exports__["a"] = (MP2);
+/* harmony default export */ __webpack_exports__["default"] = (MP2);
 
 /***/ }),
 /* 20 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+__webpack_require__.r(__webpack_exports__);
 var WebGLRenderer = function WebGLRenderer(options) {
 	this.canvas = options.canvas || document.createElement('canvas');
 	this.width = this.canvas.width;
@@ -4653,14 +4649,15 @@ WebGLRenderer.SHADER = {
 	VERTEX_IDENTITY: ['attribute vec2 vertex;', 'varying vec2 texCoord;', 'void main() {', 'texCoord = vertex;', 'gl_Position = vec4((vertex * 2.0 - 1.0) * vec2(1, -1), 0.0, 1.0);', '}'].join('\n')
 };
 
-/* harmony default export */ __webpack_exports__["a"] = (WebGLRenderer);
+/* harmony default export */ __webpack_exports__["default"] = (WebGLRenderer);
 
 /***/ }),
 /* 21 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0____ = __webpack_require__(0);
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var ___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(0);
 
 
 var CanvasRenderer = function CanvasRenderer(options) {
@@ -4684,7 +4681,7 @@ CanvasRenderer.prototype.resize = function (width, height) {
   this.canvas.height = this.height;
 
   this.imageData = this.context.getImageData(0, 0, this.width, this.height);
-  __WEBPACK_IMPORTED_MODULE_0____["default"].Fill(this.imageData.data, 255);
+  ___WEBPACK_IMPORTED_MODULE_0__["default"].Fill(this.imageData.data, 255);
 };
 
 CanvasRenderer.prototype.renderProgress = function (progress) {
@@ -4774,14 +4771,15 @@ CanvasRenderer.prototype.YCbCrToRGBA = function (y, cb, cr, rgba) {
   }
 };
 
-/* harmony default export */ __webpack_exports__["a"] = (CanvasRenderer);
+/* harmony default export */ __webpack_exports__["default"] = (CanvasRenderer);
 
 /***/ }),
 /* 22 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0____ = __webpack_require__(0);
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var ___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(0);
 
 
 var WebAudioOut = function WebAudioOut(options) {
@@ -4824,7 +4822,7 @@ WebAudioOut.prototype.play = function (sampleRate, left, right) {
 	// If the context is not unlocked yet, we simply advance the start time
 	// to "fake" actually playing audio. This will keep the video in sync.
 	if (!this.unlocked) {
-		var ts = __WEBPACK_IMPORTED_MODULE_0____["default"].Now();
+		var ts = ___WEBPACK_IMPORTED_MODULE_0__["default"].Now();
 		if (this.wallclockStartTime < ts) {
 			this.wallclockStartTime = ts;
 		}
@@ -4846,7 +4844,7 @@ WebAudioOut.prototype.play = function (sampleRate, left, right) {
 	var duration = buffer.duration;
 	if (this.startTime < now) {
 		this.startTime = now;
-		this.wallclockStartTime = __WEBPACK_IMPORTED_MODULE_0____["default"].Now();
+		this.wallclockStartTime = ___WEBPACK_IMPORTED_MODULE_0__["default"].Now();
 	}
 
 	source.start(this.startTime);
@@ -4865,12 +4863,12 @@ WebAudioOut.prototype.stop = function () {
 WebAudioOut.prototype.getEnqueuedTime = function () {
 	// The AudioContext.currentTime is only updated every so often, so if we
 	// want to get exact timing, we need to rely on the system time.
-	return Math.max(this.wallclockStartTime - __WEBPACK_IMPORTED_MODULE_0____["default"].Now(), 0);
+	return Math.max(this.wallclockStartTime - ___WEBPACK_IMPORTED_MODULE_0__["default"].Now(), 0);
 };
 
 WebAudioOut.prototype.resetEnqueuedTime = function () {
 	this.startTime = this.context.currentTime;
-	this.wallclockStartTime = __WEBPACK_IMPORTED_MODULE_0____["default"].Now();
+	this.wallclockStartTime = ___WEBPACK_IMPORTED_MODULE_0__["default"].Now();
 };
 
 WebAudioOut.prototype.unlock = function (callback) {
@@ -4923,7 +4921,7 @@ WebAudioOut.IsSupported = function () {
 
 WebAudioOut.CachedContext = null;
 
-/* harmony default export */ __webpack_exports__["a"] = (WebAudioOut);
+/* harmony default export */ __webpack_exports__["default"] = (WebAudioOut);
 
 /***/ })
 /******/ ])["default"];
