@@ -1,4 +1,6 @@
-/* According to jsmpeg project(https://github.com/phoboslab/jsmpeg) modified */
+/**
+ * According to jsmpeg project(https://github.com/phoboslab/jsmpeg)
+ */
 
 // ES6 modular
 import Player from './lib/player';
