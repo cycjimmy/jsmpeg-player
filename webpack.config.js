@@ -1,6 +1,7 @@
 var
   path = require('path')
   , webpack = require('webpack')
+  , packageJson = require('./package.json')
 
   // webpack plugin
   , BrowserSyncPlugin = require('browser-sync-webpack-plugin')
@@ -115,7 +116,13 @@ var config = {
     ]
   },
 
-  plugins: []
+  plugins: [
+    new webpack.BannerPlugin({
+      banner: packageJson.name + ' v' + packageJson.version +
+      '\nHomepage: ' + packageJson.homepage +
+      '\nReleased under the ' + packageJson.license + ' License.'
+    })
+  ]
 };
 
 // dev mode
@@ -170,7 +177,7 @@ if (IS_PRODUCTION) {
           safari10: true,
           ecma: 5,
           output: {
-            comments: false,
+            comments: /^!/,
             beautify: false
           },
           compress: {

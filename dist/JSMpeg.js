@@ -1,3 +1,8 @@
+/*!
+ * jsmpeg-player v1.2.3
+ * Homepage: https://github.com/cycdpo/jsmpeg-player#readme
+ * Released under the MIT License.
+ */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -1004,7 +1009,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _lib_webgl__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./lib/webgl */ "./src/lib/webgl.js");
 /* harmony import */ var _lib_canvas2d__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./lib/canvas2d */ "./src/lib/canvas2d.js");
 /* harmony import */ var _lib_webaudio__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./lib/webaudio */ "./src/lib/webaudio.js");
-/* According to jsmpeg project(https://github.com/phoboslab/jsmpeg) modified */
+/**
+ * According to jsmpeg project(https://github.com/phoboslab/jsmpeg)
+ */
 
 // ES6 modular
 
