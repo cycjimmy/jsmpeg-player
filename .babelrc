@@ -1,7 +1,7 @@
 {
   "presets": [
     [
-      "env",
+      "@babel/preset-env",
       {
         "loose": true,
         "modules": false
@@ -12,13 +12,13 @@
     "test": {
       "presets": [
         [
-          "env"
+          "@babel/preset-env"
         ]
       ]
     }
   },
   "plugins": [
-    "syntax-dynamic-import"
+    "@babel/plugin-syntax-dynamic-import"
   ],
   "ignore": [
     "node_modules"
