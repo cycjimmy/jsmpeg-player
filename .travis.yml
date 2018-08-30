@@ -25,5 +25,5 @@ cache:
 
 script:
   - yarn --version
-  - npm run prepublish
+  - npm run prepare
   - jest

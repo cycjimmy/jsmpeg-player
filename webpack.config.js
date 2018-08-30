@@ -192,7 +192,7 @@ if (IS_PRODUCTION) {
         }
       }),
     ]
-  }
+  };
 }
 
 module.exports = config;
