@@ -24,7 +24,7 @@
 
 * JSMpeg player is based on [jsmpeg](https://github.com/phoboslab/jsmpeg).
 * The video must be compressed into the TS format of MPEG1 / MP2.
-* Apple device automatically plays without sound, you need to guide the user to click on the video in the lower right corner of the video icon to unlock the sound.(no similar problem in non-autoplay mode)
+* Apple device automatically plays without sound, you need to guide the user to click on the video in the lower right corner of the video icon to unlock the sound. (no similar problem in non-autoplay mode)
 
 [Releases](https://github.com/cycdpo/jsmpeg-player/releases) | [Demo](https://cycdpo.github.io/jsmpeg-player/)
 
@@ -47,22 +47,22 @@
   new JSMpeg.VideoElement(videoWrapper, videoUrl, [, options])
   ```
 
-* `videoWrapper`: [string|element] the wrapper of video. Height and width of wrapper must be initialized
-* `videoUrl`: [string] a url to an MPEG .ts file
-* The `options` supports:
-  * `poster`: [string] URL to an image to use as the poster to show before the video plays.(Recommended to set it manually)
-  * `autoplay`: [boolean] whether to start playing immediately. Default `false`.
-  * `loop`: [boolean] whether to loop the video (static files only). Default `false`.**[overwrite]**
-  * `aspectPercent`: [string] Aspect ratio converted to percentage. E.g: '16:9' => `'56.25%'`. Default `'56.25%'`.
-  * `picMode`: [boolean] picture node (no playButton). Default `false`.
-  * `chunkSize` the chunk size in bytes to load at a time. Default `1024*1024` (1mb).
-  * `hookInPlay`: [function] The hook function when the video play.
-  * `hookInPause`: [function] The hook function when the video pause.
-  * `hookInStop`: [function] The hook function when the video stop.
+* `videoWrapper`: [String | Element] The wrapper of the video. Height and width of wrapper must be initialized.
+* `videoUrl`: [String] A URL to an MPEG .ts file
+* The `options` support:
+  * `poster`: [String] URL to an image to use as the poster to show before the video plays. (Recommended to set it manually)
+  * `autoplay`: [Boolean] Whether to start playing immediately. Default `false`.
+  * `loop`: [Boolean] Whether to loop the video (static files only). Default `false`.**[overwrite]**
+  * `aspectPercent`: [String] Aspect ratio converted to percentage. E.g: '16:9' => `'56.25%'`. Default `'56.25%'`.
+  * `picMode`: [Boolean] Picture mode (no playButton). Default `false`.
+  * `chunkSize` [Number] The chunk size in bytes to load at a time. Default `1024*1024` (1mb).
+  * `hookInPlay`: [Function] The hook function when the video play.
+  * `hookInPause`: [Function] The hook function when the video pause.
+  * `hookInStop`: [Function] The hook function when the video stop.
   * More options can view the [jsmpeg options](https://github.com/phoboslab/jsmpeg#usage)
 
 * `JSMpeg.VideoElement` instance supports the following methods:
-  * `destroy()`: Empty videoWrapper.
+  * `destroy()`: Empty video wrapper.
 * `JSMpeg.VideoElement.player` instance API can view the [JSMpeg.Player API](https://github.com/phoboslab/jsmpeg#jsmpegplayer-api)
 
 ### Use in browser
@@ -76,7 +76,7 @@
 ```
 
 ## CDN
-To use via a CDN include this in your html:
+To use via a CDN include this in your HTML:
 ```text
 <script src="https://cdn.jsdelivr.net/npm/jsmpeg-player@1/build/JSMpeg.min.js"></script>
 ```

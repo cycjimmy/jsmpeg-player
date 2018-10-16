@@ -1,5 +1,9 @@
 # IDE
 .idea
+.editorconfig
+
+# doc
+.github
 
 # test
 test
@@ -7,7 +11,7 @@ test
 
 # project
 src
-static
 dist
+static
 yarn.lock
 
