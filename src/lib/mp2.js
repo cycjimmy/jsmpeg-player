@@ -4,11 +4,14 @@
 import BaseDecoder from './decoder';
 import BitBuffer from './buffer';
 import {
+  Now,
   Fill,
 } from '../utils';
 
 const MP2 = function (options) {
   BaseDecoder.call(this, options);
+
+  this.onDecodeCallback = options.onAudioDecode;
 
   const bufferSize = options.audioBufferSize || 128 * 1024;
   const bufferMode = options.streaming
@@ -45,6 +48,8 @@ MP2.prototype = Object.create(BaseDecoder.prototype);
 MP2.prototype.constructor = MP2;
 
 MP2.prototype.decode = function () {
+  const startTime = Now();
+
   const pos = this.bits.index >> 3;
   if (pos >= this.bits.byteLength) {
     return false;
@@ -62,6 +67,12 @@ MP2.prototype.decode = function () {
   }
 
   this.advanceDecodedTime(this.left.length / this.sampleRate);
+
+  const elapsedTime = Now() - startTime;
+  if (this.onDecodeCallback) {
+    this.onDecodeCallback(this, elapsedTime);
+  }
+
   return true;
 };
 

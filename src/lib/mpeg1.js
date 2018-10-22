@@ -4,11 +4,14 @@
 import BaseDecoder from './decoder';
 import BitBuffer from './buffer';
 import {
+  Now,
   Fill,
 } from '../utils';
 
 let MPEG1 = function (options) {
   BaseDecoder.call(this, options);
+
+  this.onDecodeCallback = options.onVideoDecode;
 
   const bufferSize = options.videoBufferSize || 512 * 1024;
   const bufferMode = options.streaming
@@ -45,6 +48,8 @@ MPEG1.prototype.write = function (pts, buffers) {
 };
 
 MPEG1.prototype.decode = function () {
+  const startTime = Now();
+
   if (!this.hasSequenceHeader) {
     return false;
   }
@@ -56,6 +61,11 @@ MPEG1.prototype.decode = function () {
 
   this.decodePicture();
   this.advanceDecodedTime(1 / this.frameRate);
+
+  const elapsedTime = Now() - startTime;
+  if (this.onDecodeCallback) {
+    this.onDecodeCallback(this, elapsedTime);
+  }
   return true;
 };
 
