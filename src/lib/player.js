@@ -1,4 +1,20 @@
-import JSMpeg from '../';
+import AjaxSource from './ajax';
+import AjaxProgressiveSource from './ajax-progressive';
+import WSSource from './websocket';
+import TS from './ts';
+import MPEG1 from './mpeg1';
+import MPEG1WASM from './mpeg1-wasm';
+import MP2 from './mp2';
+import MP2WASM from './mp2-wasm';
+import WebGLRenderer from './webgl';
+import CanvasRenderer from './canvas2d';
+import WebAudioOut from './webaudio';
+import WASMModule from './wasm-module';
+import WASM_BINARY from './wasm/WASM_BINARY';
+import {
+  Now,
+  Base64ToArrayBuffer,
+} from '../utils';
 
 /**
  * @param url
@@ -6,7 +22,7 @@ import JSMpeg from '../';
  * @param cbUI {play: function, pause: function, stop: function} 插入UI回调
  * @constructor
  */
-let Player = function (url, options, cbUI) {
+const Player = function (url, options, cbUI) {
   this.options = options || {};
   this.cbUI = cbUI || {};
 
@@ -14,16 +30,19 @@ let Player = function (url, options, cbUI) {
     this.source = new options.source(url, options);
     options.streaming = !!this.source.streaming;
   }
+
   else if (url.match(/^wss?:\/\//)) {
-    this.source = new JSMpeg.Source.WebSocket(url, options);
+    this.source = new WSSource(url, options);
     options.streaming = true;
   }
+
   else if (options.progressive) {
-    this.source = new JSMpeg.Source.AjaxProgressive(url, options);
+    this.source = new AjaxProgressiveSource(url, options);
     options.streaming = false;
   }
+
   else {
-    this.source = new JSMpeg.Source.Ajax(url, options);
+    this.source = new AjaxSource(url, options);
     options.streaming = false;
   }
 
@@ -31,22 +50,33 @@ let Player = function (url, options, cbUI) {
   this.loop = options.loop !== false;
   this.autoplay = !!options.autoplay || options.streaming;
 
-  this.demuxer = new JSMpeg.Demuxer.TS(options);
+  this.demuxer = new TS(options);
   this.source.connect(this.demuxer);
 
+  if (!options.disableWebAssembly && WASMModule.IsSupported()) {
+    this.wasmModule = new WASMModule();
+    options.wasmModule = this.wasmModule;
+  }
+
   if (options.video !== false) {
-    this.video = new JSMpeg.Decoder.MPEG1Video(options);
-    this.renderer = !options.disableGl && JSMpeg.Renderer.WebGL.IsSupported()
-      ? new JSMpeg.Renderer.WebGL(options)
-      : new JSMpeg.Renderer.Canvas2D(options);
-    this.demuxer.connect(JSMpeg.Demuxer.TS.STREAM.VIDEO_1, this.video);
+    this.video = options.wasmModule
+      ? new MPEG1WASM(options)
+      : new MPEG1(options);
+
+    this.renderer = !options.disableGl && WebGLRenderer.IsSupported()
+      ? new WebGLRenderer(options)
+      : new CanvasRenderer(options);
+
+    this.demuxer.connect(TS.STREAM.VIDEO_1, this.video);
     this.video.connect(this.renderer);
   }
 
-  if (options.audio !== false && JSMpeg.AudioOutput.WebAudio.IsSupported()) {
-    this.audio = new JSMpeg.Decoder.MP2Audio(options);
-    this.audioOut = new JSMpeg.AudioOutput.WebAudio(options);
-    this.demuxer.connect(JSMpeg.Demuxer.TS.STREAM.AUDIO_1, this.audio);
+  if (options.audio !== false && WebAudioOut.IsSupported()) {
+    this.audio = options.wasmModule
+      ? new MP2WASM(options)
+      : new MP2(options);
+    this.audioOut = new WebAudioOut(options);
+    this.demuxer.connect(TS.STREAM.AUDIO_1, this.audio);
     this.audio.connect(this.audioOut);
   }
 
@@ -64,8 +94,25 @@ let Player = function (url, options, cbUI) {
     document.addEventListener('visibilitychange', this.showHide.bind(this));
   }
 
-  this.source.start();
+  // If we have WebAssembly support, wait until the module is compiled before
+  // loading the source. Otherwise the decoders won't know what to do with
+  // the source data.
+  if (this.wasmModule) {
+    if (WASM_BINARY) {
+      const wasm = Base64ToArrayBuffer(WASM_BINARY);
+      this.wasmModule.loadFromBuffer(wasm, this.startLoading.bind(this));
+    }
+    else {
+      this.wasmModule.loadFromFile('jsmpeg.wasm', this.startLoading.bind(this));
+    }
+  }
+  else {
+    this.startLoading();
+  }
+};
 
+Player.prototype.startLoading = function () {
+  this.source.start();
   if (this.autoplay) {
     this.play();
   }
@@ -132,12 +179,14 @@ Player.prototype.stop = function (ev) {
 Player.prototype.destroy = function () {
   this.pause();
   this.source.destroy();
-  this.renderer.destroy();
-  this.audioOut.destroy();
+  this.video && this.video.destroy();
+  this.renderer && this.renderer.destroy();
+  this.audio && this.audio.destroy();
+  this.audioOut && this.audioOut.destroy();
 };
 
 Player.prototype.seek = function (time) {
-  var startOffset = this.audio && this.audio.canPlay
+  const startOffset = this.audio && this.audio.canPlay
     ? this.audio.startTime
     : this.video.startTime;
 
@@ -148,7 +197,7 @@ Player.prototype.seek = function (time) {
     this.audio.seek(time + startOffset);
   }
 
-  this.startTime = JSMpeg.Now() - time;
+  this.startTime = Now() - time;
 };
 
 Player.prototype.getCurrentTime = function () {
@@ -173,7 +222,7 @@ Player.prototype.update = function () {
 
   if (!this.isPlaying) {
     this.isPlaying = true;
-    this.startTime = JSMpeg.Now() - this.currentTime;
+    this.startTime = Now() - this.currentTime;
   }
 
   if (this.options.streaming) {
@@ -193,7 +242,7 @@ Player.prototype.updateForStreaming = function () {
   }
 
   if (this.audio) {
-    var decoded = false;
+    let decoded = false;
     do {
       // If there's a lot of audio enqueued already, disable output and
       // catch up with the encoding.
@@ -208,7 +257,7 @@ Player.prototype.updateForStreaming = function () {
 };
 
 Player.prototype.updateForStaticFile = function () {
-  var notEnoughData = false,
+  let notEnoughData = false,
     headroom = 0;
 
   // If we have an audio track, we always try to sync the video to the audio.
@@ -234,7 +283,7 @@ Player.prototype.updateForStaticFile = function () {
 
   else if (this.video) {
     // Video only - sync it to player's wallclock
-    var targetTime = (JSMpeg.Now() - this.startTime) + this.video.startTime,
+    const targetTime = (Now() - this.startTime) + this.video.startTime,
       lateTime = targetTime - this.video.currentTime,
       frameTime = 1 / this.video.frameRate;
 

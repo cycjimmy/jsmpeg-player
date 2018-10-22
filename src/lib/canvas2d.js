@@ -1,6 +1,8 @@
-import JSMpeg from '../';
+import {
+  Fill,
+} from '../utils';
 
-let CanvasRenderer = function (options) {
+const CanvasRenderer = function (options) {
   this.canvas = options.canvas || document.createElement('canvas');
   this.width = this.canvas.width;
   this.height = this.canvas.height;
@@ -21,11 +23,11 @@ CanvasRenderer.prototype.resize = function (width, height) {
   this.canvas.height = this.height;
 
   this.imageData = this.context.getImageData(0, 0, this.width, this.height);
-  JSMpeg.Fill(this.imageData.data, 255);
+  Fill(this.imageData.data, 255);
 };
 
 CanvasRenderer.prototype.renderProgress = function (progress) {
-  var
+  const
     w = this.canvas.width,
     h = this.canvas.height,
     ctx = this.context;
@@ -52,27 +54,27 @@ CanvasRenderer.prototype.YCbCrToRGBA = function (y, cb, cr, rgba) {
   // each byte separately, but we need the automatic clamping of the RGBA
   // buffer.
 
-  var w = ((this.width + 15) >> 4) << 4,
+  const w = ((this.width + 15) >> 4) << 4,
     w2 = w >> 1;
 
-  var yIndex1 = 0,
+  let yIndex1 = 0,
     yIndex2 = w,
     yNext2Lines = w + (w - this.width);
 
-  var cIndex = 0,
+  let cIndex = 0,
     cNextLine = w2 - (this.width >> 1);
 
-  var rgbaIndex1 = 0,
+  let rgbaIndex1 = 0,
     rgbaIndex2 = this.width * 4,
     rgbaNext2Lines = this.width * 4;
 
-  var cols = this.width >> 1,
+  const cols = this.width >> 1,
     rows = this.height >> 1;
 
-  var ccb, ccr, r, g, b;
+  let ccb, ccr, r, g, b;
 
-  for (var row = 0; row < rows; row++) {
-    for (var col = 0; col < cols; col++) {
+  for (let row = 0; row < rows; row++) {
+    for (let col = 0; col < cols; col++) {
       ccb = cb[cIndex];
       ccr = cr[cIndex];
       cIndex++;
@@ -82,8 +84,8 @@ CanvasRenderer.prototype.YCbCrToRGBA = function (y, cb, cr, rgba) {
       b = (ccr + ((ccr * 198) >> 8)) - 227;
 
       // Line 1
-      var y1 = y[yIndex1++];
-      var y2 = y[yIndex1++];
+      const y1 = y[yIndex1++];
+      const y2 = y[yIndex1++];
       rgba[rgbaIndex1] = y1 + r;
       rgba[rgbaIndex1 + 1] = y1 - g;
       rgba[rgbaIndex1 + 2] = y1 + b;
@@ -93,8 +95,8 @@ CanvasRenderer.prototype.YCbCrToRGBA = function (y, cb, cr, rgba) {
       rgbaIndex1 += 8;
 
       // Line 2
-      var y3 = y[yIndex2++];
-      var y4 = y[yIndex2++];
+      const y3 = y[yIndex2++];
+      const y4 = y[yIndex2++];
       rgba[rgbaIndex2] = y3 + r;
       rgba[rgbaIndex2 + 1] = y3 - g;
       rgba[rgbaIndex2 + 2] = y3 + b;
