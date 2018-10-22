@@ -1,4 +1,5 @@
 import JSMpeg from '../';
+import Player from './player';
 
 // style
 import _style from '../../static/theme/style.scss';
@@ -68,7 +69,7 @@ export default class VideoElement {
     });
 
     // Create the player instance
-    this.player = new JSMpeg.Player(this.options.videoUrl, this.options, {
+    this.player = new Player(this.options.videoUrl, this.options, {
       play: () => {
         this.playButton.style.display = 'none';
         if (this.poster) {

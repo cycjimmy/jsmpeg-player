@@ -1,5 +1,5 @@
 /*!
- * jsmpeg-player v1.2.4
+ * jsmpeg-player v1.3.1
  * Homepage: https://github.com/cycdpo/jsmpeg-player#readme
  * Released under the MIT License.
  */
@@ -741,7 +741,9 @@ function addStyle (obj, options) {
 
 	// If a transform function was defined, run it on the css
 	if (options.transform && obj.css) {
-	    result = options.transform(obj.css);
+	    result = typeof options.transform === 'function'
+		 ? options.transform(obj.css) 
+		 : options.transform.default(obj.css);
 
 	    if (result) {
 	    	// If transform returns a value, use that instead of the original css.
@@ -1005,14 +1007,24 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _lib_ts__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./lib/ts */ "./src/lib/ts.js");
 /* harmony import */ var _lib_decoder__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./lib/decoder */ "./src/lib/decoder.js");
 /* harmony import */ var _lib_mpeg1__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./lib/mpeg1 */ "./src/lib/mpeg1.js");
-/* harmony import */ var _lib_mp2__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./lib/mp2 */ "./src/lib/mp2.js");
-/* harmony import */ var _lib_webgl__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./lib/webgl */ "./src/lib/webgl.js");
-/* harmony import */ var _lib_canvas2d__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./lib/canvas2d */ "./src/lib/canvas2d.js");
-/* harmony import */ var _lib_webaudio__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./lib/webaudio */ "./src/lib/webaudio.js");
+/* harmony import */ var _lib_mpeg1_wasm__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./lib/mpeg1-wasm */ "./src/lib/mpeg1-wasm.js");
+/* harmony import */ var _lib_mp2__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./lib/mp2 */ "./src/lib/mp2.js");
+/* harmony import */ var _lib_mp2_wasm__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./lib/mp2-wasm */ "./src/lib/mp2-wasm.js");
+/* harmony import */ var _lib_webgl__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./lib/webgl */ "./src/lib/webgl.js");
+/* harmony import */ var _lib_canvas2d__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./lib/canvas2d */ "./src/lib/canvas2d.js");
+/* harmony import */ var _lib_webaudio__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./lib/webaudio */ "./src/lib/webaudio.js");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./utils */ "./src/utils.js");
+/* harmony import */ var _lib_wasm_module__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./lib/wasm-module */ "./src/lib/wasm-module.js");
+/* harmony import */ var _lib_wasm_WASM_BINARY__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./lib/wasm/WASM_BINARY */ "./src/lib/wasm/WASM_BINARY.js");
 /**
  * According to jsmpeg project(https://github.com/phoboslab/jsmpeg)
  */
 // ES6 modular
+
+
+
+
+
 
 
 
@@ -1079,7 +1091,9 @@ var JSMpeg = {
   Decoder: {
     Base: _lib_decoder__WEBPACK_IMPORTED_MODULE_7__["default"],
     MPEG1Video: _lib_mpeg1__WEBPACK_IMPORTED_MODULE_8__["default"],
-    MP2Audio: _lib_mp2__WEBPACK_IMPORTED_MODULE_9__["default"]
+    MPEG1VideoWASM: _lib_mpeg1_wasm__WEBPACK_IMPORTED_MODULE_9__["default"],
+    MP2Audio: _lib_mp2__WEBPACK_IMPORTED_MODULE_10__["default"],
+    MP2AudioWASM: _lib_mp2_wasm__WEBPACK_IMPORTED_MODULE_11__["default"]
   },
   // A Renderer accepts raw YCrCb data in 3 separate buffers via the render()
   // method. Renderers typically convert the data into the RGBA color space
@@ -1088,8 +1102,8 @@ var JSMpeg = {
   //   .render(y, cr, cb) - pixel data as Uint8Arrays
   //   .enabled - wether the renderer does anything upon receiving data
   Renderer: {
-    WebGL: _lib_webgl__WEBPACK_IMPORTED_MODULE_10__["default"],
-    Canvas2D: _lib_canvas2d__WEBPACK_IMPORTED_MODULE_11__["default"]
+    WebGL: _lib_webgl__WEBPACK_IMPORTED_MODULE_12__["default"],
+    Canvas2D: _lib_canvas2d__WEBPACK_IMPORTED_MODULE_13__["default"]
   },
   // Audio Outputs accept raw Stero PCM data in 2 separate buffers via the
   // play() method. Outputs typically play the audio on the user's device.
@@ -1099,28 +1113,19 @@ var JSMpeg = {
   //   .enqueuedTime - float, in seconds
   //   .enabled - wether the output does anything upon receiving data
   AudioOutput: {
-    WebAudio: _lib_webaudio__WEBPACK_IMPORTED_MODULE_12__["default"]
+    WebAudio: _lib_webaudio__WEBPACK_IMPORTED_MODULE_14__["default"]
   },
+  WASMModule: _lib_wasm_module__WEBPACK_IMPORTED_MODULE_16__["default"],
   // functions
-  Now: function Now() {
-    return window.performance ? window.performance.now() / 1000 : Date.now() / 1000;
-  },
-  CreateVideoElements: function CreateVideoElements() {
-    var elements = document.querySelectorAll('.jsmpeg');
-
-    for (var i = 0; i < elements.length; i++) {
-      new _lib_video_element__WEBPACK_IMPORTED_MODULE_1__["default"](elements[i]);
-    }
-  },
-  Fill: function Fill(array, value) {
-    if (array.fill) {
-      array.fill(value);
-    } else {
-      for (var i = 0; i < array.length; i++) {
-        array[i] = value;
-      }
-    }
-  }
+  Now: _utils__WEBPACK_IMPORTED_MODULE_15__["Now"],
+  CreateVideoElements: _utils__WEBPACK_IMPORTED_MODULE_15__["CreateVideoElements"],
+  Fill: _utils__WEBPACK_IMPORTED_MODULE_15__["Fill"],
+  Base64ToArrayBuffer: _utils__WEBPACK_IMPORTED_MODULE_15__["Base64ToArrayBuffer"],
+  // The build process may append `JSMpeg.WASM_BINARY_INLINED = base64data;`
+  // to the minified source.
+  // If this property is present, jsmpeg will use the inlined binary data
+  // instead of trying to load a jsmpeg.wasm file via Ajax.
+  WASM_BINARY_INLINED: _lib_wasm_WASM_BINARY__WEBPACK_IMPORTED_MODULE_17__["default"]
 };
 /* harmony default export */ __webpack_exports__["default"] = (JSMpeg);
 
@@ -1135,7 +1140,7 @@ var JSMpeg = {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var ___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../ */ "./src/index.js");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils */ "./src/utils.js");
 
 
 var AjaxProgressiveSource = function AjaxProgressiveSource(url, options) {
@@ -1202,7 +1207,7 @@ AjaxProgressiveSource.prototype.loadNextChunk = function () {
   }
 
   this.isLoading = true;
-  this.loadStartTime = ___WEBPACK_IMPORTED_MODULE_0__["default"].Now();
+  this.loadStartTime = Object(_utils__WEBPACK_IMPORTED_MODULE_0__["Now"])();
   this.request = new XMLHttpRequest();
 
   this.request.onreadystatechange = function () {
@@ -1241,7 +1246,7 @@ AjaxProgressiveSource.prototype.onChunkLoad = function (data) {
     this.destination.write(data);
   }
 
-  this.loadTime = ___WEBPACK_IMPORTED_MODULE_0__["default"].Now() - this.loadStartTime;
+  this.loadTime = Object(_utils__WEBPACK_IMPORTED_MODULE_0__["Now"])() - this.loadStartTime;
 
   if (!this.throttled) {
     this.loadNextChunk();
@@ -1362,7 +1367,7 @@ BitBuffer.prototype.evict = function (sizeNeeded) {
     } else if (bytePos === 0) {
     // Nothing read yet - we can't evict anything
     return;
-  } // Some browsers don't support copyWithin() yet - we may have to do 
+  } // Some browsers don't support copyWithin() yet - we may have to do
   // it manually using set and a subarray
 
 
@@ -1374,16 +1379,15 @@ BitBuffer.prototype.evict = function (sizeNeeded) {
 
   this.byteLength = this.byteLength - bytePos;
   this.index -= bytePos << 3;
-  return;
 };
 
 BitBuffer.prototype.write = function (buffers) {
-  var isArrayOfBuffers = typeof buffers[0] === 'object',
-      totalLength = 0,
+  var isArrayOfBuffers = typeof buffers[0] === 'object';
+  var totalLength = 0,
       available = this.bytes.length - this.byteLength; // Calculate total byte length
 
   if (isArrayOfBuffers) {
-    var totalLength = 0;
+    totalLength = 0;
 
     for (var i = 0; i < buffers.length; i++) {
       totalLength += buffers[i].byteLength;
@@ -1403,12 +1407,14 @@ BitBuffer.prototype.write = function (buffers) {
   }
 
   if (isArrayOfBuffers) {
-    for (var i = 0; i < buffers.length; i++) {
-      this.appendSingleBuffer(buffers[i]);
+    for (var _i = 0; _i < buffers.length; _i++) {
+      this.appendSingleBuffer(buffers[_i]);
     }
   } else {
     this.appendSingleBuffer(buffers);
   }
+
+  return totalLength;
 };
 
 BitBuffer.prototype.appendSingleBuffer = function (buffer) {
@@ -1503,7 +1509,7 @@ BitBuffer.MODE = {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var ___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../ */ "./src/index.js");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils */ "./src/utils.js");
 
 
 var CanvasRenderer = function CanvasRenderer(options) {
@@ -1523,7 +1529,7 @@ CanvasRenderer.prototype.resize = function (width, height) {
   this.canvas.width = this.width;
   this.canvas.height = this.height;
   this.imageData = this.context.getImageData(0, 0, this.width, this.height);
-  ___WEBPACK_IMPORTED_MODULE_0__["default"].Fill(this.imageData.data, 255);
+  Object(_utils__WEBPACK_IMPORTED_MODULE_0__["Fill"])(this.imageData.data, 255);
 };
 
 CanvasRenderer.prototype.renderProgress = function (progress) {
@@ -1620,6 +1626,7 @@ var BaseDecoder = function BaseDecoder(options) {
   this.destination = null;
   this.canPlay = false;
   this.collectTimestamps = !options.streaming;
+  this.bytesWritten = 0;
   this.timestamps = [];
   this.timestampIndex = 0;
   this.startTime = 0;
@@ -1629,8 +1636,22 @@ var BaseDecoder = function BaseDecoder(options) {
   });
 };
 
+BaseDecoder.prototype.destroy = function () {};
+
 BaseDecoder.prototype.connect = function (destination) {
   this.destination = destination;
+};
+
+BaseDecoder.prototype.bufferGetIndex = function () {
+  return this.bits.index;
+};
+
+BaseDecoder.prototype.bufferSetIndex = function (index) {
+  this.bits.index = index;
+};
+
+BaseDecoder.prototype.bufferWrite = function (buffers) {
+  return this.bits.write(buffers);
 };
 
 BaseDecoder.prototype.write = function (pts, buffers) {
@@ -1641,12 +1662,12 @@ BaseDecoder.prototype.write = function (pts, buffers) {
     }
 
     this.timestamps.push({
-      index: this.bits.byteLength << 3,
+      index: this.bytesWritten << 3,
       time: pts
     });
   }
 
-  this.bits.write(buffers);
+  this.bytesWritten += this.bufferWrite(buffers);
   this.canPlay = true;
 };
 
@@ -1668,7 +1689,7 @@ BaseDecoder.prototype.seek = function (time) {
   var ts = this.timestamps[this.timestampIndex];
 
   if (ts) {
-    this.bits.index = ts.index;
+    this.bufferSetIndex(ts.index);
     this.decodedTime = ts.time;
   } else {
     this.bits.index = 0;
@@ -1683,9 +1704,10 @@ BaseDecoder.prototype.decode = function () {
 BaseDecoder.prototype.advanceDecodedTime = function (seconds) {
   if (this.collectTimestamps) {
     var newTimestampIndex = -1;
+    var currentIndex = this.bufferGetIndex();
 
     for (var i = this.timestampIndex; i < this.timestamps.length; i++) {
-      if (this.timestamps[i].index > this.bits.index) {
+      if (this.timestamps[i].index > currentIndex) {
         break;
       }
 
@@ -1713,6 +1735,131 @@ BaseDecoder.prototype.getCurrentTime = function () {
 
 /***/ }),
 
+/***/ "./src/lib/mp2-wasm.js":
+/*!*****************************!*\
+  !*** ./src/lib/mp2-wasm.js ***!
+  \*****************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _decoder__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./decoder */ "./src/lib/decoder.js");
+/* harmony import */ var _buffer__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./buffer */ "./src/lib/buffer.js");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../utils */ "./src/utils.js");
+// Based on kjmp2 by Martin J. Fiedler
+// http://keyj.emphy.de/kjmp2/
+
+
+
+
+var MP2WASM = function MP2WASM(options) {
+  _decoder__WEBPACK_IMPORTED_MODULE_0__["default"].call(this, options);
+  this.onDecodeCallback = options.onAudioDecode;
+  this.module = options.wasmModule;
+  this.bufferSize = options.audioBufferSize || 128 * 1024;
+  this.bufferMode = options.streaming ? _buffer__WEBPACK_IMPORTED_MODULE_1__["default"].MODE.EVICT : _buffer__WEBPACK_IMPORTED_MODULE_1__["default"].MODE.EXPAND;
+  this.sampleRate = 0;
+};
+
+MP2WASM.prototype = Object.create(_decoder__WEBPACK_IMPORTED_MODULE_0__["default"].prototype);
+MP2WASM.prototype.constructor = MP2WASM;
+
+MP2WASM.prototype.initializeWasmDecoder = function () {
+  if (!this.module.instance) {
+    console.warn('JSMpeg: WASM module not compiled yet');
+    return;
+  }
+
+  this.instance = this.module.instance;
+  this.functions = this.module.instance.exports;
+  this.decoder = this.functions._mp2_decoder_create(this.bufferSize, this.bufferMode);
+};
+
+MP2WASM.prototype.destroy = function () {
+  this.functions._mp2_decoder_destroy(this.decoder);
+};
+
+MP2WASM.prototype.bufferGetIndex = function () {
+  return this.functions._mp2_decoder_get_index(this.decoder);
+};
+
+MP2WASM.prototype.bufferSetIndex = function (index) {
+  this.functions._mp2_decoder_set_index(this.decoder, index);
+};
+
+MP2WASM.prototype.bufferWrite = function (buffers) {
+  if (!this.decoder) {
+    this.initializeWasmDecoder();
+  }
+
+  var totalLength = 0;
+
+  for (var i = 0; i < buffers.length; i++) {
+    totalLength += buffers[i].length;
+  }
+
+  var ptr = this.functions._mp2_decoder_get_write_ptr(this.decoder, totalLength);
+
+  for (var _i = 0; _i < buffers.length; _i++) {
+    this.instance.heapU8.set(buffers[_i], ptr);
+    ptr += buffers[_i].length;
+  }
+
+  this.functions._mp2_decoder_did_write(this.decoder, totalLength);
+
+  return totalLength;
+};
+
+MP2WASM.prototype.decode = function () {
+  var startTime = Object(_utils__WEBPACK_IMPORTED_MODULE_2__["Now"])();
+
+  if (!this.decoder) {
+    return false;
+  }
+
+  var decodedBytes = this.functions._mp2_decoder_decode(this.decoder);
+
+  if (decodedBytes === 0) {
+    return false;
+  }
+
+  if (!this.sampleRate) {
+    this.sampleRate = this.functions._mp2_decoder_get_sample_rate(this.decoder);
+  }
+
+  if (this.destination) {
+    // Create a Float32 View into the modules output channel data
+    var leftPtr = this.functions._mp2_decoder_get_left_channel_ptr(this.decoder),
+        rightPtr = this.functions._mp2_decoder_get_right_channel_ptr(this.decoder);
+
+    var leftOffset = leftPtr / Float32Array.BYTES_PER_ELEMENT,
+        rightOffset = rightPtr / Float32Array.BYTES_PER_ELEMENT;
+    var left = this.instance.heapF32.subarray(leftOffset, leftOffset + MP2WASM.SAMPLES_PER_FRAME),
+        right = this.instance.heapF32.subarray(rightOffset, rightOffset + MP2WASM.SAMPLES_PER_FRAME);
+    this.destination.play(this.sampleRate, left, right);
+  }
+
+  this.advanceDecodedTime(MP2WASM.SAMPLES_PER_FRAME / this.sampleRate);
+  var elapsedTime = Object(_utils__WEBPACK_IMPORTED_MODULE_2__["Now"])() - startTime;
+
+  if (this.onDecodeCallback) {
+    this.onDecodeCallback(this, elapsedTime);
+  }
+
+  return true;
+};
+
+MP2WASM.prototype.getCurrentTime = function () {
+  var enqueuedTime = this.destination ? this.destination.enqueuedTime : 0;
+  return this.decodedTime - enqueuedTime;
+};
+
+MP2WASM.SAMPLES_PER_FRAME = 1152;
+/* harmony default export */ __webpack_exports__["default"] = (MP2WASM);
+
+/***/ }),
+
 /***/ "./src/lib/mp2.js":
 /*!************************!*\
   !*** ./src/lib/mp2.js ***!
@@ -1722,18 +1869,21 @@ BaseDecoder.prototype.getCurrentTime = function () {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var ___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../ */ "./src/index.js");
-/* harmony import */ var _decoder__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./decoder */ "./src/lib/decoder.js");
+/* harmony import */ var _decoder__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./decoder */ "./src/lib/decoder.js");
+/* harmony import */ var _buffer__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./buffer */ "./src/lib/buffer.js");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../utils */ "./src/utils.js");
 // Based on kjmp2 by Martin J. Fiedler
 // http://keyj.emphy.de/kjmp2/
 
 
 
+
 var MP2 = function MP2(options) {
-  ___WEBPACK_IMPORTED_MODULE_0__["default"].Decoder.Base.call(this, options);
+  _decoder__WEBPACK_IMPORTED_MODULE_0__["default"].call(this, options);
+  this.onDecodeCallback = options.onAudioDecode;
   var bufferSize = options.audioBufferSize || 128 * 1024;
-  var bufferMode = options.streaming ? ___WEBPACK_IMPORTED_MODULE_0__["default"].BitBuffer.MODE.EVICT : ___WEBPACK_IMPORTED_MODULE_0__["default"].BitBuffer.MODE.EXPAND;
-  this.bits = new ___WEBPACK_IMPORTED_MODULE_0__["default"].BitBuffer(bufferSize, bufferMode);
+  var bufferMode = options.streaming ? _buffer__WEBPACK_IMPORTED_MODULE_1__["default"].MODE.EVICT : _buffer__WEBPACK_IMPORTED_MODULE_1__["default"].MODE.EXPAND;
+  this.bits = new _buffer__WEBPACK_IMPORTED_MODULE_1__["default"](bufferSize, bufferMode);
   this.left = new Float32Array(1152);
   this.right = new Float32Array(1152);
   this.sampleRate = 44100;
@@ -1756,10 +1906,11 @@ var MP2 = function MP2(options) {
   }
 };
 
-MP2.prototype = Object.create(_decoder__WEBPACK_IMPORTED_MODULE_1__["default"].prototype);
+MP2.prototype = Object.create(_decoder__WEBPACK_IMPORTED_MODULE_0__["default"].prototype);
 MP2.prototype.constructor = MP2;
 
 MP2.prototype.decode = function () {
+  var startTime = Object(_utils__WEBPACK_IMPORTED_MODULE_2__["Now"])();
   var pos = this.bits.index >> 3;
 
   if (pos >= this.bits.byteLength) {
@@ -1778,6 +1929,12 @@ MP2.prototype.decode = function () {
   }
 
   this.advanceDecodedTime(this.left.length / this.sampleRate);
+  var elapsedTime = Object(_utils__WEBPACK_IMPORTED_MODULE_2__["Now"])() - startTime;
+
+  if (this.onDecodeCallback) {
+    this.onDecodeCallback(this, elapsedTime);
+  }
+
   return true;
 };
 
@@ -1836,9 +1993,9 @@ MP2.prototype.decodeFrame = function (left, right) {
   } // Compute the frame size
 
 
-  var bitrate = MP2.BIT_RATE[bitrateIndex],
-      sampleRate = MP2.SAMPLE_RATE[sampleRateIndex],
-      frameSize = 144000 * bitrate / sampleRate + padding | 0; // Prepare the quantizer table lookups
+  var bitrate = MP2.BIT_RATE[bitrateIndex];
+  sampleRate = MP2.SAMPLE_RATE[sampleRateIndex];
+  var frameSize = 144000 * bitrate / sampleRate + padding | 0; // Prepare the quantizer table lookups
 
   var tab3 = 0;
   var sblimit = 0;
@@ -1866,32 +2023,32 @@ MP2.prototype.decodeFrame = function (left, right) {
     this.allocation[1][sb] = this.readAllocation(sb, tab3);
   }
 
-  for (var sb = bound; sb < sblimit; sb++) {
-    this.allocation[0][sb] = this.allocation[1][sb] = this.readAllocation(sb, tab3);
+  for (var _sb = bound; _sb < sblimit; _sb++) {
+    this.allocation[0][_sb] = this.allocation[1][_sb] = this.readAllocation(_sb, tab3);
   } // Read scale factor selector information
 
 
   var channels = mode === MP2.MODE.MONO ? 1 : 2;
 
-  for (var sb = 0; sb < sblimit; sb++) {
-    for (ch = 0; ch < channels; ch++) {
-      if (this.allocation[ch][sb]) {
-        this.scaleFactorInfo[ch][sb] = this.bits.read(2);
+  for (var _sb2 = 0; _sb2 < sblimit; _sb2++) {
+    for (var ch = 0; ch < channels; ch++) {
+      if (this.allocation[ch][_sb2]) {
+        this.scaleFactorInfo[ch][_sb2] = this.bits.read(2);
       }
     }
 
     if (mode === MP2.MODE.MONO) {
-      this.scaleFactorInfo[1][sb] = this.scaleFactorInfo[0][sb];
+      this.scaleFactorInfo[1][_sb2] = this.scaleFactorInfo[0][_sb2];
     }
   } // Read scale factors
 
 
-  for (var sb = 0; sb < sblimit; sb++) {
-    for (var ch = 0; ch < channels; ch++) {
-      if (this.allocation[ch][sb]) {
-        var sf = this.scaleFactor[ch][sb];
+  for (var _sb3 = 0; _sb3 < sblimit; _sb3++) {
+    for (var _ch = 0; _ch < channels; _ch++) {
+      if (this.allocation[_ch][_sb3]) {
+        var sf = this.scaleFactor[_ch][_sb3];
 
-        switch (this.scaleFactorInfo[ch][sb]) {
+        switch (this.scaleFactorInfo[_ch][_sb3]) {
           case 0:
             sf[0] = this.bits.read(6);
             sf[1] = this.bits.read(6);
@@ -1916,9 +2073,9 @@ MP2.prototype.decodeFrame = function (left, right) {
     }
 
     if (mode === MP2.MODE.MONO) {
-      this.scaleFactor[1][sb][0] = this.scaleFactor[0][sb][0];
-      this.scaleFactor[1][sb][1] = this.scaleFactor[0][sb][1];
-      this.scaleFactor[1][sb][2] = this.scaleFactor[0][sb][2];
+      this.scaleFactor[1][_sb3][0] = this.scaleFactor[0][_sb3][0];
+      this.scaleFactor[1][_sb3][1] = this.scaleFactor[0][_sb3][1];
+      this.scaleFactor[1][_sb3][2] = this.scaleFactor[0][_sb3][2];
     }
   } // Coefficient input and reconstruction
 
@@ -1928,25 +2085,25 @@ MP2.prototype.decodeFrame = function (left, right) {
   for (var part = 0; part < 3; part++) {
     for (var granule = 0; granule < 4; granule++) {
       // Read the samples
-      for (var sb = 0; sb < bound; sb++) {
-        this.readSamples(0, sb, part);
-        this.readSamples(1, sb, part);
+      for (var _sb4 = 0; _sb4 < bound; _sb4++) {
+        this.readSamples(0, _sb4, part);
+        this.readSamples(1, _sb4, part);
       }
 
-      for (var sb = bound; sb < sblimit; sb++) {
-        this.readSamples(0, sb, part);
-        this.sample[1][sb][0] = this.sample[0][sb][0];
-        this.sample[1][sb][1] = this.sample[0][sb][1];
-        this.sample[1][sb][2] = this.sample[0][sb][2];
+      for (var _sb5 = bound; _sb5 < sblimit; _sb5++) {
+        this.readSamples(0, _sb5, part);
+        this.sample[1][_sb5][0] = this.sample[0][_sb5][0];
+        this.sample[1][_sb5][1] = this.sample[0][_sb5][1];
+        this.sample[1][_sb5][2] = this.sample[0][_sb5][2];
       }
 
-      for (var sb = sblimit; sb < 32; sb++) {
-        this.sample[0][sb][0] = 0;
-        this.sample[0][sb][1] = 0;
-        this.sample[0][sb][2] = 0;
-        this.sample[1][sb][0] = 0;
-        this.sample[1][sb][1] = 0;
-        this.sample[1][sb][2] = 0;
+      for (var _sb6 = sblimit; _sb6 < 32; _sb6++) {
+        this.sample[0][_sb6][0] = 0;
+        this.sample[0][_sb6][1] = 0;
+        this.sample[0][_sb6][2] = 0;
+        this.sample[1][_sb6][0] = 0;
+        this.sample[1][_sb6][1] = 0;
+        this.sample[1][_sb6][2] = 0;
       } // Synthesis loop
 
 
@@ -1954,10 +2111,10 @@ MP2.prototype.decodeFrame = function (left, right) {
         // Shifting step
         this.VPos = this.VPos - 64 & 1023;
 
-        for (var ch = 0; ch < 2; ch++) {
-          MP2.MatrixTransform(this.sample[ch], p, this.V, this.VPos); // Build U, windowing, calculate output
+        for (var _ch2 = 0; _ch2 < 2; _ch2++) {
+          MP2.MatrixTransform(this.sample[_ch2], p, this.V, this.VPos); // Build U, windowing, calculate output
 
-          ___WEBPACK_IMPORTED_MODULE_0__["default"].Fill(this.U, 0);
+          Object(_utils__WEBPACK_IMPORTED_MODULE_2__["Fill"])(this.U, 0);
           var dIndex = 512 - (this.VPos >> 1);
           var vIndex = this.VPos % 128 >> 1;
 
@@ -1974,8 +2131,8 @@ MP2.prototype.decodeFrame = function (left, right) {
           dIndex -= 512 - 32;
 
           while (vIndex < 1024) {
-            for (var i = 0; i < 32; ++i) {
-              this.U[i] += this.D[dIndex++] * this.V[vIndex++];
+            for (var _i = 0; _i < 32; ++_i) {
+              this.U[_i] += this.D[dIndex++] * this.V[vIndex++];
             }
 
             vIndex += 128 - 32;
@@ -1983,7 +2140,7 @@ MP2.prototype.decodeFrame = function (left, right) {
           } // Output samples
 
 
-          var outChannel = ch === 0 ? left : right;
+          var outChannel = _ch2 === 0 ? left : right;
 
           for (var j = 0; j < 32; j++) {
             outChannel[outPos + j] = this.U[j] / 2147418112;
@@ -2463,6 +2620,146 @@ MP2.QUANT_TAB = [{
 
 /***/ }),
 
+/***/ "./src/lib/mpeg1-wasm.js":
+/*!*******************************!*\
+  !*** ./src/lib/mpeg1-wasm.js ***!
+  \*******************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _decoder__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./decoder */ "./src/lib/decoder.js");
+/* harmony import */ var _buffer__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./buffer */ "./src/lib/buffer.js");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../utils */ "./src/utils.js");
+
+
+
+
+var MPEG1WASM = function MPEG1WASM(options) {
+  _decoder__WEBPACK_IMPORTED_MODULE_0__["default"].call(this, options);
+  this.onDecodeCallback = options.onVideoDecode;
+  this.module = options.wasmModule;
+  this.bufferSize = options.videoBufferSize || 512 * 1024;
+  this.bufferMode = options.streaming ? _buffer__WEBPACK_IMPORTED_MODULE_1__["default"].MODE.EVICT : _buffer__WEBPACK_IMPORTED_MODULE_1__["default"].MODE.EXPAND;
+  this.decodeFirstFrame = options.decodeFirstFrame !== false;
+  this.hasSequenceHeader = false;
+};
+
+MPEG1WASM.prototype = Object.create(_decoder__WEBPACK_IMPORTED_MODULE_0__["default"].prototype);
+MPEG1WASM.prototype.constructor = MPEG1WASM;
+
+MPEG1WASM.prototype.initializeWasmDecoder = function () {
+  if (!this.module.instance) {
+    console.warn('JSMpeg: WASM module not compiled yet');
+    return;
+  }
+
+  this.instance = this.module.instance;
+  this.functions = this.module.instance.exports;
+  this.decoder = this.functions._mpeg1_decoder_create(this.bufferSize, this.bufferMode);
+};
+
+MPEG1WASM.prototype.destroy = function () {
+  this.functions._mpeg1_decoder_destroy(this.decoder);
+};
+
+MPEG1WASM.prototype.bufferGetIndex = function () {
+  return this.functions._mpeg1_decoder_get_index(this.decoder);
+};
+
+MPEG1WASM.prototype.bufferSetIndex = function (index) {
+  this.functions._mpeg1_decoder_set_index(this.decoder, index);
+};
+
+MPEG1WASM.prototype.bufferWrite = function (buffers) {
+  if (!this.decoder) {
+    this.initializeWasmDecoder();
+  }
+
+  var totalLength = 0;
+
+  for (var i = 0; i < buffers.length; i++) {
+    totalLength += buffers[i].length;
+  }
+
+  var ptr = this.functions._mpeg1_decoder_get_write_ptr(this.decoder, totalLength);
+
+  for (var _i = 0; _i < buffers.length; _i++) {
+    this.instance.heapU8.set(buffers[_i], ptr);
+    ptr += buffers[_i].length;
+  }
+
+  this.functions._mpeg1_decoder_did_write(this.decoder, totalLength);
+
+  return totalLength;
+};
+
+MPEG1WASM.prototype.write = function (pts, buffers) {
+  _decoder__WEBPACK_IMPORTED_MODULE_0__["default"].prototype.write.call(this, pts, buffers);
+
+  if (!this.hasSequenceHeader && this.functions._mpeg1_decoder_has_sequence_header(this.decoder)) {
+    this.loadSequnceHeader();
+  }
+};
+
+MPEG1WASM.prototype.loadSequnceHeader = function () {
+  this.hasSequenceHeader = true;
+  this.frameRate = this.functions._mpeg1_decoder_get_frame_rate(this.decoder);
+  this.codedSize = this.functions._mpeg1_decoder_get_coded_size(this.decoder);
+
+  if (this.destination) {
+    var w = this.functions._mpeg1_decoder_get_width(this.decoder);
+
+    var h = this.functions._mpeg1_decoder_get_height(this.decoder);
+
+    this.destination.resize(w, h);
+  }
+
+  if (this.decodeFirstFrame) {
+    this.decode();
+  }
+};
+
+MPEG1WASM.prototype.decode = function () {
+  var startTime = Object(_utils__WEBPACK_IMPORTED_MODULE_2__["Now"])();
+
+  if (!this.decoder) {
+    return false;
+  }
+
+  var didDecode = this.functions._mpeg1_decoder_decode(this.decoder);
+
+  if (!didDecode) {
+    return false;
+  } // Invoke decode callbacks
+
+
+  if (this.destination) {
+    var ptrY = this.functions._mpeg1_decoder_get_y_ptr(this.decoder),
+        ptrCr = this.functions._mpeg1_decoder_get_cr_ptr(this.decoder),
+        ptrCb = this.functions._mpeg1_decoder_get_cb_ptr(this.decoder);
+
+    var dy = this.instance.heapU8.subarray(ptrY, ptrY + this.codedSize);
+    var dcr = this.instance.heapU8.subarray(ptrCr, ptrCr + (this.codedSize >> 2));
+    var dcb = this.instance.heapU8.subarray(ptrCb, ptrCb + (this.codedSize >> 2));
+    this.destination.render(dy, dcr, dcb, false);
+  }
+
+  this.advanceDecodedTime(1 / this.frameRate);
+  var elapsedTime = Object(_utils__WEBPACK_IMPORTED_MODULE_2__["Now"])() - startTime;
+
+  if (this.onDecodeCallback) {
+    this.onDecodeCallback(this, elapsedTime);
+  }
+
+  return true;
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (MPEG1WASM);
+
+/***/ }),
+
 /***/ "./src/lib/mpeg1.js":
 /*!**************************!*\
   !*** ./src/lib/mpeg1.js ***!
@@ -2472,18 +2769,21 @@ MP2.QUANT_TAB = [{
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var ___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../ */ "./src/index.js");
-/* harmony import */ var _decoder__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./decoder */ "./src/lib/decoder.js");
+/* harmony import */ var _decoder__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./decoder */ "./src/lib/decoder.js");
+/* harmony import */ var _buffer__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./buffer */ "./src/lib/buffer.js");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../utils */ "./src/utils.js");
 // Inspired by Java MPEG-1 Video Decoder and Player by Zoltan Korandi
 // https://sourceforge.net/projects/javampeg1video/
 
 
 
+
 var MPEG1 = function MPEG1(options) {
-  ___WEBPACK_IMPORTED_MODULE_0__["default"].Decoder.Base.call(this, options);
+  _decoder__WEBPACK_IMPORTED_MODULE_0__["default"].call(this, options);
+  this.onDecodeCallback = options.onVideoDecode;
   var bufferSize = options.videoBufferSize || 512 * 1024;
-  var bufferMode = options.streaming ? ___WEBPACK_IMPORTED_MODULE_0__["default"].BitBuffer.MODE.EVICT : ___WEBPACK_IMPORTED_MODULE_0__["default"].BitBuffer.MODE.EXPAND;
-  this.bits = new ___WEBPACK_IMPORTED_MODULE_0__["default"].BitBuffer(bufferSize, bufferMode);
+  var bufferMode = options.streaming ? _buffer__WEBPACK_IMPORTED_MODULE_1__["default"].MODE.EVICT : _buffer__WEBPACK_IMPORTED_MODULE_1__["default"].MODE.EXPAND;
+  this.bits = new _buffer__WEBPACK_IMPORTED_MODULE_1__["default"](bufferSize, bufferMode);
   this.customIntraQuantMatrix = new Uint8Array(64);
   this.customNonIntraQuantMatrix = new Uint8Array(64);
   this.blockData = new Int32Array(64);
@@ -2491,11 +2791,11 @@ var MPEG1 = function MPEG1(options) {
   this.decodeFirstFrame = options.decodeFirstFrame !== false;
 };
 
-MPEG1.prototype = Object.create(_decoder__WEBPACK_IMPORTED_MODULE_1__["default"].prototype);
+MPEG1.prototype = Object.create(_decoder__WEBPACK_IMPORTED_MODULE_0__["default"].prototype);
 MPEG1.prototype.constructor = MPEG1;
 
 MPEG1.prototype.write = function (pts, buffers) {
-  ___WEBPACK_IMPORTED_MODULE_0__["default"].Decoder.Base.prototype.write.call(this, pts, buffers);
+  _decoder__WEBPACK_IMPORTED_MODULE_0__["default"].prototype.write.call(this, pts, buffers);
 
   if (!this.hasSequenceHeader) {
     if (this.bits.findStartCode(MPEG1.START.SEQUENCE) === -1) {
@@ -2511,6 +2811,8 @@ MPEG1.prototype.write = function (pts, buffers) {
 };
 
 MPEG1.prototype.decode = function () {
+  var startTime = Object(_utils__WEBPACK_IMPORTED_MODULE_2__["Now"])();
+
   if (!this.hasSequenceHeader) {
     return false;
   }
@@ -2522,6 +2824,12 @@ MPEG1.prototype.decode = function () {
 
   this.decodePicture();
   this.advanceDecodedTime(1 / this.frameRate);
+  var elapsedTime = Object(_utils__WEBPACK_IMPORTED_MODULE_2__["Now"])() - startTime;
+
+  if (this.onDecodeCallback) {
+    this.onDecodeCallback(this, elapsedTime);
+  }
+
   return true;
 };
 
@@ -2568,8 +2876,8 @@ MPEG1.prototype.decodeSequenceHeader = function () {
 
   if (this.bits.read(1)) {
     // load custom non intra quant matrix?
-    for (var i = 0; i < 64; i++) {
-      var idx = MPEG1.ZIG_ZAG[i];
+    for (var _i = 0; _i < 64; _i++) {
+      var idx = MPEG1.ZIG_ZAG[_i];
       this.customNonIntraQuantMatrix[idx] = this.bits.read(8);
     }
 
@@ -2664,7 +2972,7 @@ MPEG1.prototype.decodePicture = function (skipOutput) {
 
 
   if (this.destination) {
-    this.destination.render(this.currentY, this.currentCr, this.currentCb);
+    this.destination.render(this.currentY, this.currentCr, this.currentCb, true);
   } // If this is a reference picutre then rotate the prediction pointers
 
 
@@ -3255,7 +3563,7 @@ MPEG1.prototype.decodeBlock = function (block) {
     } else {
       MPEG1.IDCT(this.blockData);
       MPEG1.CopyBlockToDestination(this.blockData, destArray, destIndex, scan);
-      ___WEBPACK_IMPORTED_MODULE_0__["default"].Fill(this.blockData, 0);
+      Object(_utils__WEBPACK_IMPORTED_MODULE_2__["Fill"])(this.blockData, 0);
     }
   } else {
     // Add data to the predicted macroblock
@@ -3265,7 +3573,7 @@ MPEG1.prototype.decodeBlock = function (block) {
     } else {
       MPEG1.IDCT(this.blockData);
       MPEG1.AddBlockToDestination(this.blockData, destArray, destIndex, scan);
-      ___WEBPACK_IMPORTED_MODULE_0__["default"].Fill(this.blockData, 0);
+      Object(_utils__WEBPACK_IMPORTED_MODULE_2__["Fill"])(this.blockData, 0);
     }
   }
 
@@ -3359,33 +3667,33 @@ MPEG1.IDCT = function (block) {
   } // Transform rows
 
 
-  for (var i = 0; i < 64; i += 8) {
-    b1 = block[4 + i];
-    b3 = block[2 + i] + block[6 + i];
-    b4 = block[5 + i] - block[3 + i];
-    tmp1 = block[1 + i] + block[7 + i];
-    tmp2 = block[3 + i] + block[5 + i];
-    b6 = block[1 + i] - block[7 + i];
+  for (var _i2 = 0; _i2 < 64; _i2 += 8) {
+    b1 = block[4 + _i2];
+    b3 = block[2 + _i2] + block[6 + _i2];
+    b4 = block[5 + _i2] - block[3 + _i2];
+    tmp1 = block[1 + _i2] + block[7 + _i2];
+    tmp2 = block[3 + _i2] + block[5 + _i2];
+    b6 = block[1 + _i2] - block[7 + _i2];
     b7 = tmp1 + tmp2;
-    m0 = block[0 + i];
+    m0 = block[0 + _i2];
     x4 = (b6 * 473 - b4 * 196 + 128 >> 8) - b7;
     x0 = x4 - ((tmp1 - tmp2) * 362 + 128 >> 8);
     x1 = m0 - b1;
-    x2 = ((block[2 + i] - block[6 + i]) * 362 + 128 >> 8) - b3;
+    x2 = ((block[2 + _i2] - block[6 + _i2]) * 362 + 128 >> 8) - b3;
     x3 = m0 + b1;
     y3 = x1 + x2;
     y4 = x3 + b3;
     y5 = x1 - x2;
     y6 = x3 - b3;
     y7 = -x0 - (b4 * 473 + b6 * 196 + 128 >> 8);
-    block[0 + i] = b7 + y4 + 128 >> 8;
-    block[1 + i] = x4 + y3 + 128 >> 8;
-    block[2 + i] = y5 - x0 + 128 >> 8;
-    block[3 + i] = y6 - y7 + 128 >> 8;
-    block[4 + i] = y6 + y7 + 128 >> 8;
-    block[5 + i] = x0 + y5 + 128 >> 8;
-    block[6 + i] = y3 - x4 + 128 >> 8;
-    block[7 + i] = y4 - b7 + 128 >> 8;
+    block[0 + _i2] = b7 + y4 + 128 >> 8;
+    block[1 + _i2] = x4 + y3 + 128 >> 8;
+    block[2 + _i2] = y5 - x0 + 128 >> 8;
+    block[3 + _i2] = y6 - y7 + 128 >> 8;
+    block[4 + _i2] = y6 + y7 + 128 >> 8;
+    block[5 + _i2] = x0 + y5 + 128 >> 8;
+    block[6 + _i2] = y3 - x4 + 128 >> 8;
+    block[7 + _i2] = y4 - b7 + 128 >> 8;
   }
 }; // VLC Tables and Constants
 
@@ -4018,7 +4326,33 @@ MPEG1.START = {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var ___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../ */ "./src/index.js");
+/* harmony import */ var _ajax__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ajax */ "./src/lib/ajax.js");
+/* harmony import */ var _ajax_progressive__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ajax-progressive */ "./src/lib/ajax-progressive.js");
+/* harmony import */ var _websocket__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./websocket */ "./src/lib/websocket.js");
+/* harmony import */ var _ts__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./ts */ "./src/lib/ts.js");
+/* harmony import */ var _mpeg1__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./mpeg1 */ "./src/lib/mpeg1.js");
+/* harmony import */ var _mpeg1_wasm__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./mpeg1-wasm */ "./src/lib/mpeg1-wasm.js");
+/* harmony import */ var _mp2__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./mp2 */ "./src/lib/mp2.js");
+/* harmony import */ var _mp2_wasm__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./mp2-wasm */ "./src/lib/mp2-wasm.js");
+/* harmony import */ var _webgl__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./webgl */ "./src/lib/webgl.js");
+/* harmony import */ var _canvas2d__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./canvas2d */ "./src/lib/canvas2d.js");
+/* harmony import */ var _webaudio__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./webaudio */ "./src/lib/webaudio.js");
+/* harmony import */ var _wasm_module__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./wasm-module */ "./src/lib/wasm-module.js");
+/* harmony import */ var _wasm_WASM_BINARY__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./wasm/WASM_BINARY */ "./src/lib/wasm/WASM_BINARY.js");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../utils */ "./src/utils.js");
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /**
  * @param url
@@ -4035,33 +4369,38 @@ var Player = function Player(url, options, cbUI) {
     this.source = new options.source(url, options);
     options.streaming = !!this.source.streaming;
   } else if (url.match(/^wss?:\/\//)) {
-    this.source = new ___WEBPACK_IMPORTED_MODULE_0__["default"].Source.WebSocket(url, options);
+    this.source = new _websocket__WEBPACK_IMPORTED_MODULE_2__["default"](url, options);
     options.streaming = true;
   } else if (options.progressive) {
-    this.source = new ___WEBPACK_IMPORTED_MODULE_0__["default"].Source.AjaxProgressive(url, options);
+    this.source = new _ajax_progressive__WEBPACK_IMPORTED_MODULE_1__["default"](url, options);
     options.streaming = false;
   } else {
-    this.source = new ___WEBPACK_IMPORTED_MODULE_0__["default"].Source.Ajax(url, options);
+    this.source = new _ajax__WEBPACK_IMPORTED_MODULE_0__["default"](url, options);
     options.streaming = false;
   }
 
   this.maxAudioLag = options.maxAudioLag || 0.25;
   this.loop = options.loop !== false;
   this.autoplay = !!options.autoplay || options.streaming;
-  this.demuxer = new ___WEBPACK_IMPORTED_MODULE_0__["default"].Demuxer.TS(options);
+  this.demuxer = new _ts__WEBPACK_IMPORTED_MODULE_3__["default"](options);
   this.source.connect(this.demuxer);
 
+  if (!options.disableWebAssembly && _wasm_module__WEBPACK_IMPORTED_MODULE_11__["default"].IsSupported()) {
+    this.wasmModule = new _wasm_module__WEBPACK_IMPORTED_MODULE_11__["default"]();
+    options.wasmModule = this.wasmModule;
+  }
+
   if (options.video !== false) {
-    this.video = new ___WEBPACK_IMPORTED_MODULE_0__["default"].Decoder.MPEG1Video(options);
-    this.renderer = !options.disableGl && ___WEBPACK_IMPORTED_MODULE_0__["default"].Renderer.WebGL.IsSupported() ? new ___WEBPACK_IMPORTED_MODULE_0__["default"].Renderer.WebGL(options) : new ___WEBPACK_IMPORTED_MODULE_0__["default"].Renderer.Canvas2D(options);
-    this.demuxer.connect(___WEBPACK_IMPORTED_MODULE_0__["default"].Demuxer.TS.STREAM.VIDEO_1, this.video);
+    this.video = options.wasmModule ? new _mpeg1_wasm__WEBPACK_IMPORTED_MODULE_5__["default"](options) : new _mpeg1__WEBPACK_IMPORTED_MODULE_4__["default"](options);
+    this.renderer = !options.disableGl && _webgl__WEBPACK_IMPORTED_MODULE_8__["default"].IsSupported() ? new _webgl__WEBPACK_IMPORTED_MODULE_8__["default"](options) : new _canvas2d__WEBPACK_IMPORTED_MODULE_9__["default"](options);
+    this.demuxer.connect(_ts__WEBPACK_IMPORTED_MODULE_3__["default"].STREAM.VIDEO_1, this.video);
     this.video.connect(this.renderer);
   }
 
-  if (options.audio !== false && ___WEBPACK_IMPORTED_MODULE_0__["default"].AudioOutput.WebAudio.IsSupported()) {
-    this.audio = new ___WEBPACK_IMPORTED_MODULE_0__["default"].Decoder.MP2Audio(options);
-    this.audioOut = new ___WEBPACK_IMPORTED_MODULE_0__["default"].AudioOutput.WebAudio(options);
-    this.demuxer.connect(___WEBPACK_IMPORTED_MODULE_0__["default"].Demuxer.TS.STREAM.AUDIO_1, this.audio);
+  if (options.audio !== false && _webaudio__WEBPACK_IMPORTED_MODULE_10__["default"].IsSupported()) {
+    this.audio = options.wasmModule ? new _mp2_wasm__WEBPACK_IMPORTED_MODULE_7__["default"](options) : new _mp2__WEBPACK_IMPORTED_MODULE_6__["default"](options);
+    this.audioOut = new _webaudio__WEBPACK_IMPORTED_MODULE_10__["default"](options);
+    this.demuxer.connect(_ts__WEBPACK_IMPORTED_MODULE_3__["default"].STREAM.AUDIO_1, this.audio);
     this.audio.connect(this.audioOut);
   }
 
@@ -4077,8 +4416,24 @@ var Player = function Player(url, options, cbUI) {
 
   if (options.pauseWhenHidden !== false) {
     document.addEventListener('visibilitychange', this.showHide.bind(this));
-  }
+  } // If we have WebAssembly support, wait until the module is compiled before
+  // loading the source. Otherwise the decoders won't know what to do with
+  // the source data.
 
+
+  if (this.wasmModule) {
+    if (_wasm_WASM_BINARY__WEBPACK_IMPORTED_MODULE_12__["default"]) {
+      var wasm = Object(_utils__WEBPACK_IMPORTED_MODULE_13__["Base64ToArrayBuffer"])(_wasm_WASM_BINARY__WEBPACK_IMPORTED_MODULE_12__["default"]);
+      this.wasmModule.loadFromBuffer(wasm, this.startLoading.bind(this));
+    } else {
+      this.wasmModule.loadFromFile('jsmpeg.wasm', this.startLoading.bind(this));
+    }
+  } else {
+    this.startLoading();
+  }
+};
+
+Player.prototype.startLoading = function () {
   this.source.start();
 
   if (this.autoplay) {
@@ -4147,8 +4502,10 @@ Player.prototype.stop = function (ev) {
 Player.prototype.destroy = function () {
   this.pause();
   this.source.destroy();
-  this.renderer.destroy();
-  this.audioOut.destroy();
+  this.video && this.video.destroy();
+  this.renderer && this.renderer.destroy();
+  this.audio && this.audio.destroy();
+  this.audioOut && this.audioOut.destroy();
 };
 
 Player.prototype.seek = function (time) {
@@ -4162,7 +4519,7 @@ Player.prototype.seek = function (time) {
     this.audio.seek(time + startOffset);
   }
 
-  this.startTime = ___WEBPACK_IMPORTED_MODULE_0__["default"].Now() - time;
+  this.startTime = Object(_utils__WEBPACK_IMPORTED_MODULE_13__["Now"])() - time;
 };
 
 Player.prototype.getCurrentTime = function () {
@@ -4186,7 +4543,7 @@ Player.prototype.update = function () {
 
   if (!this.isPlaying) {
     this.isPlaying = true;
-    this.startTime = ___WEBPACK_IMPORTED_MODULE_0__["default"].Now() - this.currentTime;
+    this.startTime = Object(_utils__WEBPACK_IMPORTED_MODULE_13__["Now"])() - this.currentTime;
   }
 
   if (this.options.streaming) {
@@ -4240,7 +4597,7 @@ Player.prototype.updateForStaticFile = function () {
     headroom = this.demuxer.currentTime - this.audio.currentTime;
   } else if (this.video) {
     // Video only - sync it to player's wallclock
-    var targetTime = ___WEBPACK_IMPORTED_MODULE_0__["default"].Now() - this.startTime + this.video.startTime,
+    var targetTime = Object(_utils__WEBPACK_IMPORTED_MODULE_13__["Now"])() - this.startTime + this.video.startTime,
         lateTime = targetTime - this.video.currentTime,
         frameTime = 1 / this.video.frameRate;
 
@@ -4285,7 +4642,7 @@ Player.prototype.updateForStaticFile = function () {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var ___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../ */ "./src/index.js");
+/* harmony import */ var _buffer__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./buffer */ "./src/lib/buffer.js");
 
 
 var TS = function TS(options) {
@@ -4311,10 +4668,10 @@ TS.prototype.connect = function (streamId, destination) {
 TS.prototype.write = function (buffer) {
   if (this.leftoverBytes) {
     var totalLength = buffer.byteLength + this.leftoverBytes.byteLength;
-    this.bits = new ___WEBPACK_IMPORTED_MODULE_0__["default"].BitBuffer(totalLength);
+    this.bits = new _buffer__WEBPACK_IMPORTED_MODULE_0__["default"](totalLength);
     this.bits.write([this.leftoverBytes, buffer]);
   } else {
-    this.bits = new ___WEBPACK_IMPORTED_MODULE_0__["default"].BitBuffer(buffer);
+    this.bits = new _buffer__WEBPACK_IMPORTED_MODULE_0__["default"](buffer);
   }
 
   while (this.bits.has(188 << 3) && this.parsePacket()) {}
@@ -4369,9 +4726,9 @@ TS.prototype.parsePacket = function () {
       this.bits.skip(6);
       var headerLength = this.bits.read(8);
       var payloadBeginIndex = this.bits.index + (headerLength << 3);
-      var pi = this.pesPacketInfo[streamId];
+      var _pi = this.pesPacketInfo[streamId];
 
-      if (pi) {
+      if (_pi) {
         var pts = 0;
 
         if (ptsDtsFlag & 0x2) {
@@ -4398,7 +4755,7 @@ TS.prototype.parsePacket = function () {
         }
 
         var payloadLength = packetLength ? packetLength - headerLength - 3 : 0;
-        this.packetStart(pi, pts, payloadLength);
+        this.packetStart(_pi, pts, payloadLength);
       } // Skip the rest of the header without parsing it
 
 
@@ -4413,15 +4770,15 @@ TS.prototype.parsePacket = function () {
       // TS packet was padded - there's no good reason to pad a TS packet
       // in between, but it might just fit exactly. If this fails, we can
       // only wait for the next PES header for that stream.
-      var pi = this.pesPacketInfo[streamId];
+      var _pi2 = this.pesPacketInfo[streamId];
 
-      if (pi) {
+      if (_pi2) {
         var start = this.bits.index >> 3;
-        var complete = this.packetAddData(pi, start, end);
+        var complete = this.packetAddData(_pi2, start, end);
         var hasPadding = !payloadStart && adaptationField & 0x2;
 
         if (complete || this.guessVideoFrameEnd && hasPadding) {
-          this.packetComplete(pi);
+          this.packetComplete(_pi2);
         }
       }
     }
@@ -4475,8 +4832,7 @@ TS.prototype.packetStart = function (pi, pts, payloadLength) {
 TS.prototype.packetAddData = function (pi, start, end) {
   pi.buffers.push(this.bits.bytes.subarray(start, end));
   pi.currentLength += end - start;
-  var complete = pi.totalLength !== 0 && pi.currentLength >= pi.totalLength;
-  return complete;
+  return pi.totalLength !== 0 && pi.currentLength >= pi.totalLength;
 };
 
 TS.prototype.packetComplete = function (pi) {
@@ -4512,12 +4868,14 @@ TS.STREAM = {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return VideoElement; });
 /* harmony import */ var ___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../ */ "./src/index.js");
-/* harmony import */ var _static_theme_style_scss__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../static/theme/style.scss */ "./static/theme/style.scss");
-/* harmony import */ var _static_theme_style_scss__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_static_theme_style_scss__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _static_view_playButton_pug__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../static/view/playButton.pug */ "./static/view/playButton.pug");
-/* harmony import */ var _static_view_playButton_pug__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_static_view_playButton_pug__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _static_view_unmuteButton_pug__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../static/view/unmuteButton.pug */ "./static/view/unmuteButton.pug");
-/* harmony import */ var _static_view_unmuteButton_pug__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_static_view_unmuteButton_pug__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _player__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./player */ "./src/lib/player.js");
+/* harmony import */ var _static_theme_style_scss__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../static/theme/style.scss */ "./static/theme/style.scss");
+/* harmony import */ var _static_theme_style_scss__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_static_theme_style_scss__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _static_view_playButton_pug__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../static/view/playButton.pug */ "./static/view/playButton.pug");
+/* harmony import */ var _static_view_playButton_pug__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_static_view_playButton_pug__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _static_view_unmuteButton_pug__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../static/view/unmuteButton.pug */ "./static/view/unmuteButton.pug");
+/* harmony import */ var _static_view_unmuteButton_pug__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_static_view_unmuteButton_pug__WEBPACK_IMPORTED_MODULE_4__);
+
  // style
 
  // template
@@ -4564,7 +4922,7 @@ function () {
   var _proto = VideoElement.prototype;
 
   _proto.containerInit = function containerInit() {
-    this.container.classList.add(_static_theme_style_scss__WEBPACK_IMPORTED_MODULE_1___default.a.container);
+    this.container.classList.add(_static_theme_style_scss__WEBPACK_IMPORTED_MODULE_2___default.a.container);
     addStyles(this.container, {
       paddingBottom: this.options.aspectPercent
     });
@@ -4572,7 +4930,7 @@ function () {
   };
 
   _proto.canvasInit = function canvasInit() {
-    this.canvas.classList.add(_static_theme_style_scss__WEBPACK_IMPORTED_MODULE_1___default.a.canvas);
+    this.canvas.classList.add(_static_theme_style_scss__WEBPACK_IMPORTED_MODULE_2___default.a.canvas);
     this.container.appendChild(this.canvas);
   };
 
@@ -4586,7 +4944,7 @@ function () {
       canvas: this.canvas
     }); // Create the player instance
 
-    this.player = new ___WEBPACK_IMPORTED_MODULE_0__["default"].Player(this.options.videoUrl, this.options, {
+    this.player = new _player__WEBPACK_IMPORTED_MODULE_1__["default"](this.options.videoUrl, this.options, {
       play: function play() {
         _this2.playButton.style.display = 'none';
 
@@ -4615,7 +4973,7 @@ function () {
       this.options.decodeFirstFrame = false;
       this.poster = new Image();
       this.poster.src = this.options.poster;
-      this.poster.classList.add(_static_theme_style_scss__WEBPACK_IMPORTED_MODULE_1___default.a.poster);
+      this.poster.classList.add(_static_theme_style_scss__WEBPACK_IMPORTED_MODULE_2___default.a.poster);
       this.container.appendChild(this.poster);
     } // Add the click handler if this video is pausable
 
@@ -4638,10 +4996,10 @@ function () {
 
       if (this.options.autoplay || this.player.options.streaming) {
         this.unmuteButton = document.createElement('div');
-        this.unmuteButton.innerHTML = _static_view_unmuteButton_pug__WEBPACK_IMPORTED_MODULE_3___default()({
-          _style: _static_theme_style_scss__WEBPACK_IMPORTED_MODULE_1___default.a
+        this.unmuteButton.innerHTML = _static_view_unmuteButton_pug__WEBPACK_IMPORTED_MODULE_4___default()({
+          _style: _static_theme_style_scss__WEBPACK_IMPORTED_MODULE_2___default.a
         });
-        this.unmuteButton.classList.add(_static_theme_style_scss__WEBPACK_IMPORTED_MODULE_1___default.a.unmuteButton);
+        this.unmuteButton.classList.add(_static_theme_style_scss__WEBPACK_IMPORTED_MODULE_2___default.a.unmuteButton);
         this.container.appendChild(this.unmuteButton);
         unlockAudioElement = this.unmuteButton;
       }
@@ -4653,10 +5011,10 @@ function () {
   };
 
   _proto.playButtonInit = function playButtonInit() {
-    this.playButton.innerHTML = _static_view_playButton_pug__WEBPACK_IMPORTED_MODULE_2___default()({
-      _style: _static_theme_style_scss__WEBPACK_IMPORTED_MODULE_1___default.a
+    this.playButton.innerHTML = _static_view_playButton_pug__WEBPACK_IMPORTED_MODULE_3___default()({
+      _style: _static_theme_style_scss__WEBPACK_IMPORTED_MODULE_2___default.a
     });
-    this.playButton.classList.add(_static_theme_style_scss__WEBPACK_IMPORTED_MODULE_1___default.a.playButton);
+    this.playButton.classList.add(_static_theme_style_scss__WEBPACK_IMPORTED_MODULE_2___default.a.playButton);
 
     if (this.options.picMode) {
       this.playButton.style.visibility = 'hidden';
@@ -4716,6 +5074,188 @@ var addStyles = function addStyles(element, styles) {
 
 /***/ }),
 
+/***/ "./src/lib/wasm-module.js":
+/*!********************************!*\
+  !*** ./src/lib/wasm-module.js ***!
+  \********************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _ajax__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ajax */ "./src/lib/ajax.js");
+
+
+var WASM = function WASM() {
+  this.stackSize = 5 * 1024 * 1024; // emscripten default
+
+  this.pageSize = 64 * 1024; // wasm page size
+
+  this.onInitCallback = null;
+};
+
+WASM.prototype.write = function (buffer) {
+  this.loadFromBuffer(buffer, this.onInitCallback);
+};
+
+WASM.prototype.loadFromFile = function (url, callback) {
+  this.onInitCallback = callback;
+  var ajax = new _ajax__WEBPACK_IMPORTED_MODULE_0__["default"](url);
+  ajax.connect(this);
+  ajax.start();
+};
+
+WASM.prototype.loadFromBuffer = function (buffer, callback) {
+  this.moduleInfo = this.readDylinkSection(buffer);
+
+  if (!this.moduleInfo) {
+    this.callback && this.callback(null);
+    return;
+  }
+
+  this.memory = new WebAssembly.Memory({
+    initial: 256
+  });
+  var env = {
+    memory: this.memory,
+    memoryBase: 0,
+    table: new WebAssembly.Table({
+      initial: this.moduleInfo.tableSize,
+      element: 'anyfunc'
+    }),
+    tableBase: 0,
+    abort: this.c_abort.bind(this),
+    ___assert_fail: this.c_assertFail.bind(this),
+    _sbrk: this.c_sbrk.bind(this)
+  };
+  this.brk = this.align(this.moduleInfo.memorySize + this.stackSize);
+  WebAssembly.instantiate(buffer, {
+    env: env
+  }).then(function (results) {
+    this.instance = results.instance;
+
+    if (this.instance.exports.__post_instantiate) {
+      this.instance.exports.__post_instantiate();
+    }
+
+    this.createHeapViews();
+    callback && callback(this);
+  }.bind(this));
+};
+
+WASM.prototype.createHeapViews = function () {
+  this.instance.heapU8 = new Uint8Array(this.memory.buffer);
+  this.instance.heapU32 = new Uint32Array(this.memory.buffer);
+  this.instance.heapF32 = new Float32Array(this.memory.buffer);
+};
+
+WASM.prototype.align = function (addr) {
+  var a = Math.pow(2, this.moduleInfo.memoryAlignment);
+  return Math.ceil(addr / a) * a;
+};
+
+WASM.prototype.c_sbrk = function (size) {
+  var previousBrk = this.brk;
+  this.brk += size;
+
+  if (this.brk > this.memory.buffer.byteLength) {
+    var bytesNeeded = this.brk - this.memory.buffer.byteLength;
+    var pagesNeeded = Math.ceil(bytesNeeded / this.pageSize);
+    this.memory.grow(pagesNeeded);
+    this.createHeapViews();
+  }
+
+  return previousBrk;
+};
+
+WASM.prototype.c_abort = function (size) {
+  console.warn('JSMPeg: WASM abort', arguments);
+};
+
+WASM.prototype.c_assertFail = function (size) {
+  console.warn('JSMPeg: WASM ___assert_fail', arguments);
+};
+
+WASM.prototype.readDylinkSection = function (buffer) {
+  // Read the WASM header and dylink section of the .wasm binary data
+  // to get the needed table size and static data size.
+  // https://github.com/WebAssembly/tool-conventions/blob/master/DynamicLinking.md
+  // https://github.com/kripken/emscripten/blob/20602efb955a7c6c20865a495932427e205651d2/src/support.js
+  var bytes = new Uint8Array(buffer);
+  var next = 0;
+
+  var readVarUint = function readVarUint() {
+    var ret = 0;
+    var mul = 1;
+
+    while (1) {
+      var byte = bytes[next++];
+      ret += (byte & 0x7f) * mul;
+      mul *= 0x80;
+
+      if (!(byte & 0x80)) {
+        return ret;
+      }
+    }
+  };
+
+  var matchNextBytes = function matchNextBytes(expected) {
+    for (var i = 0; i < expected.length; i++) {
+      var b = typeof expected[i] === 'string' ? expected[i].charCodeAt(0) : expected[i];
+
+      if (bytes[next++] !== b) {
+        return false;
+      }
+    }
+
+    return true;
+  }; // Make sure we have a wasm header
+
+
+  if (!matchNextBytes([0, 'a', 's', 'm'])) {
+    console.warn('JSMpeg: WASM header not found');
+    return null;
+  } // Make sure we have a dylink section
+
+
+  next = 9;
+  var sectionSize = readVarUint();
+
+  if (!matchNextBytes([6, 'd', 'y', 'l', 'i', 'n', 'k'])) {
+    console.warn('JSMpeg: No dylink section found in WASM');
+    return null;
+  }
+
+  return {
+    memorySize: readVarUint(),
+    memoryAlignment: readVarUint(),
+    tableSize: readVarUint(),
+    tableAlignment: readVarUint()
+  };
+};
+
+WASM.IsSupported = function () {
+  return !!window.WebAssembly;
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (WASM);
+
+/***/ }),
+
+/***/ "./src/lib/wasm/WASM_BINARY.js":
+/*!*************************************!*\
+  !*** ./src/lib/wasm/WASM_BINARY.js ***!
+  \*************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// get from jsmpeg
+/* harmony default export */ __webpack_exports__["default"] = ('AGFzbQEAAAAADgZkeWxpbmvgzcACBCAAATgKYAF/AGAEf39/fwBgAX8Bf2ACf38Bf2ACf38AYAF/AX1gBn9/f39/fwBgA39/fwF/YAAAYAABfAJuBwNlbnYGbWVtb3J5AgCAAgNlbnYFdGFibGUBcAAgA2VudgptZW1vcnlCYXNlA38AA2Vudgl0YWJsZUJhc2UDfwADZW52BWFib3J0AAADZW52Dl9fX2Fzc2VydF9mYWlsAAEDZW52BV9zYnJrAAIDPz4DAAMCBAQAAgUCAgICAgICAAQABgAEAQABAQEDAAMCBAQCAgICAgEBAwADAgMCAwICAgIABAAAAwcHBwgICQahASB/AUEAC38BQQALfwBBGwt/AEEaC38AQRwLfwBBHQt/AEEeC38AQRALfwBBGQt/AEERC38AQRULfwBBEwt/AEEXC38AQRgLfwBBFgt/AEESC38AQRQLfwBBAQt/AEEPC38AQQILfwBBBgt/AEEOC38AQQkLfwBBDQt/AEEIC38AQQsLfwBBBAt/AEEKC38AQQMLfwBBDAt/AEEHC38AQQULB9YMPhJfX3Bvc3RfaW5zdGFudGlhdGUAPwVfZnJlZQA5B19tYWxsb2MAMgdfbWVtY3B5ADsIX21lbW1vdmUAPAdfbWVtc2V0AD0TX21wMl9kZWNvZGVyX2NyZWF0ZQAeE19tcDJfZGVjb2Rlcl9kZWNvZGUAJxRfbXAyX2RlY29kZXJfZGVzdHJveQAfFl9tcDJfZGVjb2Rlcl9kaWRfd3JpdGUAIxZfbXAyX2RlY29kZXJfZ2V0X2luZGV4ACEhX21wMl9kZWNvZGVyX2dldF9sZWZ0X2NoYW5uZWxfcHRyACUiX21wMl9kZWNvZGVyX2dldF9yaWdodF9jaGFubmVsX3B0cgAmHF9tcDJfZGVjb2Rlcl9nZXRfc2FtcGxlX3JhdGUAJBpfbXAyX2RlY29kZXJfZ2V0X3dyaXRlX3B0cgAgFl9tcDJfZGVjb2Rlcl9zZXRfaW5kZXgAIhVfbXBlZzFfZGVjb2Rlcl9jcmVhdGUAAxVfbXBlZzFfZGVjb2Rlcl9kZWNvZGUAEhZfbXBlZzFfZGVjb2Rlcl9kZXN0cm95AAQYX21wZWcxX2RlY29kZXJfZGlkX3dyaXRlAAgZX21wZWcxX2RlY29kZXJfZ2V0X2NiX3B0cgARHV9tcGVnMV9kZWNvZGVyX2dldF9jb2RlZF9zaXplAAwZX21wZWcxX2RlY29kZXJfZ2V0X2NyX3B0cgAQHV9tcGVnMV9kZWNvZGVyX2dldF9mcmFtZV9yYXRlAAsZX21wZWcxX2RlY29kZXJfZ2V0X2hlaWdodAAOGF9tcGVnMV9kZWNvZGVyX2dldF9pbmRleAAGGF9tcGVnMV9kZWNvZGVyX2dldF93aWR0aAANHF9tcGVnMV9kZWNvZGVyX2dldF93cml0ZV9wdHIABRhfbXBlZzFfZGVjb2Rlcl9nZXRfeV9wdHIADyJfbXBlZzFfZGVjb2Rlcl9oYXNfc2VxdWVuY2VfaGVhZGVyAAoYX21wZWcxX2RlY29kZXJfc2V0X2luZGV4AAcLcnVuUG9zdFNldHMAPghmcCRfZnJlZQMECmZwJF9tYWxsb2MDBQpmcCRfbWVtY3B5AwYLZnAkX21lbW1vdmUDBwpmcCRfbWVtc2V0AwgWZnAkX21wMl9kZWNvZGVyX2NyZWF0ZQMJFmZwJF9tcDJfZGVjb2Rlcl9kZWNvZGUDChdmcCRfbXAyX2RlY29kZXJfZGVzdHJveQMLGWZwJF9tcDJfZGVjb2Rlcl9kaWRfd3JpdGUDDBlmcCRfbXAyX2RlY29kZXJfZ2V0X2luZGV4Aw0kZnAkX21wMl9kZWNvZGVyX2dldF9sZWZ0X2NoYW5uZWxfcHRyAw4lZnAkX21wMl9kZWNvZGVyX2dldF9yaWdodF9jaGFubmVsX3B0cgMPH2ZwJF9tcDJfZGVjb2Rlcl9nZXRfc2FtcGxlX3JhdGUDEB1mcCRfbXAyX2RlY29kZXJfZ2V0X3dyaXRlX3B0cgMRGWZwJF9tcDJfZGVjb2Rlcl9zZXRfaW5kZXgDEhhmcCRfbXBlZzFfZGVjb2Rlcl9jcmVhdGUDExhmcCRfbXBlZzFfZGVjb2Rlcl9kZWNvZGUDFBlmcCRfbXBlZzFfZGVjb2Rlcl9kZXN0cm95AxUbZnAkX21wZWcxX2RlY29kZXJfZGlkX3dyaXRlAxYcZnAkX21wZWcxX2RlY29kZXJfZ2V0X2NiX3B0cgMXIGZwJF9tcGVnMV9kZWNvZGVyX2dldF9jb2RlZF9zaXplAxgcZnAkX21wZWcxX2RlY29kZXJfZ2V0X2NyX3B0cgMZIGZwJF9tcGVnMV9k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QQN0IQUgAEGEAWohAyAGIAFBAnEEfyAFBUEAC2oFIABBjAFqIQMgAEGIAWohBiAAKAIYIgVBAXUhAiABQQRHBEAgBiEDCyAAKAJUQQN0IAVBAnQgACgCUGxqCyEBIAJBeGohAiADKAIAIQMgBEEBRiEEIABBnAFqIQAgCCgCAARAIAQEQCAAKAIAQYABakEIdSADIAEgAhAZIABBADYCAAUgABAaIAAgAyABIAIQGyAAQQBBgAIQPRoLBSAEBEAgACgCAEGAAWpBCHUgAyABIAIQHCAAQQA2AgAFIAAQGiAAIAMgASACEB0gAEEAQYACED0aCwsL2AYAIAEgAmogAEH/AXEiADoAACABIAJBAWpqIAA6AAAgASACQQJqaiAAOgAAIAEgAkEDamogADoAACABIAJBBGpqIAA6AAAgASACQQVqaiAAOgAAIAEgAkEGamogADoAACABIAJBB2pqIAA6AAAgASADQQhqIgMgAmoiAmogADoAACABIAJBAWpqIAA6AAAgASACQQJqaiAAOgAAIAEgAkEDamogADoAACABIAJBBGpqIAA6AAAgASACQQVqaiAAOgAAIAEgAkEGamogADoAACABIAJBB2pqIAA6AAAgASADIAJqIgJqIAA6AAAgASACQQFqaiAAOgAAIAEgAkECamogADoAACABIAJBA2pqIAA6AAAgASACQQRqaiAAOgAAIAEgAkEFamogADoAACABIAJBBmpqIAA6AAAgASACQQdqaiAAOgAAIAEgAyACaiICaiAAOgAAIAEgAkEBamogADoAACABIAJBAmpqIAA6AAAgASACQQNqaiAAOgAAIAEgAkEEamogADoAACABIAJBBWpqIAA6AAAgASACQQZqaiAAOgAAIAEgAkEHamogADoAACABIAMgAmoiAmogADoAACABIAJBAWpqIAA6AAAgASACQQJqaiAAOgAAIAEgAkEDamogADoAACABIAJBBGpqIAA6AAAgASACQQVqaiAAOgAAIAEgAkEGamogADoAACABIAJBB2pqIAA6AAAgASADIAJqIgJqIAA6AAAgASACQQFqaiAAOgAAIAEgAkECamogADoAACABIAJBA2pqIAA6AAAgASACQQRqaiAAOgAAIAEgAkEFamogADoAACABIAJBBmpqIAA6AAAgASACQQdqaiAAOgAAIAEgAyACaiIC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ajoAACABIAMgAmoiAmoiBCAELQAAIABqOgAAIAEgAkEBamoiBCAELQAAIABqOgAAIAEgAkECamoiBCAELQAAIABqOgAAIAEgAkEDamoiBCAELQAAIABqOgAAIAEgAkEEamoiBCAELQAAIABqOgAAIAEgAkEFamoiBCAELQAAIABqOgAAIAEgAkEGamoiBCAELQAAIABqOgAAIAEgAkEHamoiBCAELQAAIABqOgAAIAEgAyACaiICaiIEIAQtAAAgAGo6AAAgASACQQFqaiIEIAQtAAAgAGo6AAAgASACQQJqaiIEIAQtAAAgAGo6AAAgASACQQNqaiIEIAQtAAAgAGo6AAAgASACQQRqaiIEIAQtAAAgAGo6AAAgASACQQVqaiIEIAQtAAAgAGo6AAAgASACQQZqaiIEIAQtAAAgAGo6AAAgASACQQdqaiIEIAQtAAAgAGo6AAAgASADIAJqIgJqIgQgBC0AACAAajoAACABIAJBAWpqIgQgBC0AACAAajoAACABIAJBAmpqIgQgBC0AACAAajoAACABIAJBA2pqIgQgBC0AACAAajoAACABIAJBBGpqIgQgBC0AACAAajoAACABIAJBBWpqIgQgBC0AACAAajoAACABIAJBBmpqIgQgBC0AACAAajoAACABIAJBB2pqIgQgBC0AACAAajoAACABIAMgAmoiAmoiBCAELQAAIABqOgAAIAEgAkEBamoiBCAELQAAIABqOgAAIAEgAkECamoiBCAELQAAIABqOgAAIAEgAkEDamoiBCAELQAAIABqOgAAIAEgAkEEamoiBCAELQAAIABqOgAAIAEgAkEFamoiBCAELQAAIABqOgAAIAEgAkEGamoiBCAELQAAIABqOgAAIAEgAkEHamoiBCAELQAAIABqOgAAIAEgAyACaiICaiIEIAQtAAAgAGo6AAAgASACQQFqaiIEIAQtAAAgAGo6AAAgASACQQJqaiIEIAQtAAAgAGo6AAAgASACQQNqaiIEIAQtAAAgAGo6AAAgASACQQRqaiIEIAQtAAAgAGo6AAAgASACQQVqaiIEIAQtAAAgAGo6AAAgASACQQZqaiIEIAQtAAAgAGo6AAAgASACQQdqaiIEIAQtAAAgAGo6AAAgASADIAJqIgJqIgMgAy0AACAAajoAACABIAJBAWpqIgMgAy0AACAAajoAACABIAJBAmpqIgMgAy0AACAAajoAACABIAJBA2pqIgMgAy0AACAAajoAACABIAJBBGpqIgMgAy0AACAAajoAACABIAJBBWpqIgMgAy0AACAAajoAACABIAJBBmpqIgMgAy0AACAAajoAACABIAJBB2pqIgEgAS0AACAAajoAAAuABAEDfyADQQhqIQZBACEDA0AgACADQQJ0aigCACABIAJqIgUtAABqIgRBAEwEQEEAIQQLIAUgBEH/AUgEfyAEBUH/AQs6AAAgACADQQFyQQJ0aigCACABIAJBAWpqIgUtAABqIgRBAEwEQEEAIQQLIAUgBEH/AUgEfyAEBUH/AQs6AAAgACADQQJyQQJ0aigCACABIAJBAmpqIgUtAABqIgRBAEwEQEEAIQQLIAUgBEH/AUgEfyAEBUH/AQs6AAAgACADQQNyQQJ0aigCACABIAJBA2pqIgUtAABqIgRBAEwEQEEAIQQLIAUgBEH/AUgEfyAEBUH/AQs6AAAgACADQQRyQQJ0aigCACABIAJBBGpqIgUtAABqIgRBAEwEQEEAIQQLIAUgBEH/AUgEfyAEBUH/AQs6AAAgACADQQVyQQJ0aigCACABIAJBBWpqIgUtAABqIgRBAEwEQEEAIQQLIAUgBEH/AUgEfyAEBUH/AQs6AAAgACADQQZyQQJ0aigCACABIAJBBmpqIgUtAABqIgRBAEwEQEEAIQQLIAUgBEH/AUgEfyAEBUH/AQs6AAAgACADQQdyQQJ0aigCACABIAJBB2pqIgUtAABqIgRBAEwEQEEAIQQLIAUgBEH/AUgEfyAEBUH/AQs6AAAgBiACaiECIANBCGoiA0HAAEkNAAsLRgEBf0HMlwEQMiICIAAgARArNgIIIAJBxNgCNgIAIAJBzNYAaiMAQdgzakGAEBA7GiACQczmAGojAEHYM2pBgBAQOxogAgsNACAAKAIIECwgABA5CwsAIAAoAgggARAtCwoAIAAoAggoAgQLDAAgACgCCCABNgIECxkBAX8gACgCCEEMaiICIAIoAgAgAWo2AgALBwAgACgCAAsIACAAQcwOagsIACAAQcwyagtKAQN/IABBCGoiASgCACgCBCECIAEoAgAiAygCDEEDdCADKAIEa0EQSQRAQQAPCyAAECghACABKAIAIABBA3QgAmpBeHE2AgQgAAvzGgEffyAAQQhqIgQoAgBBCxAxIQEgBCgCAEECEDEhAiAEKAIAQQIQMSENIAQoAgBBARAxIQUgAUH/D0cgAkEDR3IgDUECR3IEQEEADwsgBCgCAEEEEDEiDUEOSgRAQQAPCyAEKAIAQQIQMSIBQQNGBEBBAA8LIAQoAgBBARAxIQggBCgCAEEBEDEaIAQoAgBBAhAxIQkgBCgCACECIAlBAUYEfyACQQIQMUECdEEEagUgAkEEaiICKAIAQQJqIQMgAiADNgIAIAlBA0YEf0EABUEgCwshAiAEKAIAQQRqIgwoAgBBBGohAyAMIAM2AgAgBUUEQCAEKAIAQQRqIgwoAgBBEGohAyAMIAM2AgALIwBB5MMAaiANQX9qIg1BAXRqLgEAQYDlCGwjAEGcxABqIAFBAXRqLwEAIhltIRAjAEHQxgBqIwBBsMYAaiAJQQNHQQR0aiANai0AAEEDbGogAWotAAAiAUE/cSEKIAFBBnYhBSACIApKBH8gCgUgAgsiDUEASiIaBEBBACEBA0AjAEHZxgBqIAVBBXRqIAFqLQAAIgtBD3EhAyAEKAIAIAtBBHYiCxAxIQcjACMAQbnHAGogA0EEdGogB2osAAAiB0H/AXFBAnRqQajEAGohEyAAQQxqIAFBAnRqIAcEfyATBUEACzYCACAEKAIAIAsQMSELIwAjAEG5xwBqIANBBHRqIAtqLAAAIgNB/wFxQQJ0akGoxABqIQsgAEGMAWogAUECdGogAwR/IAsFQQALNgIAIAFBAWoiASANSA0ACwsgCiACSiIbBEAgDSEBA0AgBCgCACMAQdnGAGogBUEFdGogAWotAAAiAkEEdhAxIQMjACMAQbnHAGogAkEPcUEEdGogA2osAAAiA0H/AXFBAnRqQajEAGohAiAAQYwBaiABQQJ0aiADBH8gAgVBACICCzYCACAAQQxqIAFBAnRqIAI2AgAgAUEBaiIBIApIDQALCyAJQQNGIgUEf0EBBUECCyEJIApFIgNFBEAgBQRAQQAhAQNAQQAhAgNAIABBDGogAkEHdGogAUECdGooAgAEQCAAQYwCaiACQQV0aiABaiAEKAIAQQIQMToAAAsgAkEBaiICIAlJDQALIABBrAJqIAFqIABBjAJqIAFqLAAAOgAAIAFBAWoiASAKRw0ACwVBACEBA0BBACECA0AgAEEMaiACQQd0aiABQQJ0aigCAARAIABBjAJqIAJBBXRqIAFqIAQoAgBBAhAxOgAACyACQQFqIgIgCUkNAAsgAUEBaiIBIApHDQALCyADRQRAIAUEQEEAIQEDQEEAIQIDQAJAIABBDGogAkEHdGogAUECdGooAgAEQCAAQcwCaiACQYADbGogAUEMbGohBQJAAkACQAJAAkAgAEGMAmogAkEFdGogAWosAAAOBAABAgMECyAFIAQoAgBBBhAxNgIAIAAgAkGAA2xqIAFBDGxqIAQoAgBBBhAxNgLQAiAAIAJBgANsaiABQQxsaiAEKAIAQQYQMTYC1AIMBQsgACACQYADbGogAUEMbGogBCgCAEEGEDEiAzYC0AIgBSADNgIAIAAgAkGAA2xqIAFBDGxqIAQoAgBBBhAxNgLUAgwECyAAIAJBgANsaiABQQxsaiAEKAIAQQYQMSIDNgLUAiAAIAJBgANsaiABQQxsaiADNgLQAiAFIAM2AgAMAwsgBSAEKAIAQQYQMTYCACAAIAJBgANsaiABQQxsaiAEKAIAQQYQMSIFNgLUAiAAIAJBgANsaiABQQxsaiAFNgLQAgsLCyACQQFqIgIgCUkNAAsgAEHMBWogAUEMbGogAEHMAmogAUEMbGooAgA2AgAgACABQQxsaiAAIAFBDGxqKALQAjYC0AUgACABQQxsaiAAIAFBDGxqKALUAjYC1AUgAUEBaiIBIApHDQALBUEAIQEDQEEAIQIDQAJAIABBDGogAkEHdGogAUECdGooAgAEQCAAQcwCaiACQYADbGogAUEMbGohBQJAAkACQAJAAkAgAEGMAmogAkEFdGogAWosAAAOBAABAgMECyAFIAQoAgBBBhAxNgIAIAAgAkGAA2xqIAFBDGxqIAQoAgBBBhAxNgLQAiAAIAJBgANsaiABQQxsaiAEKAIAQQYQMTYC1AIMBQsgACACQYADbGogAUEMbGogBCgCAEEGEDEiAzYC0AIgBSADNgIAIAAgAkGAA2xqIAFBDGxqIAQoAgBBBhAxNgLUAgwECyAAIAJBgANsaiABQQxsaiAEKAIAQQYQMSIDNgLUAiAAIAJBgANsaiABQQxsaiADNgLQAiAFIAM2AgAMAwsgBSAEKAIAQQYQMTYCACAAIAJBgANsaiABQQxsaiAEKAIAQQYQMSIFNgLUAiAAIAJBgANsaiABQQxsaiAFNgLQAgsLCyACQQFqIgIgCUkNAAsgAUEBaiIBIApHDQALCwsLIBAgCGohHCAKQSBJIR0gAEEEaiEUIABBzPYAaiEYIABBzJYBaiEGIABBzAhqIR4gAEHMC2ohH0EAIRBBACEJA0BBACETIAkhAgNAIBoEQEEAIQEDQCAAQQAgASAQECkgAEEBIAEgEBApIAFBAWoiASANSA0ACwsgGwRAIA0hAQNAIABBACABIBAQKSAAQcwLaiABQQxsaiAAQcwIaiABQQxsaigCADYCACAAIAFBDGxqQdALaiAAIAFBDGxqQdAIaigCADYCACAAIAFBDGxqQdQLaiAAIAFBDGxqQdQIaigCADYCACABQQFqIgEgCkgNAAsLIB0EQCAKIQEDQCAAQcwIaiABQQxsakEANgIAIAAgAUEMbGpB0AhqQQA2AgAgACABQQxsakHUCGpBADYCACAAQcwLaiABQQxsakEANgIAIAAgAUEMbGpB0AtqQQA2AgAgACABQQxsakHUC2pBADYCACABQQFqIgFBIEcNAAsLQQAhCyACIQQgFCgCACEBA0AgFCABQcAHakH/B3EiATYCACAeIAsgGCABECogBkIANwIAIAZCADcCCCAGQgA3AhAgBkIANwIYIAZCADcCICAGQgA3AiggBkIANwIwIAZCADcCOCAGQUBrQgA3AgAgBkIANwJIIAZCADcCUCAGQgA3AlggBkIANwJgIAZCADcCaCAGQgA3AnAgBkIANwJ4IBQoAgAiEUEBdSEOQf8HIBFBgAFvQQF1Ig9rIgFBgH9xIRUgAUEHdkEGdEHABGohFiAPIQFBgAQgDmshBQNAQQAhByABIQMgBSEIA0AgCEEBaiESIANBAWohDCAAQcyWAWogB0ECdGoiFyAAQczWAGogCEECdGoqAgAgAEHM9gBqIANBAnRqKgIAlCAXKAIAspKoNgIAIAdBAWoiB0EgRwRAIAwhAyASIQgMAQsLIAFBgAFqIQMgBUFAayEFIAFBgAdIBEAgAyEBDAELC0HgByAPIBVqayIBQYAISARAIBYgDmtBoHxqIQUDQCABQR9qIQ9BACEHIAUhAyABIQgDQCADQQFqIRIgCEEBaiEMIABBzJYBaiAHQQJ0aiIOIABBzNYAaiADQQJ0aioCACAAQcz2AGogCEECdGoqAgCUIA4oAgCykqg2AgAgB0EBaiIHQSBHBEAgEiEDIAwhCAwBCwsgAUGAAWohASAFQUBrIQUgD0GfB0gNAAsLQQAhAQNAIABBzA5qIAEgBGpBAnRqIABBzJYBaiABQQJ0aigCALJDAP7/TpU4AgAgAUEBaiIBQSBHDQALIB8gCyAYIBEQKiAGQgA3AgAgBkIANwIIIAZCADcCECAGQgA3AhggBkIANwIgIAZCADcCKCAGQgA3AjAgBkIANwI4IAZBQGtCADcCACAGQgA3AkggBkIANwJQIAZCADcCWCAGQgA3AmAgBkIANwJoIAZCADcCcCAGQgA3AnggFCgCACISQQF1IQ5B/wcgEkGAAW9BAXUiEWsiAUGAf3EhFSABQQd2QQZ0QcAEaiEWIBEhAUGABCAOayEFA0BBACEHIAEhAyAFIQgDQCAIQQFqIQwgA0EBaiEPIABBzJYBaiAHQQJ0aiIXIABBzNYAaiAIQQJ0aioCACAAQcz2AGogA0ECdGoqAgCUIBcoAgCykqg2AgAgB0EBaiIHQSBHBEAgDyEDIAwhCAwBCwsgAUGAAWohAyAFQUBrIQUgAUGAB0gEQCADIQEMAQsLQeAHIBEgFWprIgFBgAhIBEAgFiAOa0GgfGohBQNAIAFBH2ohEUEAIQcgBSEDIAEhCANAIANBAWohDCAIQQFqIQ8gAEHMlgFqIAdBAnRqIg4gAEHM1gBqIANBAnRqKgIAIABBzPYAaiAIQQJ0aioCAJQgDigCALKSqDYCACAHQQFqIgdBIEcEQCAMIQMgDyEIDAELCyABQYABaiEBIAVBQGshBSARQZ8HSA0ACwtBACEBA0AgAEHMMmogASAEakECdGogAEHMlgFqIAFBAnRqKAIAskMA/v9OlTgCACABQQFqIgFBIEcNAAsgBEEgaiEEIAtBAWoiC0EDRwRAIBIhAQwBCwsgAkHgAGohAiATQQFqIhNBBEcNAAsgCUGAA2ohCSAQQQFqIhBBA0cNAAsgACAZNgIAIBwLhAQBB38gAEHMAmogAUGAA2xqIAJBDGxqIANBAnRqKAIAIQMgAEHMCGogAUGAA2xqIAJBDGxqIQYgAEEMaiABQQd0aiACQQJ0aigCACIERQRAIAAgAUGAA2xqIAJBDGxqQdQIakEANgIAIAAgAUGAA2xqIAJBDGxqQdAIakEANgIAIAZBADYCAA8LIANBP0YEf0EABSMAQdjDAGogAyADQQNtIgNBA2xrQQJ0aigCAEEBIAN0QQF1aiADdQshCCAELwEAIQUgBCwAAkUhCSAAQQhqIgcoAgAgBEEDaiIELQAAEDEhAyAJBEAgBiADNgIAIAAgAUGAA2xqIAJBDGxqQdAIaiIDIAcoAgAgBC0AABAxNgIAIAcoAgAgBC0AABAxIQQgBigCACEHIAMoAgAhCQUgBiADIAMgBW0iBCAFbGsiBzYCACAAIAFBgANsaiACQQxsakHQCGoiAyAEIAQgBW0iBCAFbGsiCTYCAAtBgIAEIAVBAWoiCm4hBSAGIApBAXZBf2oiBiAHayAFbCIKIAhB/x9xIgdsQYAQakEMdSAKIAhBDHUiCGxqQQx1NgIAIAMgBiAJayAFbCIDIAdsQYAQakEMdSADIAhsakEMdTYCACAAIAFBgANsaiACQQxsakHUCGogBiAEayAFbCIAIAdsQYAQakEMdSAAIAhsakEMdTYCAAuAHAIffzZ9IABBxAJqIAFBAnRqKAIAIgQgAEEwaiABQQJ0aigCACIFarIiJSAAQfABaiABQQJ0aigCACIGIABBhAFqIAFBAnRqKAIAIgdqsiIukiImIABB0AJqIAFBAnRqKAIAIgggAEEkaiABQQJ0aigCACIJarIiOyAAQeQBaiABQQJ0aigCACIKIABBkAFqIAFBAnRqKAIAIgtqsiIjkiI1kiIxIABBoAJqIAFBAnRqKAIAIgwgAEHUAGogAUECdGooAgAiDWqyIicgAEGUAmogAUECdGooAgAiDiAAQeAAaiABQQJ0aigCACIParIiOZIiLyAAQfQCaiABQQJ0aigCACIQIAAgAUECdGooAgAiEWqyIiggAEHAAWogAUECdGooAgAiEiAAQbQBaiABQQJ0aigCACITarIiKZIiLZIiMJIiPCAAQbgCaiABQQJ0aigCACIUIABBPGogAUECdGooAgAiFWqyIjIgAEH8AWogAUECdGooAgAiFiAAQfgAaiABQQJ0aigCACIXarIiK5IiLCAAQdwCaiABQQJ0aigCACIYIABBGGogAUECdGooAgAiGWqyIiQgAEHYAWogAUECdGooAgAiGiAAQZwBaiABQQJ0aigCACIbarIiM5IiOpIiKiAAQawCaiABQQJ0aigCACIcIABByABqIAFBAnRqKAIAIh1qsiI9IABBiAJqIAFBAnRqKAIAIh4gAEHsAGogAUECdGooAgAiH2qyIkSSIjYgAEHoAmogAUECdGooAgAiICAAQQxqIAFBAnRqKAIAIiFqsiJFIABBzAFqIAFBAnRqKAIAIiIgAEGoAWogAUECdGooAgAiAGqyIkaSIkeSIkiSIk2Tu0S4S39mnqDmP6K2ITQgMCAxk7tEpjHbe3pR4T+itiJOIEggKpO7RLowRZGu5/Q/orYiSJO7RLhLf2aeoOY/orYhMSA1ICaTu0TopnPQ2YAEQKK2IiYgLSAvk7tEubR80T5Q4D+itiI1kiJPIDogLJO7RLh+se+azOw/orYiLyBHIDaTu0SmFeChNz7jP6K2Ii2SIjaTu0S4S39mnqDmP6K2IkcgNSAmk7tEpjHbe3pR4T+itiJQIC0gL5O7RLowRZGu5/Q/orYiUZO7RLhLf2aeoOY/orYiNZIhLyAnIDmTu0SLPOWAk2cUQKK2IiYgKCApk7tE99NhnNET4D+itiInkiI5ICUgLpO7REI5fQuQOOk/orYiJSA7ICOTu0Qf5LuYw7LkP6K2Ii6SIiiTu0SmMdt7elHhP6K2IlIgPSBEk7tEkH5AsCSP+z+itiIjIEUgRpO7RFHs6wNPuOA/orYiKZIiLSAyICuTu0S8yE4qifjwP6K2IjAgJCAzk7tE3k0G0Wck4j+itiIykiIrk7tEujBFka7n9D+itiI9k7tEuEt/Zp6g5j+itiE7IC4gJZO7ROimc9DZgARAorYiLiAnICaTu0S5tHzRPlDgP6K2IieSISUgMiAwk7tEuH6x75rM7D+itiIwICkgI5O7RKYV4KE3PuM/orYiI5IhJiAnIC6Tu0SmMdt7elHhP6K2IicgIyAwk7tEujBFka7n9D+itiIjk7tEuEt/Zp6g5j+itiEuICYgJZIgIyAnkiAukiInkiEjICcgJSAmk7tEuEt/Zp6g5j+itiIlkiEnICUgLpIiRCAoIDmSIkUgKyAtkiJGk7tEuEt/Zp6g5j+itiJTkiE5IAUgBGuyu0ToMhjxBrPhP6K2IiUgByAGa7K7RAZ+y6UGtvI/orYiMpIiJiAJIAhrsrtEBXgwCE3+4D+itiIrIAsgCmuyu0TP6I5lI7/3P6K2IiySIi2SIjogDSAMa7K7RFHAs6kHmOU/orYiJCAPIA5rsrtE1HXUuj3T5z+itiIzkiIwIBEgEGuyu0QmXTaU8ATgP6K2IiogEyASa7K7REzQqL5IYSRAorYiSZIiPpIiSpIhKCAVIBRrsrtEW3cEPGen4j+itiI3IBcgFmuyu0RG3NdsRx/vP6K2Ij+SIkAgGSAYa7K7RFfGXVuLfuA/orYiQSAbIBprsrtEU4Xg41V2AECitiJCkiI4kiJLIB0gHGuyu0SuEkLEjevjP6K2IkMgHyAea7K7RL8Rn8nz2+o/orYiTJIiVCAhICBrsrtET946b9Es4D+itiJVIAAgImuyu0Q1OdczyEILQKK2IlaSIleSIliSISkgLSAmk7tE6KZz0NmABECitiImID4gMJO7RLm0fNE+UOA/orYiPpIhLSA4IECTu0S4frHvmszsP6K2IkAgVyBUk7tEphXgoTc+4z+itiI4kiEwID4gJpO7RKYx23t6UeE/orYiPiA4IECTu0S6MEWRruf0P6K2IkCTu0S4S39mnqDmP6K2ISYgJSAyk7tEQjl9C5A46T+itiIlICsgLJO7RB/ku5jDsuQ/orYiK5IiOCAkIDOTu0SLPOWAk2cUQKK2IiwgKiBJk7tE99NhnNET4D+itiIkkiIzkiJJIDcgP5O7RLzITiqJ+PA/orYiKiBBIEKTu0TeTQbRZyTiP6K2IjeSIj8gQyBMk7tEkH5AsCSP+z+itiJBIFUgVpO7RFHs6wNPuOA/orYiQpIiQ5IiTJO7RLhLf2aeoOY/orYhMiArICWTu0TopnPQ2YAEQKK2IiUgJCAsk7tEubR80T5Q4D+itiIkkiErIDcgKpO7RLh+se+azOw/orYiKiBCIEGTu0SmFeChNz7jP6K2IjeSISwgJCAlk7tEpjHbe3pR4T+itiIkIDcgKpO7RLowRZGu5/Q/orYiKpO7RLhLf2aeoOY/orYhJSAsICuSICogJJIgJZIiKpIhJCAqICsgLJO7RLhLf2aeoOY/orYiLJIhKyAsICWSIjcgMpIiQSAoICmTu0S4S39mnqDmP6K2IkKSISwgMyA4k7tEpjHbe3pR4T+itiI4IEMgP5O7RLowRZGu5/Q/orYiP5O7RLhLf2aeoOY/orYiMyAlkiJDIEogOpO7RKYx23t6UeE/orYiSiBYIEuTu0S6MEWRruf0P6K2IkuTu0S4S39mnqDmP6K2IjqSISogAiADQTBqQQJ0aiBNIDySjDgCACACIANBL2pBAnRqICkgKJIgTCBJkiAkkiIokowiKTgCACACIANBMWpBAnRqICk4AgAgAiADQS5qQQJ0aiBGIEWSICOSjCIpOAIAIAIgA0EyakECdGogKTgCACACIANBLWpBAnRqIDAgLZIgQCA+kiAmkiIpkiI8ICiSjCIoOAIAIAIgA0EzakECdGogKDgCACACIANBLGpBAnRqIDYgT5IgUSBQkiA1kiIokowiNjgCACACIANBNGpBAnRqIDY4AgAgAiADQStqQQJ0aiA8ID8gOJIgM5IiPCAkkiIkkowiNjgCACACIANBNWpBAnRqIDY4AgAgAiADQSpqQQJ0aiA9IFKSIDuSIj0gI5KMIiM4AgAgAiADQTZqQQJ0aiAjOAIAIAIgA0EpakECdGogSyBKkiA6kiIjICSSjCIkOAIAIAIgA0E3akECdGogJDgCACACIANBKGpBAnRqIEggTpIgMZKMIiQ4AgAgAiADQThqQQJ0aiAkOAIAIAIgA0EnakECdGogIyA8ICuSIiOSjCIkOAIAIAIgA0E5akECdGogJDgCACACIANBJmpBAnRqID0gJ5KMIiQ4AgAgAiADQTpqQQJ0aiAkOAIAIAIgA0ElakECdGogKSAtIDCTu0S4S39mnqDmP6K2IimSIi0gI5KMIiM4AgAgAiADQTtqQQJ0aiAjOAIAIAIgA0EkakECdGogKCBHkowiIzgCACACIANBPGpBAnRqICM4AgAgAiADQSNqQQJ0aiAtICsgMpIiI5KMIig4AgAgAiADQT1qQQJ0aiAoOAIAIAIgA0EiakECdGogJyBTkowiJzgCACACIANBPmpBAnRqICc4AgAgAiADQSFqQQJ0aiAjIEKSjCIjOAIAIAIgA0E/akECdGogIzgCACACIANBIGpBAnRqIDSMOAIAIAIgA0ECdGogNDgCACACIANBH2pBAnRqICyMOAIAIAIgA0EBakECdGogLDgCACACIANBHmpBAnRqIDmMOAIAIAIgA0ECakECdGogOTgCACACIANBHWpBAnRqICkgJpIiNCBBkiIjjDgCACACIANBA2pBAnRqICM4AgAgAiADQRxqQQJ0aiAvjDgCACACIANBBGpBAnRqIC84AgAgAiADQRtqQQJ0aiA0IDcgM5IiNJIiL4w4AgAgAiADQQVqQQJ0aiAvOAIAIAIgA0EaakECdGogRCA7kiIvjDgCACACIANBBmpBAnRqIC84AgAgAiADQRlqQQJ0aiA0IDqSIjSMOAIAIAIgA0EHakECdGogNDgCACACIANBGGpBAnRqIDGMOAIAIAIgA0EIakECdGogMTgCACACIANBF2pBAnRqICqMOAIAIAIgA0EJakECdGogKjgCACACIANBFmpBAnRqIDsgLpIiMYw4AgAgAiADQQpqQQJ0aiAxOAIAIAIgA0EVakECdGogQyAmkiIxjDgCACACIANBC2pBAnRqIDE4AgAgAiADQRRqQQJ0aiA1jDgCACACIANBDGpBAnRqIDU4AgAgAiADQRNqQQJ0aiAmICWSIiaMOAIAIAIgA0ENakECdGogJjgCACACIANBEmpBAnRqIC6MOAIAIAIgA0EOakECdGogLjgCACACIANBEWpBAnRqICWMOAIAIAIgA0EPakECdGogJTgCACACIANBEGpBAnRqQwAAAAA4AgALLwEBf0EUEDIiAiABNgIQIAIgABAyNgIAIAIgADYCCCACQQA2AgwgAkEANgIEIAILDQAgACgCABA5IAAQOQuEAgEGfwJAIABBCGoiAygCACIEIABBDGoiBigCACICayIFIAFJBEAgACgCEEECRgRAIAEgBWshAiAAIAAoAgAgBSAEQQF0IgVqIAFJBH8gAgUgBSICCxA6NgIAIAMgAjYCACAAQQRqIgIoAgAgBigCACIBQQN0IgNNDQIgAiADNgIADAILIAIgAEEEaiIEKAIAIgdBA3YiA0YgBSADaiABSXIEQCAGQQA2AgAgBEEANgIAQQAhAQwCCyADBEAgACgCACIBIAEgA2ogAiADaxA8GiAGIAYoAgAgA2siATYCACAEIAQoAgAgB0F4cWs2AgAFIAIhAQsFIAIhAQsLIAAoAgAgAWoLlgEBBH8CQCAAQQRqIgMoAgBBB2pBA3YiASAAKAIMIgRJBEAgACgCACECIAEhAANAAkAgAEEBaiEBIAIgAGosAABFBEAgAiABaiwAAEUEQCACIABBAmpqLAAAQQFGDQILCyABIARPDQMgASEADAELCyADIABBA3RBIGo2AgAgAiAAQQNqai0AAA8LCyADIARBA3Q2AgBBfwuyAQEEfwJAIABBBGoiBSgCAEEHakEDdiICIAAoAgwiBEkEQCAAKAIAIQMgAiEAA0ACQCAAQQFqIQICQAJAIAMgAGosAAANACADIAJqLAAADQAgAyAAQQJq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QR9LBEACQAJAAkACQCADQQNxQQFrDgMAAQIDCyADIAEoAgAiBDoAACADIAEsAAE6AAEgAyABLAACOgACIAEgAkFsakFwcSIIQRNqIglqIQcgAkFtaiEKIAJBfWohBiADQQNqIQIgAUEDaiEBA0AgAiABKAIBIgVBCHQgBEEYdnI2AgAgAiABKAIFIgRBCHQgBUEYdnI2AgQgAiABKAIJIgVBCHQgBEEYdnI2AgggAiABKAINIgRBCHQgBUEYdnI2AgwgAUEQaiEBIAJBEGohAiAGQXBqIgZBEEsNAAsgCiAIayECIAchASADIAlqIQMMBAsgAyABKAIAIgQ6AAAgAyABLAABOgABIAEgAkFsakFwcSIIQRJqIglqIQcgAkFuaiEKIAJBfmohBiADQQJqIQIgAUECaiEBA0AgAiABKAICIgVBEHQgBEEQdnI2AgAgAiABKAIGIgRBEHQgBUEQdnI2AgQgAiABKAIKIgVBEHQgBEEQdnI2AgggAiABKAIOIgRBEHQgBUEQdnI2AgwgAUEQaiEBIAJBEGohAiAGQXBqIgZBEUsNAAsgCiAIayECIAchASADIAlqIQMMAwsgAyABKAIAIgQ6AAAgASACQWxqQXBxIghBEWoiCWohByACQW9qIQogAkF/aiEGIANBAWohAiABQQFqIQEDQCACIAEoAgMiBUEYdCAEQQh2cjYCACACIAEoAgciBEEYdCAFQQh2cjYCBCACIAEoAgsiBUEYdCAEQQh2cjYCCCACIAEoAg8iBEEYdCAFQQh2cjYCDCABQRBqIQEgAkEQaiECIAZBcGoiBkESSw0ACyAKIAhrIQIgByEBIAMgCWohAwsLCyACQRBxBEAgAyABLAAAOgAAIAMgASwAAToAASADIAEsAAI6AAIgAyABLAADOgADIAMgASwABDoABCADIAEsAAU6AAUgAyABLAAGOgAGIAMgASwABzoAByADIAEsAAg6AAggAyABLAAJOgAJIAMgASwACjoACiADIAEsAAs6AAsgAyABLAAMOgAMIAMgASwADToADSADIAEsAA46AA4gAyABLAAPOgAPIAFBEGohASADQRBqIQMLIAJBCHEEQCADIAEsAAA6AAAgAyABLAABOgABIAMgASwAAjoAAiADIAEsAAM6AAMgAyABLAAEOgAEIAMgASwABToABSADIAEsAAY6AAYg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OTIrJB0WDxceJSwzOjs0LSYfJy41PD02Lzc+PwgQExYaGx0iEBAWGBsdIiUTFhobHSIiJhYWGhsdIiUoFhobHSAjKDAaGx0gIygwOhobHSImLjhFGx0jJi44RVMgLComIBkRCSw+OjQsIxgMKjo3MSohFwwmNDEsJh4UCiAsKiYgGREJGSMhHhkUDgcRGBcUEQ4JBQkMDAoJBwUCAAABAQECAgICAgICAgIAAAAAAAAAAAEBAQICAgICAAAICAxbW1teW15ERDQ0NDQ0NDQ0NDQAAAAAAAAAAAAAAAAAAAAAAAAAAENDQ0JCQkJCQkJCMTExMTExMTExMTExICAgICAgIAAARUVFRTQ0NDQ0NDQkJCQkJCQkJCQkJCQkJCQkJCQkAAAAAQIRAAAAAAAAAAAAAAAAAAECAwQFBhEAAAAAAAAAAAABAgMEBQYHCAkKCwwNDhEAAQMFBgcICQoLDA0ODxARAAECBAUGBwgJCgsMDQ4PEQABAgMEBQYHCAkKCwwNDg9zaXplID4gMABEOi9zcnYvZW1zZGsvZW1zY3JpcHRlbi8xLjM4LjUvc3lzdGVtL2xpYi9lbW1hbGxvYy5jcHAAZ2V0RnJlZUxpc3RJbmRleABNSU5fRlJFRUxJU1RfSU5ERVggPD0gaW5kZXggJiYgaW5kZXggPCBNQVhfRlJFRUxJU1RfSU5ERVgAZ2V0QWZ0ZXIocmVnaW9uKSA8PSBzYnJrKDApAGVtbWFsbG9jX21hbGxvYwByZWdpb24tPmdldFVzZWQoKQBnZXRQYXlsb2FkAChjaGFyKilleHRyYVB0ciA9PSAoY2hhciopcHRyICsgc2Jya1NpemUAYWxsb2NhdGVSZWdpb24AIWxhc3RSZWdpb24AIWZpcnN0UmVnaW9uAGZpcnN0UmVnaW9uAHB0ciA9PSBnZXRBZnRlcihsYXN0UmVnaW9uKQBleHRlbmRMYXN0UmVnaW9uAGFkZFRvRnJlZUxpc3QAZ2V0QmlnRW5vdWdoRnJlZUxpc3RJbmRleABwYXlsb2FkU2l6ZSA+PSBzaXplAHBvc3NpYmx5U3BsaXRSZW1haW5kZXIAZXh0cmEgPj0gTUlOX1JFR0lPTl9TSVpFAHRvdGFsU3BsaXRTaXplID49IE1JTl9SRUdJT05fU0laRQBtZXJnZUludG9FeGlzdGluZ0ZyZWVSZWdpb24AcmVnaW9uID09IGxhc3RSZWdpb24AZW1tYWxsb2NfcmVhbGxvYw==');
+
+/***/ }),
+
 /***/ "./src/lib/webaudio.js":
 /*!*****************************!*\
   !*** ./src/lib/webaudio.js ***!
@@ -4725,7 +5265,7 @@ var addStyles = function addStyles(element, styles) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var ___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../ */ "./src/index.js");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils */ "./src/utils.js");
 
 
 var WebAudioOut = function WebAudioOut(options) {
@@ -4765,7 +5305,7 @@ WebAudioOut.prototype.play = function (sampleRate, left, right) {
 
 
   if (!this.unlocked) {
-    var ts = ___WEBPACK_IMPORTED_MODULE_0__["default"].Now();
+    var ts = Object(_utils__WEBPACK_IMPORTED_MODULE_0__["Now"])();
 
     if (this.wallclockStartTime < ts) {
       this.wallclockStartTime = ts;
@@ -4787,7 +5327,7 @@ WebAudioOut.prototype.play = function (sampleRate, left, right) {
 
   if (this.startTime < now) {
     this.startTime = now;
-    this.wallclockStartTime = ___WEBPACK_IMPORTED_MODULE_0__["default"].Now();
+    this.wallclockStartTime = Object(_utils__WEBPACK_IMPORTED_MODULE_0__["Now"])();
   }
 
   source.start(this.startTime);
@@ -4806,12 +5346,12 @@ WebAudioOut.prototype.stop = function () {
 WebAudioOut.prototype.getEnqueuedTime = function () {
   // The AudioContext.currentTime is only updated every so often, so if we
   // want to get exact timing, we need to rely on the system time.
-  return Math.max(this.wallclockStartTime - ___WEBPACK_IMPORTED_MODULE_0__["default"].Now(), 0);
+  return Math.max(this.wallclockStartTime - Object(_utils__WEBPACK_IMPORTED_MODULE_0__["Now"])(), 0);
 };
 
 WebAudioOut.prototype.resetEnqueuedTime = function () {
   this.startTime = this.context.currentTime;
-  this.wallclockStartTime = ___WEBPACK_IMPORTED_MODULE_0__["default"].Now();
+  this.wallclockStartTime = Object(_utils__WEBPACK_IMPORTED_MODULE_0__["Now"])();
 };
 
 WebAudioOut.prototype.unlock = function (callback) {
@@ -4880,12 +5420,14 @@ var WebGLRenderer = function WebGLRenderer(options) {
   this.width = this.canvas.width;
   this.height = this.canvas.height;
   this.enabled = true;
+  this.hasTextureData = {};
   var contextCreateOptions = {
     preserveDrawingBuffer: !!options.preserveDrawingBuffer,
     alpha: false,
     depth: false,
     stencil: false,
-    antialias: false
+    antialias: false,
+    premultipliedAlpha: false
   };
   this.gl = this.canvas.getContext('webgl', contextCreateOptions) || this.canvas.getContext('experimental-webgl', contextCreateOptions);
 
@@ -4894,7 +5436,8 @@ var WebGLRenderer = function WebGLRenderer(options) {
   }
 
   var gl = this.gl;
-  var vertexAttr = null; // Init buffers
+  var vertexAttr = null;
+  gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false); // Init buffers
 
   this.vertexBuffer = gl.createBuffer();
   var vertexCoords = new Float32Array([0, 0, 0, 1, 1, 0, 1, 1]);
@@ -4986,7 +5529,7 @@ WebGLRenderer.prototype.renderProgress = function (progress) {
   gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 };
 
-WebGLRenderer.prototype.render = function (y, cb, cr) {
+WebGLRenderer.prototype.render = function (y, cb, cr, isClampedArray) {
   if (!this.enabled) {
     return;
   }
@@ -4996,11 +5539,13 @@ WebGLRenderer.prototype.render = function (y, cb, cr) {
       h = this.height,
       w2 = w >> 1,
       h2 = h >> 1; // In some browsers WebGL doesn't like Uint8ClampedArrays (this is a bug
-  // and should be fixed soon-ish), so we have to create a Uint8Array view 
+  // and should be fixed soon-ish), so we have to create a Uint8Array view
   // for each plane.
 
-  if (this.shouldCreateUnclampedViews) {
-    y = new Uint8Array(y.buffer), cb = new Uint8Array(cb.buffer), cr = new Uint8Array(cr.buffer);
+  if (isClampedArray && this.shouldCreateUnclampedViews) {
+    y = new Uint8Array(y.buffer);
+    cb = new Uint8Array(cb.buffer);
+    cr = new Uint8Array(cr.buffer);
   }
 
   gl.useProgram(this.program);
@@ -5014,7 +5559,13 @@ WebGLRenderer.prototype.updateTexture = function (unit, texture, w, h, data) {
   var gl = this.gl;
   gl.activeTexture(unit);
   gl.bindTexture(gl.TEXTURE_2D, texture);
-  gl.texImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE, w, h, 0, gl.LUMINANCE, gl.UNSIGNED_BYTE, data);
+
+  if (this.hasTextureData[unit]) {
+    gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, w, h, gl.LUMINANCE, gl.UNSIGNED_BYTE, data);
+  } else {
+    this.hasTextureData[unit] = true;
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE, w, h, 0, gl.LUMINANCE, gl.UNSIGNED_BYTE, data);
+  }
 };
 
 WebGLRenderer.IsSupported = function () {
@@ -5111,6 +5662,54 @@ WSSource.prototype.onMessage = function (ev) {
 };
 
 /* harmony default export */ __webpack_exports__["default"] = (WSSource);
+
+/***/ }),
+
+/***/ "./src/utils.js":
+/*!**********************!*\
+  !*** ./src/utils.js ***!
+  \**********************/
+/*! exports provided: Now, CreateVideoElements, Fill, Base64ToArrayBuffer */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Now", function() { return Now; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CreateVideoElements", function() { return CreateVideoElements; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Fill", function() { return Fill; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Base64ToArrayBuffer", function() { return Base64ToArrayBuffer; });
+/* harmony import */ var _lib_video_element__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./lib/video-element */ "./src/lib/video-element.js");
+
+var Now = function Now() {
+  return window.performance ? window.performance.now() / 1000 : Date.now() / 1000;
+};
+var CreateVideoElements = function CreateVideoElements() {
+  var elements = document.querySelectorAll('.jsmpeg');
+
+  for (var i = 0; i < elements.length; i++) {
+    new _lib_video_element__WEBPACK_IMPORTED_MODULE_0__["default"](elements[i]);
+  }
+};
+var Fill = function Fill(array, value) {
+  if (array.fill) {
+    array.fill(value);
+  } else {
+    for (var i = 0; i < array.length; i++) {
+      array[i] = value;
+    }
+  }
+};
+var Base64ToArrayBuffer = function Base64ToArrayBuffer(base64) {
+  var binary = window.atob(base64);
+  var length = binary.length;
+  var bytes = new Uint8Array(length);
+
+  for (var i = 0; i < length; i++) {
+    bytes[i] = binary.charCodeAt(i);
+  }
+
+  return bytes.buffer;
+};
 
 /***/ }),
 

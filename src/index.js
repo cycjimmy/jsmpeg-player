@@ -12,10 +12,20 @@ import WSSource from './lib/websocket';
 import TS from './lib/ts';
 import BaseDecoder from './lib/decoder';
 import MPEG1 from './lib/mpeg1';
+import MPEG1WASM from './lib/mpeg1-wasm';
 import MP2 from './lib/mp2';
+import MP2WASM from './lib/mp2-wasm';
 import WebGLRenderer from './lib/webgl';
 import CanvasRenderer from './lib/canvas2d';
 import WebAudioOut from './lib/webaudio';
+import {
+  Now,
+  CreateVideoElements,
+  Fill,
+  Base64ToArrayBuffer,
+} from './utils';
+import WASMModule from './lib/wasm-module';
+import WASM_BINARY from './lib/wasm/WASM_BINARY';
 
 // This sets up the JSMpeg "Namespace". The object is empty apart from the Now()
 // utility function and the automatic CreateVideoElements() after DOMReady.
@@ -75,7 +85,9 @@ let JSMpeg = {
   Decoder: {
     Base: BaseDecoder,
     MPEG1Video: MPEG1,
+    MPEG1VideoWASM: MPEG1WASM,
     MP2Audio: MP2,
+    MP2AudioWASM: MP2WASM,
   },
 
   // A Renderer accepts raw YCrCb data in 3 separate buffers via the render()
@@ -100,28 +112,19 @@ let JSMpeg = {
     WebAudio: WebAudioOut,
   },
 
+  WASMModule,
+
   // functions
-  Now: () => {
-    return window.performance
-      ? window.performance.now() / 1000
-      : Date.now() / 1000;
-  },
-  CreateVideoElements: () => {
-    let elements = document.querySelectorAll('.jsmpeg');
-    for (let i = 0; i < elements.length; i++) {
-      new VideoElement(elements[i]);
-    }
-  },
-  Fill: (array, value) => {
-    if (array.fill) {
-      array.fill(value);
-    }
-    else {
-      for (let i = 0; i < array.length; i++) {
-        array[i] = value;
-      }
-    }
-  },
+  Now,
+  CreateVideoElements,
+  Fill,
+  Base64ToArrayBuffer,
+
+  // The build process may append `JSMpeg.WASM_BINARY_INLINED = base64data;`
+  // to the minified source.
+  // If this property is present, jsmpeg will use the inlined binary data
+  // instead of trying to load a jsmpeg.wasm file via Ajax.
+  WASM_BINARY_INLINED: WASM_BINARY,
 };
 
 export default JSMpeg;
