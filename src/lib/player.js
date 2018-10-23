@@ -19,30 +19,31 @@ import {
 /**
  * @param url
  * @param options
- * @param cbUI {play: function, pause: function, stop: function} 插入UI回调
+ * @param hooks (play: function, pause: function, stop: function) 插入UI回调
  * @constructor
  */
-const Player = function (url, options, cbUI) {
+const Player = function (url, options, hooks) {
   this.options = options || {};
-  this.cbUI = cbUI || {};
+  this.hooks = hooks || {};
+  this.options.hookOnEstablished = () => this.hooks.load();
 
   if (options.source) {
-    this.source = new options.source(url, options);
+    this.source = new options.source(url, this.options);
     options.streaming = !!this.source.streaming;
   }
 
   else if (url.match(/^wss?:\/\//)) {
-    this.source = new WSSource(url, options);
+    this.source = new WSSource(url, this.options);
     options.streaming = true;
   }
 
   else if (options.progressive) {
-    this.source = new AjaxProgressiveSource(url, options);
+    this.source = new AjaxProgressiveSource(url, this.options);
     options.streaming = false;
   }
 
   else {
-    this.source = new AjaxSource(url, options);
+    this.source = new AjaxSource(url, this.options);
     options.streaming = false;
   }
 
@@ -132,8 +133,8 @@ Player.prototype.play = function (ev) {
   this.animationId = requestAnimationFrame(this.update.bind(this));
   this.wantsToPlay = true;
 
-  if (this.cbUI.play) {
-    this.cbUI.play();
+  if (this.hooks.play) {
+    this.hooks.play();
   }
 };
 
@@ -149,8 +150,8 @@ Player.prototype.pause = function (ev) {
     this.seek(this.currentTime);
   }
 
-  if (this.cbUI.pause) {
-    this.cbUI.pause();
+  if (this.hooks.pause) {
+    this.hooks.pause();
   }
 };
 
@@ -171,8 +172,8 @@ Player.prototype.stop = function (ev) {
     this.video.decode();
   }
 
-  if (this.cbUI.stop) {
-    this.cbUI.stop();
+  if (this.hooks.stop) {
+    this.hooks.stop();
   }
 };
 
@@ -318,5 +319,4 @@ Player.prototype.updateForStaticFile = function () {
 };
 
 export default Player;
-
 

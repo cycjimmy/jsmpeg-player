@@ -1,5 +1,5 @@
 /*!
- * jsmpeg-player v1.3.1
+ * jsmpeg-player v2.0.0
  * Homepage: https://github.com/cycdpo/jsmpeg-player#readme
  * Released under the MIT License.
  */
@@ -101,6 +101,26 @@ return /******/ (function(modules) { // webpackBootstrap
 /************************************************************************/
 /******/ ({
 
+/***/ "./node_modules/awesome-js-funcs/judgeBasic/isString.js":
+/*!**************************************************************!*\
+  !*** ./node_modules/awesome-js-funcs/judgeBasic/isString.js ***!
+  \**************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/**
+ * 判断是否字符串
+ * @param str
+ * @returns {boolean}
+ */
+/* harmony default export */ __webpack_exports__["default"] = (function (str) {
+  return typeof str === 'string' && str.constructor === String;
+});
+
+/***/ }),
+
 /***/ "./node_modules/css-loader/index.js?!./node_modules/sass-loader/lib/loader.js?!./static/theme/style.scss":
 /*!************************************************************************************************************************!*\
   !*** ./node_modules/css-loader??ref--5-1!./node_modules/sass-loader/lib/loader.js??ref--5-2!./static/theme/style.scss ***!
@@ -113,7 +133,7 @@ exports = module.exports = __webpack_require__(/*! ../../node_modules/css-loader
 
 
 // module
-exports.push([module.i, ".static-theme-style__canvas,\n.static-theme-style__poster, .static-theme-style__unmuteButton, .static-theme-style__playButton, .static-theme-style__unmuteButtonSvg {\n  position: absolute;\n  z-index: 1;\n}\n\n.static-theme-style__canvas,\n.static-theme-style__poster, .static-theme-style__unmuteButton {\n  left: 0;\n  top: 0;\n  width: 100%;\n  height: 100%;\n}\n\n.static-theme-style__playButton {\n  left: 0;\n  top: 0;\n  right: 0;\n  bottom: 0;\n  margin: auto;\n}\n\n.static-theme-style__container {\n  position: relative;\n  width: 100%;\n  min-width: 80px;\n  height: 0;\n}\n\n.static-theme-style__canvas,\n.static-theme-style__poster {\n  display: block;\n}\n\n.static-theme-style__playButton, .static-theme-style__unmuteButton {\n  opacity: .7;\n  cursor: pointer;\n}\n\n.static-theme-style__playButton, .static-theme-style__playButtonSvg {\n  max-width: 60px;\n  max-height: 60px;\n}\n\n.static-theme-style__playButton {\n  z-index: 2;\n}\n\n.static-theme-style__playButtonSvg {\n  fill: #fff;\n}\n\n.static-theme-style__unmuteButton {\n  z-index: 2;\n}\n\n.static-theme-style__unmuteButtonSvg {\n  bottom: 15px;\n  right: 15px;\n  width: 40px;\n  height: 40px;\n  fill: #fff;\n}\n", ""]);
+exports.push([module.i, ".static-theme-style__canvas,\n.static-theme-style__poster, .static-theme-style__unmuteButton, .static-theme-style__playButton, .static-theme-style__unmuteButtonSvg {\n  position: absolute;\n  z-index: 1;\n}\n\n.static-theme-style__canvas,\n.static-theme-style__poster, .static-theme-style__unmuteButton {\n  left: 0;\n  top: 0;\n  width: 100%;\n  height: 100%;\n}\n\n.static-theme-style__playButton {\n  left: 0;\n  top: 0;\n  right: 0;\n  bottom: 0;\n  margin: auto;\n}\n\n.static-theme-style__wrapper {\n  position: relative;\n}\n\n.static-theme-style__canvas,\n.static-theme-style__poster {\n  display: block;\n}\n\n.static-theme-style__playButton, .static-theme-style__unmuteButton {\n  opacity: .7;\n  cursor: pointer;\n}\n\n.static-theme-style__playButton, .static-theme-style__playButtonSvg {\n  max-width: 60px;\n  max-height: 60px;\n}\n\n.static-theme-style__playButton {\n  z-index: 10;\n}\n\n.static-theme-style__playButtonSvg {\n  fill: #fff;\n}\n\n.static-theme-style__unmuteButton {\n  z-index: 10;\n}\n\n.static-theme-style__unmuteButtonSvg {\n  bottom: 15px;\n  right: 15px;\n  width: 40px;\n  height: 40px;\n  fill: #fff;\n}\n", ""]);
 
 // exports
 exports.locals = {
@@ -122,7 +142,7 @@ exports.locals = {
 	"unmuteButton": "static-theme-style__unmuteButton",
 	"playButton": "static-theme-style__playButton",
 	"unmuteButtonSvg": "static-theme-style__unmuteButtonSvg",
-	"container": "static-theme-style__container",
+	"wrapper": "static-theme-style__wrapper",
 	"playButtonSvg": "static-theme-style__playButtonSvg"
 };
 
@@ -1157,6 +1177,10 @@ var AjaxProgressiveSource = function AjaxProgressiveSource(url, options) {
   this.loadStartTime = 0;
   this.throttled = options.throttled !== false;
   this.aborted = false;
+
+  if (options.hookOnEstablished) {
+    this.hookOnEstablished = options.hookOnEstablished;
+  }
 };
 
 AjaxProgressiveSource.prototype.connect = function (destination) {
@@ -1242,6 +1266,10 @@ AjaxProgressiveSource.prototype.onChunkLoad = function (data) {
   this.loadFails = 0;
   this.isLoading = false;
 
+  if (this.hookOnEstablished) {
+    this.hookOnEstablished();
+  }
+
   if (this.destination) {
     this.destination.write(data);
   }
@@ -1273,6 +1301,10 @@ var AjaxSource = function AjaxSource(url, options) {
   this.completed = false;
   this.established = false;
   this.progress = 0;
+
+  if (options.hookOnEstablished) {
+    this.hookOnEstablished = options.hookOnEstablished;
+  }
 };
 
 AjaxSource.prototype.connect = function (destination) {
@@ -1309,6 +1341,10 @@ AjaxSource.prototype.onLoad = function (data) {
   this.established = true;
   this.completed = true;
   this.progress = 1;
+
+  if (this.hookOnEstablished) {
+    this.hookOnEstablished();
+  }
 
   if (this.destination) {
     this.destination.write(data);
@@ -4357,25 +4393,31 @@ __webpack_require__.r(__webpack_exports__);
 /**
  * @param url
  * @param options
- * @param cbUI {play: function, pause: function, stop: function} 插入UI回调
+ * @param hooks (play: function, pause: function, stop: function) 插入UI回调
  * @constructor
  */
 
-var Player = function Player(url, options, cbUI) {
+var Player = function Player(url, options, hooks) {
+  var _this = this;
+
   this.options = options || {};
-  this.cbUI = cbUI || {};
+  this.hooks = hooks || {};
+
+  this.options.hookOnEstablished = function () {
+    return _this.hooks.load();
+  };
 
   if (options.source) {
-    this.source = new options.source(url, options);
+    this.source = new options.source(url, this.options);
     options.streaming = !!this.source.streaming;
   } else if (url.match(/^wss?:\/\//)) {
-    this.source = new _websocket__WEBPACK_IMPORTED_MODULE_2__["default"](url, options);
+    this.source = new _websocket__WEBPACK_IMPORTED_MODULE_2__["default"](url, this.options);
     options.streaming = true;
   } else if (options.progressive) {
-    this.source = new _ajax_progressive__WEBPACK_IMPORTED_MODULE_1__["default"](url, options);
+    this.source = new _ajax_progressive__WEBPACK_IMPORTED_MODULE_1__["default"](url, this.options);
     options.streaming = false;
   } else {
-    this.source = new _ajax__WEBPACK_IMPORTED_MODULE_0__["default"](url, options);
+    this.source = new _ajax__WEBPACK_IMPORTED_MODULE_0__["default"](url, this.options);
     options.streaming = false;
   }
 
@@ -4454,8 +4496,8 @@ Player.prototype.play = function (ev) {
   this.animationId = requestAnimationFrame(this.update.bind(this));
   this.wantsToPlay = true;
 
-  if (this.cbUI.play) {
-    this.cbUI.play();
+  if (this.hooks.play) {
+    this.hooks.play();
   }
 };
 
@@ -4471,8 +4513,8 @@ Player.prototype.pause = function (ev) {
     this.seek(this.currentTime);
   }
 
-  if (this.cbUI.pause) {
-    this.cbUI.pause();
+  if (this.hooks.pause) {
+    this.hooks.pause();
   }
 };
 
@@ -4494,8 +4536,8 @@ Player.prototype.stop = function (ev) {
     this.video.decode();
   }
 
-  if (this.cbUI.stop) {
-    this.cbUI.stop();
+  if (this.hooks.stop) {
+    this.hooks.stop();
   }
 };
 
@@ -4867,124 +4909,180 @@ TS.STREAM = {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return VideoElement; });
-/* harmony import */ var ___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../ */ "./src/index.js");
-/* harmony import */ var _player__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./player */ "./src/lib/player.js");
-/* harmony import */ var _static_theme_style_scss__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../static/theme/style.scss */ "./static/theme/style.scss");
-/* harmony import */ var _static_theme_style_scss__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_static_theme_style_scss__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _static_view_playButton_pug__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../static/view/playButton.pug */ "./static/view/playButton.pug");
-/* harmony import */ var _static_view_playButton_pug__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_static_view_playButton_pug__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _static_view_unmuteButton_pug__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../static/view/unmuteButton.pug */ "./static/view/unmuteButton.pug");
-/* harmony import */ var _static_view_unmuteButton_pug__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_static_view_unmuteButton_pug__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _player__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./player */ "./src/lib/player.js");
+/* harmony import */ var _static_theme_style_scss__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../static/theme/style.scss */ "./static/theme/style.scss");
+/* harmony import */ var _static_theme_style_scss__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_static_theme_style_scss__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _static_view_playButton_pug__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../static/view/playButton.pug */ "./static/view/playButton.pug");
+/* harmony import */ var _static_view_playButton_pug__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_static_view_playButton_pug__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _static_view_unmuteButton_pug__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../static/view/unmuteButton.pug */ "./static/view/unmuteButton.pug");
+/* harmony import */ var _static_view_unmuteButton_pug__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_static_view_unmuteButton_pug__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var awesome_js_funcs_judgeBasic_isString__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! awesome-js-funcs/judgeBasic/isString */ "./node_modules/awesome-js-funcs/judgeBasic/isString.js");
+function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 
  // style
 
  // template
 
 
+ // service
+
 
 
 var VideoElement =
 /*#__PURE__*/
 function () {
-  function VideoElement(wrapper, videoUrl, options) {
-    var _this = this;
+  function VideoElement(wrapper, videoUrl, _ref, overlayOptions) {
+    var _ref$canvas = _ref.canvas,
+        canvas = _ref$canvas === void 0 ? '' : _ref$canvas,
+        _ref$canvasWidth = _ref.canvasWidth,
+        canvasWidth = _ref$canvasWidth === void 0 ? 0 : _ref$canvasWidth,
+        _ref$canvasHeight = _ref.canvasHeight,
+        canvasHeight = _ref$canvasHeight === void 0 ? 0 : _ref$canvasHeight,
+        _ref$poster = _ref.poster,
+        poster = _ref$poster === void 0 ? '' : _ref$poster,
+        _ref$autoplay = _ref.autoplay,
+        autoplay = _ref$autoplay === void 0 ? false : _ref$autoplay,
+        _ref$loop = _ref.loop,
+        loop = _ref$loop === void 0 ? false : _ref$loop,
+        _ref$control = _ref.control,
+        control = _ref$control === void 0 ? true : _ref$control,
+        _ref$decodeFirstFrame = _ref.decodeFirstFrame,
+        decodeFirstFrame = _ref$decodeFirstFrame === void 0 ? true : _ref$decodeFirstFrame,
+        _ref$picMode = _ref.picMode,
+        picMode = _ref$picMode === void 0 ? false : _ref$picMode,
+        _ref$progressive = _ref.progressive,
+        progressive = _ref$progressive === void 0 ? true : _ref$progressive,
+        _ref$chunkSize = _ref.chunkSize,
+        chunkSize = _ref$chunkSize === void 0 ? 1024 * 1024 : _ref$chunkSize,
+        _ref$hooks = _ref.hooks,
+        hooks = _ref$hooks === void 0 ? {} : _ref$hooks;
 
-    // Setup the div container, canvas and play button
-    this.options = Object.assign({
+    if (overlayOptions === void 0) {
+      overlayOptions = {};
+    }
+
+    this.options = _extends({
       videoUrl: videoUrl,
-      poster: '',
-      aspectPercent: '56.25%',
-      picMode: false,
-      autoplay: false,
-      loop: false,
-      decodeFirstFrame: true,
-      progressive: true,
-      hookInPlay: function hookInPlay() {},
-      hookInPause: function hookInPause() {},
-      hookInStop: function hookInStop() {}
-    }, options);
-    this.wrapper = isString(wrapper) ? document.querySelector(wrapper) : wrapper;
-    this.container = document.createElement('div');
-    this.canvas = document.createElement('canvas');
-    this.player = null;
-    this.playButton = document.createElement('div');
-    this.containerInit();
-    this.canvasInit();
-    this.playButtonInit();
-    this.playerInit(); // Assignment height of wrapper. prevent page shake when destroyed.
+      canvas: canvas,
+      canvasWidth: canvasWidth,
+      canvasHeight: canvasHeight,
+      poster: poster,
+      picMode: picMode,
+      autoplay: autoplay,
+      loop: loop,
+      control: control,
+      decodeFirstFrame: decodeFirstFrame,
+      progressive: progressive,
+      chunkSize: chunkSize,
+      hooks: _extends({
+        play: function play() {},
+        pause: function pause() {},
+        stop: function stop() {},
+        load: function load() {}
+      }, hooks)
+    }, overlayOptions);
+    this.options.needPlayButton = this.options.control && !this.options.picMode;
+    this.player = null; // Setup canvas and play button
 
-    this.setWrapperHeight();
-    window.addEventListener('resize', function () {
-      return _this.setWrapperHeight();
-    });
+    this.els = {
+      wrapper: Object(awesome_js_funcs_judgeBasic_isString__WEBPACK_IMPORTED_MODULE_4__["default"])(wrapper) ? document.querySelector(wrapper) : wrapper,
+      canvas: null,
+      playButton: document.createElement('div'),
+      unmuteButton: null,
+      poster: null
+    };
+    this.els.wrapper.classList.add(_static_theme_style_scss__WEBPACK_IMPORTED_MODULE_1___default.a.wrapper);
+    this.els.wrapper.clientRect = this.els.wrapper.getBoundingClientRect();
+    this.initCanvas();
+    this.initPlayButton();
+    this.initPlayer();
   }
 
   var _proto = VideoElement.prototype;
 
-  _proto.containerInit = function containerInit() {
-    this.container.classList.add(_static_theme_style_scss__WEBPACK_IMPORTED_MODULE_2___default.a.container);
-    addStyles(this.container, {
-      paddingBottom: this.options.aspectPercent
-    });
-    this.wrapper.appendChild(this.container);
+  _proto.initCanvas = function initCanvas() {
+    if (this.options.canvas) {
+      this.els.canvas = Object(awesome_js_funcs_judgeBasic_isString__WEBPACK_IMPORTED_MODULE_4__["default"])(this.options.canvas) ? document.querySelector(this.options.canvas) : this.options.canvas;
+    } else {
+      this.els.canvas = document.createElement('canvas');
+      this.els.canvas.classList.add(_static_theme_style_scss__WEBPACK_IMPORTED_MODULE_1___default.a.canvas);
+      this.els.wrapper.appendChild(this.els.canvas);
+    }
+
+    this.els.canvas.width = this.options.canvasWidth ? this.options.canvasWidth : this.els.wrapper.clientRect.width;
+    this.els.canvas.height = this.options.canvasHeight ? this.options.canvasHeight : this.els.wrapper.clientRect.height;
   };
 
-  _proto.canvasInit = function canvasInit() {
-    this.canvas.classList.add(_static_theme_style_scss__WEBPACK_IMPORTED_MODULE_2___default.a.canvas);
-    this.container.appendChild(this.canvas);
-  };
-
-  _proto.playerInit = function playerInit() {
-    var _this2 = this;
+  _proto.initPlayer = function initPlayer() {
+    var _this = this;
 
     // Parse the data-options - we try to decode the values as json. This way
     // we can get proper boolean and number values. If JSON.parse() fails,
     // treat it as a string.
-    this.options = Object.assign(this.options, {
-      canvas: this.canvas
+    this.options = _extends(this.options, {
+      canvas: this.els.canvas
+    });
+
+    var _options = _extends({}, this.options, {
+      autoplay: false
     }); // Create the player instance
 
-    this.player = new _player__WEBPACK_IMPORTED_MODULE_1__["default"](this.options.videoUrl, this.options, {
-      play: function play() {
-        _this2.playButton.style.display = 'none';
 
-        if (_this2.poster) {
-          _this2.poster.style.display = 'none';
+    this.player = new _player__WEBPACK_IMPORTED_MODULE_0__["default"](this.options.videoUrl, _options, {
+      play: function play() {
+        if (_this.options.needPlayButton) {
+          _this.els.playButton.style.display = 'none';
         }
 
-        _this2.options.hookInPlay();
+        if (_this.els.poster) {
+          _this.els.poster.style.display = 'none';
+        }
+
+        _this.options.hooks.play();
       },
       pause: function pause() {
-        _this2.playButton.style.display = 'block';
-
-        _this2.options.hookInPause();
-      },
-      stop: function stop() {
-        if (_this2.poster) {
-          _this2.poster.style.display = 'block';
+        if (_this.options.needPlayButton) {
+          _this.els.playButton.style.display = 'block';
         }
 
-        _this2.options.hookInStop();
+        _this.options.hooks.pause();
+      },
+      stop: function stop() {
+        if (_this.els.poster) {
+          _this.els.poster.style.display = 'block';
+        }
+
+        _this.options.hooks.stop();
+      },
+      load: function load() {
+        if (_this.options.autoplay) {
+          _this.play();
+        }
+
+        _this.options.hooks.load();
       }
     });
-    this.wrapper.playerInstance = this.player; // Setup the poster element, if any
+
+    this._copyPlayerFuncs();
+
+    this.els.wrapper.playerInstance = this.player; // Setup the poster element, if any
 
     if (this.options.poster && !this.options.autoplay && !this.player.options.streaming) {
       this.options.decodeFirstFrame = false;
-      this.poster = new Image();
-      this.poster.src = this.options.poster;
-      this.poster.classList.add(_static_theme_style_scss__WEBPACK_IMPORTED_MODULE_2___default.a.poster);
-      this.container.appendChild(this.poster);
+      this.els.poster = new Image();
+      this.els.poster.src = this.options.poster;
+      this.els.poster.classList.add(_static_theme_style_scss__WEBPACK_IMPORTED_MODULE_1___default.a.poster);
+      this.els.wrapper.appendChild(this.els.poster);
     } // Add the click handler if this video is pausable
 
 
     if (!this.player.options.streaming) {
-      this.container.addEventListener('click', this.onClick.bind(this));
+      this.els.wrapper.addEventListener('click', this.onClick.bind(this));
     } // Hide the play button if this video immediately begins playing
 
 
     if (this.options.autoplay || this.player.options.streaming) {
-      this.playButton.style.display = 'none';
+      this.els.playButton.style.display = 'none';
     } // Set up the unlock audio buton for iOS devices. iOS only allows us to
     // play audio after a user action has initiated playing. For autoplay or
     // streaming players we set up a muted speaker icon as the button. For all
@@ -4992,16 +5090,16 @@ function () {
 
 
     if (this.player.audioOut && !this.player.audioOut.unlocked) {
-      var unlockAudioElement = this.container;
+      var unlockAudioElement = this.els.wrapper;
 
       if (this.options.autoplay || this.player.options.streaming) {
-        this.unmuteButton = document.createElement('div');
-        this.unmuteButton.innerHTML = _static_view_unmuteButton_pug__WEBPACK_IMPORTED_MODULE_4___default()({
-          _style: _static_theme_style_scss__WEBPACK_IMPORTED_MODULE_2___default.a
+        this.els.unmuteButton = document.createElement('div');
+        this.els.unmuteButton.innerHTML = _static_view_unmuteButton_pug__WEBPACK_IMPORTED_MODULE_3___default()({
+          _style: _static_theme_style_scss__WEBPACK_IMPORTED_MODULE_1___default.a
         });
-        this.unmuteButton.classList.add(_static_theme_style_scss__WEBPACK_IMPORTED_MODULE_2___default.a.unmuteButton);
-        this.container.appendChild(this.unmuteButton);
-        unlockAudioElement = this.unmuteButton;
+        this.els.unmuteButton.classList.add(_static_theme_style_scss__WEBPACK_IMPORTED_MODULE_1___default.a.unmuteButton);
+        this.els.wrapper.appendChild(this.els.unmuteButton);
+        unlockAudioElement = this.els.unmuteButton;
       }
 
       this.unlockAudioBound = this.onUnlockAudio.bind(this, unlockAudioElement);
@@ -5010,51 +5108,73 @@ function () {
     }
   };
 
-  _proto.playButtonInit = function playButtonInit() {
-    this.playButton.innerHTML = _static_view_playButton_pug__WEBPACK_IMPORTED_MODULE_3___default()({
-      _style: _static_theme_style_scss__WEBPACK_IMPORTED_MODULE_2___default.a
-    });
-    this.playButton.classList.add(_static_theme_style_scss__WEBPACK_IMPORTED_MODULE_2___default.a.playButton);
-
-    if (this.options.picMode) {
-      this.playButton.style.visibility = 'hidden';
+  _proto.initPlayButton = function initPlayButton() {
+    if (!this.options.needPlayButton) {
+      return;
     }
 
-    this.container.appendChild(this.playButton);
+    this.els.playButton.classList.add(_static_theme_style_scss__WEBPACK_IMPORTED_MODULE_1___default.a.playButton);
+    this.els.playButton.innerHTML = _static_view_playButton_pug__WEBPACK_IMPORTED_MODULE_2___default()({
+      _style: _static_theme_style_scss__WEBPACK_IMPORTED_MODULE_1___default.a
+    });
+    this.els.wrapper.appendChild(this.els.playButton);
   };
 
   _proto.onUnlockAudio = function onUnlockAudio(element, ev) {
-    if (this.unmuteButton) {
+    var _this2 = this;
+
+    if (this.els.unmuteButton) {
       ev.preventDefault();
       ev.stopPropagation();
     }
 
     this.player.audioOut.unlock(function () {
-      if (this.unmuteButton) {
-        this.unmuteButton.style.display = 'none';
+      if (_this2.els.unmuteButton) {
+        _this2.els.unmuteButton.style.display = 'none';
       }
 
-      element.removeEventListener('touchstart', this.unlockAudioBound);
-      element.removeEventListener('click', this.unlockAudioBound);
-    }.bind(this));
+      element.removeEventListener('touchstart', _this2.unlockAudioBound);
+      element.removeEventListener('click', _this2.unlockAudioBound);
+    });
   };
 
   _proto.onClick = function onClick() {
+    if (!this.options.control) {
+      return;
+    }
+
     if (this.player.isPlaying) {
-      this.player.pause();
+      this.pause();
     } else {
-      this.player.play();
+      this.play();
     }
   };
 
-  _proto.setWrapperHeight = function setWrapperHeight() {
-    this.wrapper.style.height = this.container.offsetHeight + 'px';
-  };
+  /**
+   * copy player functions
+   * @private
+   */
+  _proto._copyPlayerFuncs = function _copyPlayerFuncs() {
+    var _this3 = this;
 
-  _proto.destroy = function destroy() {
-    this.player.destroy();
-    this.wrapper.innerHTML = '';
-    window.removeEventListener('resize', this.setWrapperHeight);
+    this.play = function () {
+      return _this3.player.play();
+    };
+
+    this.pause = function () {
+      return _this3.player.pause();
+    };
+
+    this.stop = function () {
+      return _this3.player.stop();
+    };
+
+    this.destroy = function () {
+      _this3.player.destroy();
+
+      _this3.els.wrapper.innerHTML = '';
+      _this3.els.wrapper.playerInstance = null;
+    };
   };
 
   return VideoElement;
@@ -5062,15 +5182,6 @@ function () {
 
 
 ;
-
-var addStyles = function addStyles(element, styles) {
-  for (var name in styles) {
-    element.style[name] = styles[name];
-  }
-},
-    isString = function isString(str) {
-  return typeof str === 'string' && str.constructor === String;
-};
 
 /***/ }),
 
@@ -5614,6 +5725,10 @@ var WSSource = function WSSource(url, options) {
   this.established = false;
   this.progress = 0;
   this.reconnectTimeoutId = 0;
+
+  if (options.hookOnEstablished) {
+    this.hookOnEstablished = options.hookOnEstablished;
+  }
 };
 
 WSSource.prototype.connect = function (destination) {
@@ -5644,6 +5759,10 @@ WSSource.prototype.resume = function (secondsHeadroom) {// Nothing to do here
 WSSource.prototype.onOpen = function () {
   this.progress = 1;
   this.established = true;
+
+  if (this.hookOnEstablished) {
+    this.hookOnEstablished();
+  }
 };
 
 WSSource.prototype.onClose = function () {

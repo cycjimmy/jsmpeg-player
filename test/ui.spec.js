@@ -18,17 +18,11 @@ describe('ui spec', () => {
   ;
 
   test('videoDefault.wrapper should be videoWrapper', () => {
-    expect(videoDefault.wrapper.id).toBe('videoWrapper');
-    expect(videoDefault.wrapper).toBe(videoWrapper);
+    expect(videoDefault.els.wrapper.id).toBe('videoWrapper');
+    expect(videoDefault.els.wrapper).toBe(videoWrapper);
   });
 
   test('videoWrapper.playerInstance should be videoDefault.player', () => {
     expect(videoWrapper.playerInstance).toBe(videoDefault.player);
-  });
-
-  test('videoWrapper height should be equal to container height', () => {
-    expect(videoWrapper).not.toBe(videoDefault.container);
-    expect(videoDefault.container.parentNode).toBe(videoWrapper);
-    expect(videoWrapper.offsetHeight).toBe(videoDefault.container.offsetHeight);
   });
 });

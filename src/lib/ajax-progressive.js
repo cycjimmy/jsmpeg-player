@@ -19,6 +19,10 @@ const AjaxProgressiveSource = function (url, options) {
   this.loadStartTime = 0;
   this.throttled = options.throttled !== false;
   this.aborted = false;
+
+  if(options.hookOnEstablished) {
+    this.hookOnEstablished = options.hookOnEstablished;
+  }
 };
 
 AjaxProgressiveSource.prototype.connect = function (destination) {
@@ -108,6 +112,10 @@ AjaxProgressiveSource.prototype.onChunkLoad = function (data) {
   this.loadedSize += data.byteLength;
   this.loadFails = 0;
   this.isLoading = false;
+
+  if(this.hookOnEstablished) {
+    this.hookOnEstablished();
+  }
 
   if (this.destination) {
     this.destination.write(data);

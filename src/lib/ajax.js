@@ -6,6 +6,10 @@ const AjaxSource = function (url, options) {
   this.completed = false;
   this.established = false;
   this.progress = 0;
+
+  if (options.hookOnEstablished) {
+    this.hookOnEstablished = options.hookOnEstablished;
+  }
 };
 
 AjaxSource.prototype.connect = function (destination) {
@@ -46,6 +50,10 @@ AjaxSource.prototype.onLoad = function (data) {
   this.established = true;
   this.completed = true;
   this.progress = 1;
+
+  if (this.hookOnEstablished) {
+    this.hookOnEstablished();
+  }
 
   if (this.destination) {
     this.destination.write(data);
