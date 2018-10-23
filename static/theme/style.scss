@@ -20,19 +20,17 @@
   margin: auto;
 }
 
-.container {
+.wrapper {
   position: relative;
-  width: 100%;
-  min-width: 80px;
-  height: 0;
 }
 
 .canvas,
 .poster {
-  @extend %full;
   display: block;
+  @extend %full;
 }
 
+// buttons
 %buttonCommon {
   opacity: .7;
   cursor: pointer;
@@ -46,7 +44,7 @@
 .playButton {
   @extend %keepCenter;
   @extend %playButtonSize;
-  z-index: 2;
+  z-index: 10;
   @extend %buttonCommon;
 }
 
@@ -57,7 +55,7 @@
 
 .unmuteButton {
   @extend %full;
-  z-index: 2;
+  z-index: 10;
   @extend %buttonCommon;
 }
 

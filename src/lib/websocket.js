@@ -16,6 +16,10 @@ const WSSource = function (url, options) {
   this.progress = 0;
 
   this.reconnectTimeoutId = 0;
+
+  if (options.hookOnEstablished) {
+    this.hookOnEstablished = options.hookOnEstablished;
+  }
 };
 
 WSSource.prototype.connect = function (destination) {
@@ -48,6 +52,10 @@ WSSource.prototype.resume = function (secondsHeadroom) {
 WSSource.prototype.onOpen = function () {
   this.progress = 1;
   this.established = true;
+
+  if (this.hookOnEstablished) {
+    this.hookOnEstablished();
+  }
 };
 
 WSSource.prototype.onClose = function () {

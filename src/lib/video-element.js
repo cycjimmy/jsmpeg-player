@@ -1,4 +1,3 @@
-import JSMpeg from '../';
 import Player from './player';
 
 // style
@@ -8,105 +7,161 @@ import _style from '../../static/theme/style.scss';
 import playButtonTemplate from '../../static/view/playButton.pug';
 import unmuteButtonTemplate from '../../static/view/unmuteButton.pug';
 
+// service
+import isString from 'awesome-js-funcs/judgeBasic/isString';
+
 export default class VideoElement {
-  constructor(wrapper, videoUrl, options) {
-    // Setup the div container, canvas and play button
+  constructor(wrapper, videoUrl, {
+    canvas = '',
+    canvasWidth = 0,
+    canvasHeight = 0,
+    poster = '',
+    autoplay = false,
+    loop = false,
+    control = true,
+    decodeFirstFrame = true,
+    picMode = false,
+    progressive = true,
+    chunkSize = 1024 * 1024,
+    hooks = {}
+  }, overlayOptions = {}) {
+
     this.options = Object.assign({
       videoUrl: videoUrl,
-      poster: '',
-      aspectPercent: '56.25%',
-      picMode: false,
-      autoplay: false,
-      loop: false,
-      decodeFirstFrame: true,
-      progressive: true,
-      hookInPlay: () => {
-      },
-      hookInPause: () => {
-      },
-      hookInStop: () => {
-      },
-    }, options);
+      canvas,
+      canvasWidth,
+      canvasHeight,
+      poster,
+      picMode,
+      autoplay,
+      loop,
+      control,
+      decodeFirstFrame,
+      progressive,
+      chunkSize,
+      hooks: Object.assign({
+        play: () => {
+        },
+        pause: () => {
+        },
+        stop: () => {
+        },
+        load: () => {
+        },
+      }, hooks),
+    }, overlayOptions);
 
+    this.options.needPlayButton = this.options.control && !this.options.picMode;
 
-    this.wrapper = isString(wrapper)
-      ? document.querySelector(wrapper)
-      : wrapper;
-    this.container = document.createElement('div');
-    this.canvas = document.createElement('canvas');
     this.player = null;
-    this.playButton = document.createElement('div');
 
-    this.containerInit();
-    this.canvasInit();
-    this.playButtonInit();
-    this.playerInit();
+    // Setup canvas and play button
+    this.els = {
+      wrapper: isString(wrapper)
+        ? document.querySelector(wrapper)
+        : wrapper,
+      canvas: null,
+      playButton: document.createElement('div'),
+      unmuteButton: null,
+      poster: null,
+    };
 
-    // Assignment height of wrapper. prevent page shake when destroyed.
-    this.setWrapperHeight();
-    window.addEventListener('resize', () => this.setWrapperHeight());
+    this.els.wrapper.classList.add(_style.wrapper);
+    this.els.wrapper.clientRect = this.els.wrapper.getBoundingClientRect();
+
+    this.initCanvas();
+    this.initPlayButton();
+    this.initPlayer();
   };
 
-  containerInit() {
-    this.container.classList.add(_style.container);
-    addStyles(this.container, {
-      paddingBottom: this.options.aspectPercent,
-    });
-    this.wrapper.appendChild(this.container);
+  initCanvas() {
+    if (this.options.canvas) {
+      this.els.canvas = isString(this.options.canvas)
+        ? document.querySelector(this.options.canvas)
+        : this.options.canvas;
+    } else {
+      this.els.canvas = document.createElement('canvas');
+      this.els.canvas.classList.add(_style.canvas);
+      this.els.wrapper.appendChild(this.els.canvas);
+    }
+
+    this.els.canvas.width = this.options.canvasWidth
+      ? this.options.canvasWidth
+      : this.els.wrapper.clientRect.width;
+
+    this.els.canvas.height = this.options.canvasHeight
+      ? this.options.canvasHeight
+      : this.els.wrapper.clientRect.height;
   };
 
-  canvasInit() {
-    this.canvas.classList.add(_style.canvas);
-    this.container.appendChild(this.canvas);
-  };
-
-  playerInit() {
+  initPlayer() {
     // Parse the data-options - we try to decode the values as json. This way
     // we can get proper boolean and number values. If JSON.parse() fails,
     // treat it as a string.
     this.options = Object.assign(this.options, {
-      canvas: this.canvas,
+      canvas: this.els.canvas,
+    });
+
+    const _options = Object.assign({}, this.options, {
+      autoplay: false,
     });
 
     // Create the player instance
-    this.player = new Player(this.options.videoUrl, this.options, {
+    this.player = new Player(this.options.videoUrl, _options, {
       play: () => {
-        this.playButton.style.display = 'none';
-        if (this.poster) {
-          this.poster.style.display = 'none';
+        if (this.options.needPlayButton) {
+          this.els.playButton.style.display = 'none';
         }
-        this.options.hookInPlay();
+
+        if (this.els.poster) {
+          this.els.poster.style.display = 'none';
+        }
+
+        this.options.hooks.play();
       },
       pause: () => {
-        this.playButton.style.display = 'block';
-        this.options.hookInPause();
+        if (this.options.needPlayButton) {
+          this.els.playButton.style.display = 'block';
+        }
+
+        this.options.hooks.pause();
       },
       stop: () => {
-        if (this.poster) {
-          this.poster.style.display = 'block';
+        if (this.els.poster) {
+          this.els.poster.style.display = 'block';
         }
-        this.options.hookInStop();
+
+        this.options.hooks.stop();
       },
+      load: () => {
+        if (this.options.autoplay) {
+          this.play();
+        }
+
+        this.options.hooks.load();
+      }
     });
-    this.wrapper.playerInstance = this.player;
+
+    this._copyPlayerFuncs();
+    this.els.wrapper.playerInstance = this.player;
 
     // Setup the poster element, if any
     if (this.options.poster && !this.options.autoplay && !this.player.options.streaming) {
       this.options.decodeFirstFrame = false;
-      this.poster = new Image();
-      this.poster.src = this.options.poster;
-      this.poster.classList.add(_style.poster);
-      this.container.appendChild(this.poster);
+      this.els.poster = new Image();
+      this.els.poster.src = this.options.poster;
+      this.els.poster.classList.add(_style.poster);
+      this.els.wrapper.appendChild(this.els.poster);
     }
 
     // Add the click handler if this video is pausable
     if (!this.player.options.streaming) {
-      this.container.addEventListener('click', this.onClick.bind(this));
+      this.els.wrapper.addEventListener('click', this.onClick.bind(this));
     }
 
     // Hide the play button if this video immediately begins playing
     if (this.options.autoplay || this.player.options.streaming) {
-      this.playButton.style.display = 'none';
+      this.els.playButton.style.display = 'none';
     }
 
     // Set up the unlock audio buton for iOS devices. iOS only allows us to
@@ -114,16 +169,14 @@ export default class VideoElement {
     // streaming players we set up a muted speaker icon as the button. For all
     // others, we can simply use the play button.
     if (this.player.audioOut && !this.player.audioOut.unlocked) {
-      let unlockAudioElement = this.container;
+      let unlockAudioElement = this.els.wrapper;
 
       if (this.options.autoplay || this.player.options.streaming) {
-        this.unmuteButton = document.createElement('div');
-        this.unmuteButton.innerHTML = unmuteButtonTemplate({
-          _style
-        });
-        this.unmuteButton.classList.add(_style.unmuteButton);
-        this.container.appendChild(this.unmuteButton);
-        unlockAudioElement = this.unmuteButton;
+        this.els.unmuteButton = document.createElement('div');
+        this.els.unmuteButton.innerHTML = unmuteButtonTemplate({_style});
+        this.els.unmuteButton.classList.add(_style.unmuteButton);
+        this.els.wrapper.appendChild(this.els.unmuteButton);
+        unlockAudioElement = this.els.unmuteButton;
       }
 
       this.unlockAudioBound = this.onUnlockAudio.bind(this, unlockAudioElement);
@@ -132,60 +185,56 @@ export default class VideoElement {
     }
   };
 
-  playButtonInit() {
-    this.playButton.innerHTML = playButtonTemplate({
-      _style
-    });
-    this.playButton.classList.add(_style.playButton);
-    if (this.options.picMode) {
-      this.playButton.style.visibility = 'hidden';
+  initPlayButton() {
+    if (!this.options.needPlayButton) {
+      return;
     }
-    this.container.appendChild(this.playButton);
+
+    this.els.playButton.classList.add(_style.playButton);
+    this.els.playButton.innerHTML = playButtonTemplate({_style});
+    this.els.wrapper.appendChild(this.els.playButton);
   };
 
   onUnlockAudio(element, ev) {
-    if (this.unmuteButton) {
+    if (this.els.unmuteButton) {
       ev.preventDefault();
       ev.stopPropagation();
     }
-    this.player.audioOut.unlock(function () {
-      if (this.unmuteButton) {
-        this.unmuteButton.style.display = 'none';
+    this.player.audioOut.unlock(() => {
+      if (this.els.unmuteButton) {
+        this.els.unmuteButton.style.display = 'none';
       }
       element.removeEventListener('touchstart', this.unlockAudioBound);
       element.removeEventListener('click', this.unlockAudioBound);
-    }.bind(this));
+    });
   };
 
   onClick() {
+    if (!this.options.control) {
+      return;
+    }
+
     if (this.player.isPlaying) {
-      this.player.pause();
+      this.pause();
     }
     else {
-      this.player.play();
+      this.play();
     }
   };
 
-  setWrapperHeight() {
-    this.wrapper.style.height = this.container.offsetHeight + 'px';
-  };
-
-  destroy() {
-    this.player.destroy();
-    this.wrapper.innerHTML = '';
-    window.removeEventListener('resize', this.setWrapperHeight);
+  /**
+   * copy player functions
+   * @private
+   */
+  _copyPlayerFuncs() {
+    this.play = () => this.player.play();
+    this.pause = () => this.player.pause();
+    this.stop = () => this.player.stop();
+    this.destroy = () => {
+      this.player.destroy();
+      this.els.wrapper.innerHTML = '';
+      this.els.wrapper.playerInstance = null;
+    };
   };
 };
-
-let
-  addStyles = (element, styles) => {
-    for (let name in styles) {
-      element.style[name] = styles[name];
-    }
-  }
-
-  , isString = (str) => {
-    return (typeof str === 'string') && str.constructor === String;
-  }
-;
 

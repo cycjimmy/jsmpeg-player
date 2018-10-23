@@ -440,6 +440,13 @@
   dependencies:
     "@babel/helper-plugin-utils" "^7.0.0"
 
+"@babel/plugin-transform-object-assign@^7.0.0":
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/@babel/plugin-transform-object-assign/-/plugin-transform-object-assign-7.0.0.tgz#fca6d7500d9675c42868b8f3882979201b9a5ad8"
+  integrity sha512-Dag8mxx7/03oj8F8PkNso8GEMhwGfeT0TL6KfMsa9Brjx4IpwZVl3WBvEmYks8BMhPmrvM5NQ/tjaMbwEj5ijA==
+  dependencies:
+    "@babel/helper-plugin-utils" "^7.0.0"
+
 "@babel/plugin-transform-object-super@^7.1.0":
   version "7.1.0"
   resolved "https://registry.yarnpkg.com/@babel/plugin-transform-object-super/-/plugin-transform-object-super-7.1.0.tgz#b1ae194a054b826d8d4ba7ca91486d4ada0f91bb"
@@ -1123,6 +1130,11 @@ autoprefixer@^9.2.1:
     num2fraction "^1.2.2"
     postcss "^7.0.5"
     postcss-value-parser "^3.3.1"
+
+awesome-js-funcs@^0.1.4:
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/awesome-js-funcs/-/awesome-js-funcs-0.1.4.tgz#5cb0c18a0728b94ecd3a378c618ade6f68dac4a0"
+  integrity sha512-4XBdKmUUz5KmFCMoq9wSj15LrrpWXSYsDlsnHO+FmmMvvEU6R0M4WIf28rQSBe9AOgcVGurCsT3RJpkrAtz8dA==
 
 aws-sign2@~0.7.0:
   version "0.7.0"
