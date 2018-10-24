@@ -1,0 +1,58 @@
+@import "utilities";
+
+.canvas,
+.poster {
+  @extend %fullContainer;
+  display: block;
+}
+
+.poster {
+  &.hidden {
+    display: none;
+  }
+}
+
+// buttons
+%buttonCommon {
+  @extend %fullContainer;
+
+  opacity: .7;
+  cursor: pointer;
+  -webkit-tap-highlight-color: rgba(255, 0, 0, 0);
+
+  &.hidden {
+    display: none;
+  }
+}
+
+.playButton {
+  @extend %buttonCommon;
+  @extend %flexCenter;
+  z-index: 10;
+
+  > svg {
+    width: 8vw;
+    height: 8vw;
+    max-width: 60px;
+    max-height: 60px;
+    fill: #fff;
+  }
+}
+
+.unmuteButton {
+  @extend %buttonCommon;
+  z-index: 10;
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+
+  > svg {
+    margin: 0 15px 15px 0;
+    width: 6vw;
+    height: 6vw;
+    max-width: 40px;
+    max-height: 40px;
+    fill: #fff;
+  }
+}
+

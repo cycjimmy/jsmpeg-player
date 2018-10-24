@@ -1,0 +1,43 @@
+/*---------------------------
+ * mixin
+ *---------------------------*/
+/**
+ * flex container inner elements alignment
+ * $mainAxis
+ * $crossAxis
+ * options: false, center, flex-end, ...
+ */
+@mixin flex-box-align($mainAxis:false, $crossAxis:false) {
+  @if ($mainAxis != false) {
+    justify-content: $mainAxis;
+  }
+  @if ($crossAxis != false) {
+    align-items: $crossAxis;
+  }
+}
+
+/*---------------------------
+ * %placeholder
+ *---------------------------*/
+// absolute
+%abs {
+  position: absolute;
+  z-index: 1;
+}
+
+// fullContainer
+%fullContainer {
+  @extend %abs;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+}
+
+// flexCenter
+%flexCenter {
+  display: flex;
+  @include flex-box-align(center, center);
+}
+
+

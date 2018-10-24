@@ -1,6 +1,6 @@
 {
   "name": "jsmpeg-player",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "MPEG1 Video Player Based On JSMpeg",
   "main": "build/JSMpeg.js",
   "scripts": {
@@ -29,7 +29,7 @@
     "@babel/plugin-syntax-dynamic-import": "^7.0.0",
     "@babel/plugin-transform-object-assign": "^7.0.0",
     "@babel/preset-env": "^7.1.0",
-    "autoprefixer": "^9.2.1",
+    "autoprefixer": "^9.3.0",
     "babel-core": "7.0.0-bridge.0",
     "babel-jest": "^23.6.0",
     "babel-loader": "^8.0.4",

@@ -1,13 +1,14 @@
-import Player from './player';
-
 // style
-import _style from '../../static/theme/style.scss';
+import _style from '../theme/style.scss';
 
-// template
-import playButtonTemplate from '../../static/view/playButton.pug';
-import unmuteButtonTemplate from '../../static/view/unmuteButton.pug';
+// button view
+import {
+  PLAY_BUTTON,
+  UNMUTE_BUTTON,
+} from '../buttonView';
 
 // service
+import Player from './player';
 import isString from 'awesome-js-funcs/judgeBasic/isString';
 
 export default class VideoElement {
@@ -66,7 +67,10 @@ export default class VideoElement {
       poster: null,
     };
 
-    this.els.wrapper.classList.add(_style.wrapper);
+    if (window.getComputedStyle(this.els.wrapper).getPropertyValue('position') === 'static') {
+      this.els.wrapper.style.position = 'relative';
+    }
+
     this.els.wrapper.clientRect = this.els.wrapper.getBoundingClientRect();
 
     this.initCanvas();
@@ -110,25 +114,25 @@ export default class VideoElement {
     this.player = new Player(this.options.videoUrl, _options, {
       play: () => {
         if (this.options.needPlayButton) {
-          this.els.playButton.style.display = 'none';
+          this.els.playButton.classList.add(_style.hidden);
         }
 
         if (this.els.poster) {
-          this.els.poster.style.display = 'none';
+          this.els.poster.classList.add(_style.hidden);
         }
 
         this.options.hooks.play();
       },
       pause: () => {
         if (this.options.needPlayButton) {
-          this.els.playButton.style.display = 'block';
+          this.els.playButton.classList.remove(_style.hidden);
         }
 
         this.options.hooks.pause();
       },
       stop: () => {
         if (this.els.poster) {
-          this.els.poster.style.display = 'block';
+          this.els.poster.classList.remove(_style.hidden);
         }
 
         this.options.hooks.stop();
@@ -161,7 +165,7 @@ export default class VideoElement {
 
     // Hide the play button if this video immediately begins playing
     if (this.options.autoplay || this.player.options.streaming) {
-      this.els.playButton.style.display = 'none';
+      this.els.playButton.classList.add(_style.hidden);
     }
 
     // Set up the unlock audio buton for iOS devices. iOS only allows us to
@@ -173,7 +177,7 @@ export default class VideoElement {
 
       if (this.options.autoplay || this.player.options.streaming) {
         this.els.unmuteButton = document.createElement('div');
-        this.els.unmuteButton.innerHTML = unmuteButtonTemplate({_style});
+        this.els.unmuteButton.innerHTML = UNMUTE_BUTTON;
         this.els.unmuteButton.classList.add(_style.unmuteButton);
         this.els.wrapper.appendChild(this.els.unmuteButton);
         unlockAudioElement = this.els.unmuteButton;
@@ -191,7 +195,7 @@ export default class VideoElement {
     }
 
     this.els.playButton.classList.add(_style.playButton);
-    this.els.playButton.innerHTML = playButtonTemplate({_style});
+    this.els.playButton.innerHTML = PLAY_BUTTON;
     this.els.wrapper.appendChild(this.els.playButton);
   };
 
@@ -202,7 +206,7 @@ export default class VideoElement {
     }
     this.player.audioOut.unlock(() => {
       if (this.els.unmuteButton) {
-        this.els.unmuteButton.style.display = 'none';
+        this.els.unmuteButton.classList.add(_style.hidden);
       }
       element.removeEventListener('touchstart', this.unlockAudioBound);
       element.removeEventListener('click', this.unlockAudioBound);
