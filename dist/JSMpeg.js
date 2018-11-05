@@ -1,5 +1,5 @@
 /*!
- * jsmpeg-player v1.3.1
+ * jsmpeg-player v1.3.2
  * Homepage: https://github.com/cycdpo/jsmpeg-player#readme
  * Released under the MIT License.
  */
@@ -1777,14 +1777,26 @@ MP2WASM.prototype.initializeWasmDecoder = function () {
 };
 
 MP2WASM.prototype.destroy = function () {
+  if (!this.decoder) {
+    return;
+  }
+
   this.functions._mp2_decoder_destroy(this.decoder);
 };
 
 MP2WASM.prototype.bufferGetIndex = function () {
+  if (!this.decoder) {
+    return;
+  }
+
   return this.functions._mp2_decoder_get_index(this.decoder);
 };
 
 MP2WASM.prototype.bufferSetIndex = function (index) {
+  if (!this.decoder) {
+    return;
+  }
+
   this.functions._mp2_decoder_set_index(this.decoder, index);
 };
 
@@ -2661,14 +2673,26 @@ MPEG1WASM.prototype.initializeWasmDecoder = function () {
 };
 
 MPEG1WASM.prototype.destroy = function () {
+  if (!this.decoder) {
+    return;
+  }
+
   this.functions._mpeg1_decoder_destroy(this.decoder);
 };
 
 MPEG1WASM.prototype.bufferGetIndex = function () {
+  if (!this.decoder) {
+    return;
+  }
+
   return this.functions._mpeg1_decoder_get_index(this.decoder);
 };
 
 MPEG1WASM.prototype.bufferSetIndex = function (index) {
+  if (!this.decoder) {
+    return;
+  }
+
   this.functions._mpeg1_decoder_set_index(this.decoder, index);
 };
 
@@ -5475,7 +5499,8 @@ WebGLRenderer.prototype.resize = function (width, height) {
   this.canvas.width = this.width;
   this.canvas.height = this.height;
   this.gl.useProgram(this.program);
-  this.gl.viewport(0, 0, this.width, this.height);
+  var codedWidth = this.width + 15 >> 4 << 4;
+  this.gl.viewport(0, 0, codedWidth, this.height);
 };
 
 WebGLRenderer.prototype.createTexture = function (index, name) {
