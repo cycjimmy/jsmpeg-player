@@ -7,6 +7,9 @@ const AjaxSource = function (url, options) {
   this.established = false;
   this.progress = 0;
 
+  this.onEstablishedCallback = options.onSourceEstablished;
+  this.onCompletedCallback = options.onSourceCompleted;
+
   if (options.hookOnEstablished) {
     this.hookOnEstablished = options.hookOnEstablished;
   }
@@ -53,6 +56,13 @@ AjaxSource.prototype.onLoad = function (data) {
 
   if (this.hookOnEstablished) {
     this.hookOnEstablished();
+  }
+
+  if (this.onEstablishedCallback) {
+    this.onEstablishedCallback(this);
+  }
+  if (this.onCompletedCallback) {
+    this.onCompletedCallback(this);
   }
 
   if (this.destination) {

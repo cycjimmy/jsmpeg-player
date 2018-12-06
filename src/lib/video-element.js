@@ -25,7 +25,7 @@ export default class VideoElement {
     progressive = true,
     chunkSize = 1024 * 1024,
     hooks = {}
-  }, overlayOptions = {}) {
+  } = {}, overlayOptions = {}) {
 
     this.options = Object.assign({
       videoUrl: videoUrl,

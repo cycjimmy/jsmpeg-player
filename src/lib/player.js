@@ -90,6 +90,7 @@ const Player = function (url, options, hooks) {
     set: this.setVolume
   });
 
+  this.paused = true;
   this.unpauseOnShow = false;
   if (options.pauseWhenHidden !== false) {
     document.addEventListener('visibilitychange', this.showHide.bind(this));
@@ -130,18 +131,25 @@ Player.prototype.showHide = function (ev) {
 };
 
 Player.prototype.play = function (ev) {
+  if (this.animationId) {
+    return;
+  }
+
   this.animationId = requestAnimationFrame(this.update.bind(this));
   this.wantsToPlay = true;
-
-  if (this.hooks.play) {
-    this.hooks.play();
-  }
+  this.paused = false;
 };
 
 Player.prototype.pause = function (ev) {
+  if (this.paused) {
+    return;
+  }
+
   cancelAnimationFrame(this.animationId);
+  this.animationId = null;
   this.wantsToPlay = false;
   this.isPlaying = false;
+  this.paused = true;
 
   if (this.audio && this.audio.canPlay) {
     // Seek to the currentTime again - audio may already be enqueued a bit
@@ -152,6 +160,10 @@ Player.prototype.pause = function (ev) {
 
   if (this.hooks.pause) {
     this.hooks.pause();
+  }
+
+  if (this.options.onPause) {
+    this.options.onPause(this);
   }
 };
 
@@ -224,6 +236,14 @@ Player.prototype.update = function () {
   if (!this.isPlaying) {
     this.isPlaying = true;
     this.startTime = Now() - this.currentTime;
+
+    if (this.hooks.play) {
+      this.hooks.play();
+    }
+
+    if (this.options.onPlay) {
+      this.options.onPlay(this);
+    }
   }
 
   if (this.options.streaming) {
@@ -232,6 +252,13 @@ Player.prototype.update = function () {
   else {
     this.updateForStaticFile();
   }
+};
+
+Player.prototype.nextFrame = function () {
+  if (this.source.established && this.video) {
+    return this.video.decode();
+  }
+  return false;
 };
 
 Player.prototype.updateForStreaming = function () {
@@ -314,7 +341,17 @@ Player.prototype.updateForStaticFile = function () {
     else {
       // this.pause();
       this.stop();
+
+      if (this.options.onEnded) {
+        this.options.onEnded(this);
+      }
     }
+  }
+
+  // If there's not enough data and the source is not completed, we have
+  // just stalled.
+  else if (notEnoughData && this.options.onStalled) {
+    this.options.onStalled(this);
   }
 };
 

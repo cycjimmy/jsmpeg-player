@@ -1,5 +1,5 @@
 /*!
- * jsmpeg-player v2.1.3
+ * jsmpeg-player v2.1.4
  * Homepage: https://github.com/cycdpo/jsmpeg-player#readme
  * Released under the MIT License.
  */
@@ -334,6 +334,7 @@ var Player = function Player(url, options, hooks) {
     get: this.getVolume,
     set: this.setVolume
   });
+  this.paused = true;
   this.unpauseOnShow = false;
 
   if (options.pauseWhenHidden !== false) {
@@ -373,18 +374,25 @@ Player.prototype.showHide = function (ev) {
 };
 
 Player.prototype.play = function (ev) {
+  if (this.animationId) {
+    return;
+  }
+
   this.animationId = requestAnimationFrame(this.update.bind(this));
   this.wantsToPlay = true;
-
-  if (this.hooks.play) {
-    this.hooks.play();
-  }
+  this.paused = false;
 };
 
 Player.prototype.pause = function (ev) {
+  if (this.paused) {
+    return;
+  }
+
   cancelAnimationFrame(this.animationId);
+  this.animationId = null;
   this.wantsToPlay = false;
   this.isPlaying = false;
+  this.paused = true;
 
   if (this.audio && this.audio.canPlay) {
     // Seek to the currentTime again - audio may already be enqueued a bit
@@ -395,6 +403,10 @@ Player.prototype.pause = function (ev) {
 
   if (this.hooks.pause) {
     this.hooks.pause();
+  }
+
+  if (this.options.onPause) {
+    this.options.onPause(this);
   }
 };
 
@@ -466,6 +478,14 @@ Player.prototype.update = function () {
   if (!this.isPlaying) {
     this.isPlaying = true;
     this.startTime = Object(_utils__WEBPACK_IMPORTED_MODULE_13__["Now"])() - this.currentTime;
+
+    if (this.hooks.play) {
+      this.hooks.play();
+    }
+
+    if (this.options.onPlay) {
+      this.options.onPlay(this);
+    }
   }
 
   if (this.options.streaming) {
@@ -473,6 +493,14 @@ Player.prototype.update = function () {
   } else {
     this.updateForStaticFile();
   }
+};
+
+Player.prototype.nextFrame = function () {
+  if (this.source.established && this.video) {
+    return this.video.decode();
+  }
+
+  return false;
 };
 
 Player.prototype.updateForStreaming = function () {
@@ -547,8 +575,16 @@ Player.prototype.updateForStaticFile = function () {
     } else {
       // this.pause();
       this.stop();
+
+      if (this.options.onEnded) {
+        this.options.onEnded(this);
+      }
     }
-  }
+  } // If there's not enough data and the source is not completed, we have
+  // just stalled.
+  else if (notEnoughData && this.options.onStalled) {
+      this.options.onStalled(this);
+    }
 };
 
 /* harmony default export */ __webpack_exports__["default"] = (Player);
@@ -566,6 +602,8 @@ var AjaxSource = function AjaxSource(url, options) {
   this.completed = false;
   this.established = false;
   this.progress = 0;
+  this.onEstablishedCallback = options.onSourceEstablished;
+  this.onCompletedCallback = options.onSourceCompleted;
 
   if (options.hookOnEstablished) {
     this.hookOnEstablished = options.hookOnEstablished;
@@ -611,6 +649,14 @@ AjaxSource.prototype.onLoad = function (data) {
     this.hookOnEstablished();
   }
 
+  if (this.onEstablishedCallback) {
+    this.onEstablishedCallback(this);
+  }
+
+  if (this.onCompletedCallback) {
+    this.onCompletedCallback(this);
+  }
+
   if (this.destination) {
     this.destination.write(data);
   }
@@ -645,6 +691,9 @@ var AjaxProgressiveSource = function AjaxProgressiveSource(url, options) {
   if (options.hookOnEstablished) {
     this.hookOnEstablished = options.hookOnEstablished;
   }
+
+  this.onEstablishedCallback = options.onSourceEstablished;
+  this.onCompletedCallback = options.onSourceCompleted;
 };
 
 AjaxProgressiveSource.prototype.connect = function (destination) {
@@ -691,6 +740,11 @@ AjaxProgressiveSource.prototype.loadNextChunk = function () {
 
   if (start >= this.fileSize || this.aborted) {
     this.completed = true;
+
+    if (this.onCompletedCallback) {
+      this.onCompletedCallback(this);
+    }
+
     return;
   }
 
@@ -724,14 +778,19 @@ AjaxProgressiveSource.prototype.onProgress = function (ev) {
 };
 
 AjaxProgressiveSource.prototype.onChunkLoad = function (data) {
+  var isFirstChunk = !this.established;
   this.established = true;
   this.progress = 1;
   this.loadedSize += data.byteLength;
   this.loadFails = 0;
   this.isLoading = false;
 
-  if (this.hookOnEstablished) {
+  if (isFirstChunk && this.hookOnEstablished) {
     this.hookOnEstablished();
+  }
+
+  if (isFirstChunk && this.onEstablishedCallback) {
+    this.onEstablishedCallback(this);
   }
 
   if (this.destination) {
@@ -815,8 +874,9 @@ function _extends() { _extends = Object.assign || function (target) { for (var i
 var VideoElement =
 /*#__PURE__*/
 function () {
-  function VideoElement(wrapper, videoUrl, _ref, overlayOptions) {
-    var _ref$canvas = _ref.canvas,
+  function VideoElement(wrapper, videoUrl, _temp, overlayOptions) {
+    var _ref = _temp === void 0 ? {} : _temp,
+        _ref$canvas = _ref.canvas,
         canvas = _ref$canvas === void 0 ? '' : _ref$canvas,
         _ref$canvasWidth = _ref.canvasWidth,
         canvasWidth = _ref$canvasWidth === void 0 ? 0 : _ref$canvasWidth,
@@ -1101,7 +1161,7 @@ exports = module.exports = __webpack_require__(8)(false);
 
 
 // module
-exports.push([module.i, "/*---------------------------\r\n * mixin\r\n *---------------------------*/\n/**\r\n * flex container inner elements alignment\r\n * $mainAxis\r\n * $crossAxis\r\n * options: false, center, flex-end, ...\r\n */\n/*---------------------------\r\n * %placeholder\r\n *---------------------------*/\n.src-theme-style__canvas,\n.src-theme-style__poster, .src-theme-style__playButton, .src-theme-style__unmuteButton {\n  position: absolute;\n  z-index: 1;\n}\n\n.src-theme-style__canvas,\n.src-theme-style__poster, .src-theme-style__playButton, .src-theme-style__unmuteButton {\n  left: 0;\n  top: 0;\n  width: 100%;\n  height: 100%;\n}\n\n.src-theme-style__playButton {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n}\n\n.src-theme-style__canvas,\n.src-theme-style__poster {\n  display: block;\n}\n\n.src-theme-style__poster.src-theme-style__hidden {\n  display: none;\n}\n\n.src-theme-style__playButton, .src-theme-style__unmuteButton {\n  opacity: .7;\n  cursor: pointer;\n  -webkit-tap-highlight-color: rgba(255, 0, 0, 0);\n}\n\n.src-theme-style__hidden.src-theme-style__playButton, .src-theme-style__hidden.src-theme-style__unmuteButton {\n  display: none;\n}\n\n.src-theme-style__playButton {\n  z-index: 10;\n}\n\n.src-theme-style__playButton > svg {\n  width: 12vw;\n  height: 12vw;\n  max-width: 60px;\n  max-height: 60px;\n  fill: #fff;\n}\n\n.src-theme-style__unmuteButton {\n  z-index: 10;\n  display: flex;\n  justify-content: flex-end;\n  align-items: flex-end;\n}\n\n.src-theme-style__unmuteButton > svg {\n  margin: 0 15px 15px 0;\n  width: 9vw;\n  height: 9vw;\n  max-width: 40px;\n  max-height: 40px;\n  fill: #fff;\n}\n", ""]);
+exports.push([module.i, "/*---------------------------\n * mixin\n *---------------------------*/\n/**\n * flex container inner elements alignment\n * $mainAxis\n * $crossAxis\n * options: false, center, flex-end, ...\n */\n/*---------------------------\n * %placeholder\n *---------------------------*/\n.src-theme-style__canvas,\n.src-theme-style__poster, .src-theme-style__playButton, .src-theme-style__unmuteButton {\n  position: absolute;\n  z-index: 1;\n}\n\n.src-theme-style__canvas,\n.src-theme-style__poster, .src-theme-style__playButton, .src-theme-style__unmuteButton {\n  left: 0;\n  top: 0;\n  width: 100%;\n  height: 100%;\n}\n\n.src-theme-style__playButton {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n}\n\n.src-theme-style__canvas,\n.src-theme-style__poster {\n  display: block;\n}\n\n.src-theme-style__poster.src-theme-style__hidden {\n  display: none;\n}\n\n.src-theme-style__playButton, .src-theme-style__unmuteButton {\n  opacity: .7;\n  cursor: pointer;\n  -webkit-tap-highlight-color: rgba(255, 0, 0, 0);\n}\n\n.src-theme-style__hidden.src-theme-style__playButton, .src-theme-style__hidden.src-theme-style__unmuteButton {\n  display: none;\n}\n\n.src-theme-style__playButton {\n  z-index: 10;\n}\n\n.src-theme-style__playButton > svg {\n  width: 12vw;\n  height: 12vw;\n  max-width: 60px;\n  max-height: 60px;\n  fill: #fff;\n}\n\n.src-theme-style__unmuteButton {\n  z-index: 10;\n  display: flex;\n  justify-content: flex-end;\n  align-items: flex-end;\n}\n\n.src-theme-style__unmuteButton > svg {\n  margin: 0 15px 15px 0;\n  width: 9vw;\n  height: 9vw;\n  max-width: 40px;\n  max-height: 40px;\n  fill: #fff;\n}\n", ""]);
 
 // exports
 exports.locals = {
@@ -1749,6 +1809,8 @@ var WSSource = function WSSource(url, options) {
   this.established = false;
   this.progress = 0;
   this.reconnectTimeoutId = 0;
+  this.onEstablishedCallback = options.onSourceEstablished;
+  this.onCompletedCallback = options.onSourceCompleted; // Never used
 
   if (options.hookOnEstablished) {
     this.hookOnEstablished = options.hookOnEstablished;
@@ -1782,11 +1844,6 @@ WSSource.prototype.resume = function (secondsHeadroom) {// Nothing to do here
 
 WSSource.prototype.onOpen = function () {
   this.progress = 1;
-  this.established = true;
-
-  if (this.hookOnEstablished) {
-    this.hookOnEstablished();
-  }
 };
 
 WSSource.prototype.onClose = function () {
@@ -1799,6 +1856,17 @@ WSSource.prototype.onClose = function () {
 };
 
 WSSource.prototype.onMessage = function (ev) {
+  var isFirstChunk = !this.established;
+  this.established = true;
+
+  if (isFirstChunk && this.hookOnEstablished) {
+    this.hookOnEstablished();
+  }
+
+  if (isFirstChunk && this.onEstablishedCallback) {
+    this.onEstablishedCallback(this);
+  }
+
   if (this.destination) {
     this.destination.write(ev.data);
   }
