@@ -1,5 +1,5 @@
 /*!
- * jsmpeg-player v2.1.4
+ * jsmpeg-player v2.1.5
  * Homepage: https://github.com/cycdpo/jsmpeg-player#readme
  * Released under the MIT License.
  */
@@ -280,11 +280,21 @@ __webpack_require__.r(__webpack_exports__);
 var Player = function Player(url, options, hooks) {
   var _this = this;
 
-  this.options = options || {};
-  this.hooks = hooks || {};
+  if (options === void 0) {
+    options = {};
+  }
+
+  if (hooks === void 0) {
+    hooks = {};
+  }
+
+  this.options = options;
+  this.hooks = hooks;
 
   this.options.hookOnEstablished = function () {
-    return _this.hooks.load();
+    if (_this.hooks.load) {
+      _this.hooks.load();
+    }
   };
 
   if (options.source) {
@@ -1161,13 +1171,13 @@ exports = module.exports = __webpack_require__(8)(false);
 
 
 // module
-exports.push([module.i, "/*---------------------------\n * mixin\n *---------------------------*/\n/**\n * flex container inner elements alignment\n * $mainAxis\n * $crossAxis\n * options: false, center, flex-end, ...\n */\n/*---------------------------\n * %placeholder\n *---------------------------*/\n.src-theme-style__canvas,\n.src-theme-style__poster, .src-theme-style__playButton, .src-theme-style__unmuteButton {\n  position: absolute;\n  z-index: 1;\n}\n\n.src-theme-style__canvas,\n.src-theme-style__poster, .src-theme-style__playButton, .src-theme-style__unmuteButton {\n  left: 0;\n  top: 0;\n  width: 100%;\n  height: 100%;\n}\n\n.src-theme-style__playButton {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n}\n\n.src-theme-style__canvas,\n.src-theme-style__poster {\n  display: block;\n}\n\n.src-theme-style__poster.src-theme-style__hidden {\n  display: none;\n}\n\n.src-theme-style__playButton, .src-theme-style__unmuteButton {\n  opacity: .7;\n  cursor: pointer;\n  -webkit-tap-highlight-color: rgba(255, 0, 0, 0);\n}\n\n.src-theme-style__hidden.src-theme-style__playButton, .src-theme-style__hidden.src-theme-style__unmuteButton {\n  display: none;\n}\n\n.src-theme-style__playButton {\n  z-index: 10;\n}\n\n.src-theme-style__playButton > svg {\n  width: 12vw;\n  height: 12vw;\n  max-width: 60px;\n  max-height: 60px;\n  fill: #fff;\n}\n\n.src-theme-style__unmuteButton {\n  z-index: 10;\n  display: flex;\n  justify-content: flex-end;\n  align-items: flex-end;\n}\n\n.src-theme-style__unmuteButton > svg {\n  margin: 0 15px 15px 0;\n  width: 9vw;\n  height: 9vw;\n  max-width: 40px;\n  max-height: 40px;\n  fill: #fff;\n}\n", ""]);
+exports.push([module.i, ".src-theme-style__canvas,.src-theme-style__playButton,.src-theme-style__poster,.src-theme-style__unmuteButton{position:absolute;z-index:1;left:0;top:0;width:100%;height:100%}.src-theme-style__playButton{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-box-pack:center;-webkit-justify-content:center;-ms-flex-pack:center;justify-content:center;-webkit-box-align:center;-webkit-align-items:center;-ms-flex-align:center;align-items:center}.src-theme-style__canvas,.src-theme-style__poster{display:block}.src-theme-style__poster.src-theme-style__hidden{display:none}.src-theme-style__playButton,.src-theme-style__unmuteButton{opacity:.7;cursor:pointer;-webkit-tap-highlight-color:rgba(255,0,0,0)}.src-theme-style__hidden.src-theme-style__playButton,.src-theme-style__hidden.src-theme-style__unmuteButton{display:none}.src-theme-style__playButton{z-index:10}.src-theme-style__playButton>svg{width:12vw;height:12vw;max-width:60px;max-height:60px;fill:#fff}.src-theme-style__unmuteButton{z-index:10;display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-box-pack:end;-webkit-justify-content:flex-end;-ms-flex-pack:end;justify-content:flex-end;-webkit-box-align:end;-webkit-align-items:flex-end;-ms-flex-align:end;align-items:flex-end}.src-theme-style__unmuteButton>svg{margin:0 15px 15px 0;width:9vw;height:9vw;max-width:40px;max-height:40px;fill:#fff}", ""]);
 
 // exports
 exports.locals = {
 	"canvas": "src-theme-style__canvas",
-	"poster": "src-theme-style__poster",
 	"playButton": "src-theme-style__playButton",
+	"poster": "src-theme-style__poster",
 	"unmuteButton": "src-theme-style__unmuteButton",
 	"hidden": "src-theme-style__hidden"
 };

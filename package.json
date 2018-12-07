@@ -1,6 +1,6 @@
 {
   "name": "jsmpeg-player",
-  "version": "2.1.4",
+  "version": "2.1.5",
   "description": "MPEG1 Video Player Based On JSMpeg",
   "main": "build/JSMpeg.js",
   "scripts": {
@@ -40,6 +40,7 @@
     "clean-webpack-plugin": "^1.0.0",
     "cross-env": "^5.2.0",
     "css-loader": "^1.0.1",
+    "cssnano": "^4.1.7",
     "file-loader": "^2.0.0",
     "gh-pages": "^2.0.1",
     "gulp": "^3.9.1",

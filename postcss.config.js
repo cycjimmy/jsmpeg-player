@@ -12,6 +12,11 @@ module.exports = {
         'ios >= 8',
         'android >= 4.4'
       ]
+    },
+    'cssnano': {
+      discardComments: {
+        removeAll: true
+      }
     }
   }
 };

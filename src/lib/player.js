@@ -22,10 +22,14 @@ import {
  * @param hooks (play: function, pause: function, stop: function) 插入UI回调
  * @constructor
  */
-const Player = function (url, options, hooks) {
-  this.options = options || {};
-  this.hooks = hooks || {};
-  this.options.hookOnEstablished = () => this.hooks.load();
+const Player = function (url, options = {}, hooks = {}) {
+  this.options = options;
+  this.hooks = hooks;
+  this.options.hookOnEstablished = () => {
+    if (this.hooks.load) {
+      this.hooks.load();
+    }
+  };
 
   if (options.source) {
     this.source = new options.source(url, this.options);

@@ -74,6 +74,14 @@ var config = {
             },
           },
           {
+            loader: 'postcss-loader',
+            options: {
+              config: {
+                path: path.resolve('postcss.config.js'),
+              },
+            },
+          },
+          {
             loader: 'sass-loader',
             options: {
               outputStyle: 'expanded',
