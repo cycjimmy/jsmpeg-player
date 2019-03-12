@@ -146,8 +146,7 @@ if (IS_DEVELOPMENT) {
       template: path.resolve('./static', 'view', 'index.pug'),
     }),
 
-    new CleanWebpackPlugin(['dist'], {
-      root: path.resolve('./'),
+    new CleanWebpackPlugin({
       verbose: true,
       dry: false
     }),
@@ -169,8 +168,7 @@ if (IS_PRODUCTION) {
   config.plugins.push(
     new webpack.HashedModuleIdsPlugin(),
 
-    new CleanWebpackPlugin(['build'], {
-      root: path.resolve('./'),
+    new CleanWebpackPlugin({
       verbose: true,
       dry: false
     }),
