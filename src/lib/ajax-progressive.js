@@ -6,6 +6,7 @@ const AjaxProgressiveSource = function (url, options) {
   this.url = url;
   this.destination = null;
   this.request = null;
+  this.streaming = false;
 
   this.completed = false;
   this.established = false;

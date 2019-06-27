@@ -7,6 +7,7 @@ import Player from './lib/player';
 import VideoElement from './lib/video-element'
 import BitBuffer from './lib/buffer';
 import AjaxSource from './lib/ajax';
+import FetchSource from './lib/fetch';
 import AjaxProgressiveSource from './lib/ajax-progressive';
 import WSSource from './lib/websocket';
 import TS from './lib/ts';
@@ -59,6 +60,7 @@ let JSMpeg = {
     Ajax: AjaxSource,
     AjaxProgressive: AjaxProgressiveSource,
     WebSocket: WSSource,
+    Fetch: FetchSource,
   },
 
   // A Demuxer may sit between a Source and a Decoder. It separates the

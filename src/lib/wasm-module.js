@@ -28,8 +28,10 @@ WASM.prototype.loadFromBuffer = function (buffer, callback) {
   let env = {
     memory: this.memory,
     memoryBase: 0,
+    __memory_base: 0,
     table: new WebAssembly.Table({initial: this.moduleInfo.tableSize, element: 'anyfunc'}),
     tableBase: 0,
+    __table_base: 0,
     abort: this.c_abort.bind(this),
     ___assert_fail: this.c_assertFail.bind(this),
     _sbrk: this.c_sbrk.bind(this)
