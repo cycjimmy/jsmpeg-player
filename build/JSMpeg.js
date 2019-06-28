@@ -1,5 +1,5 @@
 /*!
- * jsmpeg-player v2.2.0
+ * jsmpeg-player v2.2.1
  * Homepage: https://github.com/cycdpo/jsmpeg-player#readme
  * Released under the MIT License.
  */
@@ -1173,15 +1173,14 @@ if(false) {}
 
 exports = module.exports = __webpack_require__(8)(false);
 // Module
-exports.push([module.i, ".src-theme-style__canvas,.src-theme-style__playButton,.src-theme-style__poster,.src-theme-style__unmuteButton{position:absolute;z-index:1;left:0;top:0;width:100%;height:100%}.src-theme-style__playButton{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-box-pack:center;-webkit-justify-content:center;-ms-flex-pack:center;justify-content:center;-webkit-box-align:center;-webkit-align-items:center;-ms-flex-align:center;align-items:center}.src-theme-style__canvas,.src-theme-style__poster{display:block}.src-theme-style__poster.src-theme-style__hidden{display:none}.src-theme-style__playButton,.src-theme-style__unmuteButton{opacity:.7;cursor:pointer;-webkit-tap-highlight-color:rgba(255,0,0,0)}.src-theme-style__hidden.src-theme-style__playButton,.src-theme-style__hidden.src-theme-style__unmuteButton{display:none}.src-theme-style__playButton{z-index:10}.src-theme-style__playButton>svg{width:12vw;height:12vw;max-width:60px;max-height:60px;fill:#fff}.src-theme-style__unmuteButton{z-index:10;display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-box-pack:end;-webkit-justify-content:flex-end;-ms-flex-pack:end;justify-content:flex-end;-webkit-box-align:end;-webkit-align-items:flex-end;-ms-flex-align:end;align-items:flex-end}.src-theme-style__unmuteButton>svg{margin:0 15px 15px 0;width:9vw;height:9vw;max-width:40px;max-height:40px;fill:#fff}", ""]);
-
+exports.push([module.i, ".src\\/theme\\/style__canvas,.src\\/theme\\/style__playButton,.src\\/theme\\/style__poster,.src\\/theme\\/style__unmuteButton{position:absolute;z-index:1;left:0;top:0;width:100%;height:100%}.src\\/theme\\/style__playButton{display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;-webkit-box-align:center;-ms-flex-align:center;align-items:center}.src\\/theme\\/style__canvas,.src\\/theme\\/style__poster{display:block}.src\\/theme\\/style__poster.src\\/theme\\/style__hidden{display:none}.src\\/theme\\/style__playButton,.src\\/theme\\/style__unmuteButton{opacity:.7;cursor:pointer;-webkit-tap-highlight-color:rgba(255,0,0,0)}.src\\/theme\\/style__hidden.src\\/theme\\/style__playButton,.src\\/theme\\/style__hidden.src\\/theme\\/style__unmuteButton{display:none}.src\\/theme\\/style__playButton{z-index:10}.src\\/theme\\/style__playButton>svg{width:12vw;height:12vw;max-width:60px;max-height:60px;fill:#fff}.src\\/theme\\/style__unmuteButton{z-index:10;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-pack:end;-ms-flex-pack:end;justify-content:flex-end;-webkit-box-align:end;-ms-flex-align:end;align-items:flex-end}.src\\/theme\\/style__unmuteButton>svg{margin:0 15px 15px 0;width:9vw;height:9vw;max-width:40px;max-height:40px;fill:#fff}", ""]);
 // Exports
 exports.locals = {
-	"canvas": "src-theme-style__canvas",
-	"playButton": "src-theme-style__playButton",
-	"poster": "src-theme-style__poster",
-	"unmuteButton": "src-theme-style__unmuteButton",
-	"hidden": "src-theme-style__hidden"
+	"canvas": "src/theme/style__canvas",
+	"playButton": "src/theme/style__playButton",
+	"poster": "src/theme/style__poster",
+	"unmuteButton": "src/theme/style__unmuteButton",
+	"hidden": "src/theme/style__hidden"
 };
 
 /***/ }),
@@ -1196,6 +1195,7 @@ exports.locals = {
   Author Tobias Koppers @sokra
 */
 // css base code, injected by the css-loader
+// eslint-disable-next-line func-names
 module.exports = function (useSourceMap) {
   var list = []; // return the list of modules as css string
 
@@ -1204,22 +1204,25 @@ module.exports = function (useSourceMap) {
       var content = cssWithMappingToString(item, useSourceMap);
 
       if (item[2]) {
-        return '@media ' + item[2] + '{' + content + '}';
-      } else {
-        return content;
+        return "@media ".concat(item[2], "{").concat(content, "}");
       }
+
+      return content;
     }).join('');
   }; // import a list of modules into the list
+  // eslint-disable-next-line func-names
 
 
   list.i = function (modules, mediaQuery) {
     if (typeof modules === 'string') {
+      // eslint-disable-next-line no-param-reassign
       modules = [[null, modules, '']];
     }
 
     var alreadyImportedModules = {};
 
     for (var i = 0; i < this.length; i++) {
+      // eslint-disable-next-line prefer-destructuring
       var id = this[i][0];
 
       if (id != null) {
@@ -1227,8 +1230,8 @@ module.exports = function (useSourceMap) {
       }
     }
 
-    for (i = 0; i < modules.length; i++) {
-      var item = modules[i]; // skip already imported module
+    for (var _i = 0; _i < modules.length; _i++) {
+      var item = modules[_i]; // skip already imported module
       // this implementation is not 100% perfect for weird media query combinations
       // when a module is imported multiple times with different media queries.
       // I hope this will never occur (Hey this way we have smaller bundles)
@@ -1237,7 +1240,7 @@ module.exports = function (useSourceMap) {
         if (mediaQuery && !item[2]) {
           item[2] = mediaQuery;
         } else if (mediaQuery) {
-          item[2] = '(' + item[2] + ') and (' + mediaQuery + ')';
+          item[2] = "(".concat(item[2], ") and (").concat(mediaQuery, ")");
         }
 
         list.push(item);
@@ -1249,7 +1252,8 @@ module.exports = function (useSourceMap) {
 };
 
 function cssWithMappingToString(item, useSourceMap) {
-  var content = item[1] || '';
+  var content = item[1] || ''; // eslint-disable-next-line prefer-destructuring
+
   var cssMapping = item[3];
 
   if (!cssMapping) {
@@ -1259,7 +1263,7 @@ function cssWithMappingToString(item, useSourceMap) {
   if (useSourceMap && typeof btoa === 'function') {
     var sourceMapping = toComment(cssMapping);
     var sourceURLs = cssMapping.sources.map(function (source) {
-      return '/*# sourceURL=' + cssMapping.sourceRoot + source + ' */';
+      return "/*# sourceURL=".concat(cssMapping.sourceRoot).concat(source, " */");
     });
     return [content].concat(sourceURLs).concat([sourceMapping]).join('\n');
   }
@@ -1271,8 +1275,8 @@ function cssWithMappingToString(item, useSourceMap) {
 function toComment(sourceMap) {
   // eslint-disable-next-line no-undef
   var base64 = btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap))));
-  var data = 'sourceMappingURL=data:application/json;charset=utf-8;base64,' + base64;
-  return '/*# ' + data + ' */';
+  var data = "sourceMappingURL=data:application/json;charset=utf-8;base64,".concat(base64);
+  return "/*# ".concat(data, " */");
 }
 
 /***/ }),
@@ -5543,11 +5547,11 @@ WASM.prototype.readDylinkSection = function (buffer) {
     var mul = 1;
 
     while (1) {
-      var byte = bytes[next++];
-      ret += (byte & 0x7f) * mul;
+      var _byte = bytes[next++];
+      ret += (_byte & 0x7f) * mul;
       mul *= 0x80;
 
-      if (!(byte & 0x80)) {
+      if (!(_byte & 0x80)) {
         return ret;
       }
     }
@@ -5643,7 +5647,7 @@ FetchSource.prototype.start = function () {
       return this.pump(res.body.getReader());
     } else {//error
     }
-  }.bind(this)).catch(function (err) {
+  }.bind(this))["catch"](function (err) {
     throw err;
   });
 };
@@ -5663,7 +5667,7 @@ FetchSource.prototype.pump = function (reader) {
 
       return this.pump(reader);
     }
-  }.bind(this)).catch(function (err) {
+  }.bind(this))["catch"](function (err) {
     throw err;
   });
 };
