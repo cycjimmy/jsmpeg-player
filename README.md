@@ -78,7 +78,7 @@
 ### Use in browser
 ```html
 <div id="videoWrapper"></div>
-<script src="JSMpeg.min.js"></script>
+<script src="jsmpeg-player.min.js"></script>
 <script>
   var videoUrl = '../static/media/test_video.ts';
   new JSMpeg.VideoElement('#videoWrapper', videoUrl);
@@ -88,7 +88,7 @@
 ## CDN
 To use via a CDN include this in your HTML:
 ```text
-<script src="https://cdn.jsdelivr.net/npm/jsmpeg-player@3/build/JSMpeg.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsmpeg-player@3/build/jsmpeg-player.min.js"></script>
 ```
 
 ## Encoding Video/Audio for [jsmpeg](https://github.com/phoboslab/jsmpeg) by [ffmpeg](https://ffmpeg.org/). E.g:

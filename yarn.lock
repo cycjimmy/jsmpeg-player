@@ -893,6 +893,11 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
+"@cycjimmy/sass-lib@^0.0.3":
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/@cycjimmy/sass-lib/-/sass-lib-0.0.3.tgz#9f21666ffdffb18103ca0e2f9951312642eb3d19"
+  integrity sha512-tK2LszB4ihXkS117CF7ExZztgmHlOUQb6+Ym+BHl2McrrOiezIzC9Pk50maC42Z6ZLdJV7oLAjQw/+4zg+NmIg==
+
 "@jest/console@^24.7.1":
   version "24.7.1"
   resolved "https://registry.yarnpkg.com/@jest/console/-/console-24.7.1.tgz#32a9e42535a97aedfe037e725bd67e954b459545"

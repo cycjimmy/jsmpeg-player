@@ -1,4 +1,4 @@
-var
+const
   path = require('path')
   , webpack = require('webpack')
   , packageJson = require('./package.json')
@@ -10,13 +10,13 @@ var
   , {CleanWebpackPlugin} = require('clean-webpack-plugin')
 ;
 
-var
+const
   IS_DEVELOPMENT = process.env.NODE_ENV === 'development'
   , IS_PRODUCTION = process.env.NODE_ENV === 'production'
   , cssIdentifier = IS_PRODUCTION ? '[hash:base64:10]' : '[path][name]__[local]'
 ;
 
-var config = {
+const config = {
   mode: 'none',
   entry: path.resolve('src', 'index.js'),
 
@@ -25,8 +25,8 @@ var config = {
       ? path.resolve('dist')
       : path.resolve('build'),
     filename: IS_PRODUCTION
-      ? 'JSMpeg.min.js'
-      : 'JSMpeg.js',
+      ? 'jsmpeg-player.min.js'
+      : 'jsmpeg-player.js',
     library: 'JSMpeg',
     libraryTarget: 'umd',
     libraryExport: 'default'
@@ -46,21 +46,12 @@ var config = {
       {
         test: /\.js$/,
         type: 'javascript/auto',
-        include: [
-          path.resolve('src'),
-        ],
-        exclude: [
-          path.resolve('node_modules'),
-        ],
         loader: 'babel-loader'
       },
 
       // Style
       {
         test: /\.scss$/,
-        exclude: [
-          path.resolve('node_modules'),
-        ],
         use: [
           {
             loader: 'style-loader'

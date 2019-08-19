@@ -14,4 +14,5 @@ src
 dist
 static
 yarn.lock
+webpack.config.js
 

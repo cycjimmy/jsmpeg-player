@@ -1,8 +1,8 @@
 {
   "name": "jsmpeg-player",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "MPEG1 Video Player Based On JSMpeg",
-  "main": "build/JSMpeg.js",
+  "main": "build/jsmpeg-player.js",
   "scripts": {
     "test": "jest",
     "start": "cross-env NODE_ENV=development webpack --display-modules --display-reasons --display-error-details --watch --color",
@@ -58,6 +58,7 @@
     "ws": "^7.1.2"
   },
   "dependencies": {
+    "@cycjimmy/sass-lib": "^0.0.3",
     "awesome-js-funcs": "^0.1.6"
   }
 }

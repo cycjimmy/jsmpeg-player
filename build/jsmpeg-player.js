@@ -1,5 +1,5 @@
 /*!
- * jsmpeg-player v3.0.0
+ * jsmpeg-player v3.0.1
  * Homepage: https://github.com/cycdpo/jsmpeg-player#readme
  * Released under the MIT License.
  */
@@ -1205,13 +1205,13 @@ exports.locals = {
 
 "use strict";
 
-
 /*
   MIT License http://www.opensource.org/licenses/mit-license.php
   Author Tobias Koppers @sokra
 */
 // css base code, injected by the css-loader
 // eslint-disable-next-line func-names
+
 module.exports = function (useSourceMap) {
   var list = []; // return the list of modules as css string
 
