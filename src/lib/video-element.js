@@ -1,23 +1,18 @@
 // style
 import _style from '../theme/style.scss';
-
 // button view
-import {
-  PLAY_BUTTON,
-  UNMUTE_BUTTON,
-} from '../buttonView';
-
+import {PLAY_BUTTON, UNMUTE_BUTTON,} from '../buttonView';
 // service
 import Player from './player';
 import isString from 'awesome-js-funcs/judgeBasic/isString';
+import functionToPromise from 'awesome-js-funcs/typeConversion/functionToPromise';
 
 export default class VideoElement {
   constructor(wrapper, videoUrl, {
     canvas = '',
-    canvasWidth = 0,
-    canvasHeight = 0,
     poster = '',
     autoplay = false,
+    autoSetWrapperSize = false,
     loop = false,
     control = true,
     decodeFirstFrame = true,
@@ -28,13 +23,12 @@ export default class VideoElement {
   } = {}, overlayOptions = {}) {
 
     this.options = Object.assign({
-      videoUrl: videoUrl,
+      videoUrl,
       canvas,
-      canvasWidth,
-      canvasHeight,
       poster,
       picMode,
       autoplay,
+      autoSetWrapperSize,
       loop,
       control,
       decodeFirstFrame,
@@ -88,14 +82,6 @@ export default class VideoElement {
       this.els.canvas.classList.add(_style.canvas);
       this.els.wrapper.appendChild(this.els.canvas);
     }
-
-    this.els.canvas.width = this.options.canvasWidth
-      ? this.options.canvasWidth
-      : this.els.wrapper.clientRect.width;
-
-    this.els.canvas.height = this.options.canvasHeight
-      ? this.options.canvasHeight
-      : this.els.wrapper.clientRect.height;
   };
 
   initPlayer() {
@@ -142,6 +128,7 @@ export default class VideoElement {
           this.play();
         }
 
+        this._autoSetWrapperSize();
         this.options.hooks.load();
       }
     });
@@ -168,7 +155,7 @@ export default class VideoElement {
       this.els.playButton.classList.add(_style.hidden);
     }
 
-    // Set up the unlock audio buton for iOS devices. iOS only allows us to
+    // Set up the unlock audio button for iOS devices. iOS only allows us to
     // play audio after a user action has initiated playing. For autoplay or
     // streaming players we set up a muted speaker icon as the button. For all
     // others, we can simply use the play button.
@@ -199,6 +186,24 @@ export default class VideoElement {
     this.els.wrapper.appendChild(this.els.playButton);
   };
 
+  _autoSetWrapperSize() {
+    if (!this.options.autoSetWrapperSize) {
+      return Promise.resolve();
+    }
+
+    const destination = this.player.video.destination;
+
+    if (!destination) {
+      return Promise.resolve();
+    }
+
+    return Promise.resolve()
+      .then(() => functionToPromise(() => {
+        this.els.wrapper.style.width = destination.width + 'px';
+        this.els.wrapper.style.height = destination.height + 'px';
+      }));
+  };
+
   onUnlockAudio(element, ev) {
     if (this.els.unmuteButton) {
       ev.preventDefault();
@@ -220,8 +225,7 @@ export default class VideoElement {
 
     if (this.player.isPlaying) {
       this.pause();
-    }
-    else {
+    } else {
       this.play();
     }
   };

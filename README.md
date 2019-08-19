@@ -48,14 +48,13 @@
   ```
 
 * `JSMpeg.VideoElement` config:
-  * `videoWrapper`: [String | Element] The wrapper of the video. Height and width of wrapper must be initialized.
+  * `videoWrapper`: [String | Element] The wrapper of the video. The height and width of the wrapper are recommended to be initialized.
   * `videoUrl`: [String] A URL to an MPEG .ts file
   * `options`: [Object] support:
     * `canvas`: [String | Element] The HTML canvas element to use for video rendering. If none is given, the renderer will create its own canvas element. Default `''`.
-    * `canvasWidth`: [Number] Set the width of the HTML canvas element. `0` means autoset. Default `0`.
-    * `canvasHeight`: [Number] Set the height of the HTML canvas element. `0` means autoset. Default `0`.
     * `poster`: [String] URL to an image to use as the poster to show before the video plays. (Recommended to set it manually)
     * `autoplay`: [Boolean] Whether to start playing immediately. Default `false`.
+    * `autoSetWrapperSize`: [Boolean] Whether to set the wrapper element size automatically when the video loaded. Default `false`.
     * `loop`: [Boolean] Whether to loop the video (static files only). Default `false`.**[overwrite]**
     * `control`: [Boolean] Whether the user can control. Default `true`.
     * `decodeFirstFrame`: [Boolean] Whether to decode and display the first frame of the video. Default `true`.
@@ -89,7 +88,7 @@
 ## CDN
 To use via a CDN include this in your HTML:
 ```text
-<script src="https://cdn.jsdelivr.net/npm/jsmpeg-player@2/build/JSMpeg.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsmpeg-player@3/build/JSMpeg.min.js"></script>
 ```
 
 ## Encoding Video/Audio for [jsmpeg](https://github.com/phoboslab/jsmpeg) by [ffmpeg](https://ffmpeg.org/). E.g:
@@ -109,5 +108,6 @@ $ ffmpeg -i input.mp4 -f mpegts
   * `-b:a`: audio bit rate
 
 ## Earlier Version
+* [2.x](https://github.com/cycdpo/jsmpeg-player/tree/2.x)
 * [1.x](https://github.com/cycdpo/jsmpeg-player/tree/1.x)
 
