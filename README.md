@@ -88,7 +88,7 @@
 ## CDN
 To use via a CDN include this in your HTML:
 ```text
-<script src="https://cdn.jsdelivr.net/npm/jsmpeg-player@2/build/JSMpeg.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsmpeg-player@3/build/JSMpeg.min.js"></script>
 ```
 
 ## Encoding Video/Audio for [jsmpeg](https://github.com/phoboslab/jsmpeg) by [ffmpeg](https://ffmpeg.org/). E.g:
@@ -108,5 +108,6 @@ $ ffmpeg -i input.mp4 -f mpegts
   * `-b:a`: audio bit rate
 
 ## Earlier Version
+* [2.x](https://github.com/cycdpo/jsmpeg-player/tree/2.x)
 * [1.x](https://github.com/cycdpo/jsmpeg-player/tree/1.x)
 
