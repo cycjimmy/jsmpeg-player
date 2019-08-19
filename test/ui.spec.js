@@ -1,4 +1,4 @@
-import JSMpeg from '../build/JSMpeg.min';
+import JSMpeg from '../build/jsmpeg-player.min';
 
 describe('ui spec', () => {
   const
