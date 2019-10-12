@@ -1,20 +1,17 @@
 {
-  "name": "jsmpeg-player",
-  "version": "3.0.2",
+  "name": "@cycjimmy/jsmpeg-player",
+  "version": "4.0.0",
   "description": "MPEG1 Video Player Based On JSMpeg",
   "main": "build/jsmpeg-player.js",
   "scripts": {
     "test": "jest",
     "start": "cross-env NODE_ENV=development webpack --display-modules --display-reasons --display-error-details --watch --color",
     "build": "cross-env NODE_ENV=production webpack --progress --optimize-minimize && webpack --progress --display-modules --display-reasons --display-error-details --color",
-    "ws": "node ./ws/websocket-relay.js supersecret 8081 8082",
-    "ffmpeg": "ffmpeg -re -stream_loop -1 -i ./static/media/big_buck_bunny_640x360.ts -f mpegts -vcodec copy -acodec copy -muxdelay 0.001 http://localhost:8081/supersecret",
-    "deploy": "gulp deploy",
-    "prepare": "npm run build"
+    "build:dev": "cross-env NODE_ENV=development webpack --display-modules --display-reasons --display-error-details --color"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/cycdpo/jsmpeg-player.git"
+    "url": "git+https://github.com/cycjimmy/jsmpeg-player.git"
   },
   "keywords": [
     "jsmpeg",
@@ -23,9 +20,9 @@
   "author": "cycjimmy <cycjimmy@gmail.com> (https://github.com/cycjimmy)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/cycdpo/jsmpeg-player/issues"
+    "url": "https://github.com/cycjimmy/jsmpeg-player/issues"
   },
-  "homepage": "https://github.com/cycdpo/jsmpeg-player#readme",
+  "homepage": "https://github.com/cycjimmy/jsmpeg-player#readme",
   "devDependencies": {
     "@babel/core": "^7.6.4",
     "@babel/plugin-syntax-dynamic-import": "^7.2.0",
@@ -41,8 +38,6 @@
     "css-loader": "^3.2.0",
     "cssnano": "^4.1.10",
     "file-loader": "^4.2.0",
-    "gh-pages": "^2.1.1",
-    "gulp": "^4.0.2",
     "html-webpack-plugin": "^3.2.0",
     "jest": "^24.9.0",
     "node-sass": "^4.12.0",
@@ -54,8 +49,7 @@
     "uglify-js": "^3.6.1",
     "uglifyjs-webpack-plugin": "^2.2.0",
     "webpack": "^4.41.1",
-    "webpack-cli": "^3.3.9",
-    "ws": "^7.1.2"
+    "webpack-cli": "^3.3.9"
   },
   "dependencies": {
     "@cycjimmy/awesome-js-funcs": "^1.0.1",

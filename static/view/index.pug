@@ -42,12 +42,8 @@ html(lang='en')
     each _js in htmlWebpackPlugin.files.js
       script(src=_js)
 
-    //- copy medias into dist dir
-    - require('../media/big_buck_bunny_640x360.ts');
-
     script.
-      var videoUrl = './media/big_buck_bunny_640x360.ts';
-      // var videoUrl = 'ws://' + document.location.hostname + ':8082/';
+      var videoUrl = 'https://cycjimmy.github.io/staticFiles/media/big_buck_bunny_640x360.ts';
 
       var video = new JSMpeg.VideoElement('#videoWrapper', videoUrl, {
         poster: 'https://cycjimmy.github.io/staticFiles/images/screenshot/big_buck_bunny_640x360.jpg'

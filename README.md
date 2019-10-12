@@ -8,44 +8,49 @@
 [![jsdelivr][jsdelivr-image]][jsdelivr-url]
 [![npm license][license-image]][download-url]
 
-[npm-image]: https://img.shields.io/npm/v/jsmpeg-player.svg?style=flat-square
-[npm-url]: https://npmjs.org/package/jsmpeg-player
-[travis-image]: https://img.shields.io/travis/cycdpo/jsmpeg-player.svg?style=flat-square
-[travis-url]: https://travis-ci.org/cycdpo/jsmpeg-player
-[david-image]: https://img.shields.io/david/cycdpo/jsmpeg-player.svg?style=flat-square
-[david-url]: https://david-dm.org/cycdpo/jsmpeg-player
-[david-dev-image]: https://david-dm.org/cycdpo/jsmpeg-player/dev-status.svg?style=flat-square
-[david-dev-url]: https://david-dm.org/cycdpo/jsmpeg-player?type=dev
-[download-image]: https://img.shields.io/npm/dm/jsmpeg-player.svg?style=flat-square
-[download-url]: https://npmjs.org/package/jsmpeg-player
-[jsdelivr-image]: https://data.jsdelivr.com/v1/package/npm/jsmpeg-player/badge
-[jsdelivr-url]: https://www.jsdelivr.com/package/npm/jsmpeg-player
-[license-image]: https://img.shields.io/npm/l/jsmpeg-player.svg?style=flat-square
+[npm-image]: https://img.shields.io/npm/v/@cycjimmy/jsmpeg-player.svg?style=flat-square
+[npm-url]: https://npmjs.org/package/@cycjimmy/jsmpeg-player
+[travis-image]: https://img.shields.io/travis/cycjimmy/jsmpeg-player.svg?style=flat-square
+[travis-url]: https://travis-ci.org/cycjimmy/jsmpeg-player
+[david-image]: https://img.shields.io/david/cycjimmy/jsmpeg-player.svg?style=flat-square
+[david-url]: https://david-dm.org/cycjimmy/jsmpeg-player
+[david-dev-image]: https://david-dm.org/cycjimmy/jsmpeg-player/dev-status.svg?style=flat-square
+[david-dev-url]: https://david-dm.org/cycjimmy/jsmpeg-player?type=dev
+[download-image]: https://img.shields.io/npm/dm/@cycjimmy/jsmpeg-player.svg?style=flat-square
+[download-url]: https://npmjs.org/package/@cycjimmy/jsmpeg-player
+[jsdelivr-image]: https://data.jsdelivr.com/v1/package/npm/@cycjimmy/jsmpeg-player/badge
+[jsdelivr-url]: https://www.jsdelivr.com/package/npm/@cycjimmy/jsmpeg-player
+[license-image]: https://img.shields.io/npm/l/@cycjimmy/jsmpeg-player.svg?style=flat-square
 
 * JSMpeg player is based on [jsmpeg](https://github.com/phoboslab/jsmpeg).
 * The video must be compressed into the TS format of MPEG1 / MP2.
 * Apple device automatically plays without sound, you need to guide the user to click on the video in the lower right corner of the video icon to unlock the sound. (no similar problem in non-autoplay mode)
 
-[Releases](https://github.com/cycdpo/jsmpeg-player/releases) | [Demo](https://cycdpo.github.io/jsmpeg-player/)
+[Releases](https://github.com/cycjimmy/jsmpeg-player/releases) | [Demo](https://cycjimmy.github.io/jsmpeg-player/)
+
+## This package has been deprecated
+[new-url]: https://github.com/cycjimmy/jsmpeg-player
+
+**This package has been migrated to [@cycjimmy/jsmpeg-player][new-url] for scoped NPM package. Please switch to [@cycjimmy/jsmpeg-player][new-url] to stay up to date.**
 
 ## How to use
 ### Install
-  ```shell
-  $ npm install jsmpeg-player --save
-  # or
-  $ yarn add jsmpeg-player
-  ```
+```shell
+$ npm install @cycjimmy/jsmpeg-player --save
+# or
+$ yarn add @cycjimmy/jsmpeg-player
+```
 
 ### Usage
-  ```javascript
-  import JSMpeg from 'jsmpeg-player';
-  # OR
-  const JSMpeg = require('jsmpeg-player');
-  ```
+```javascript
+import JSMpeg from '@cycjimmy/jsmpeg-player';
+# OR
+const JSMpeg = require('@cycjimmy/jsmpeg-player');
+```
 
-  ```javascript
-  new JSMpeg.VideoElement(videoWrapper, videoUrl [, options] [, overlayOptions])
-  ```
+```javascript
+new JSMpeg.VideoElement(videoWrapper, videoUrl [, options] [, overlayOptions])
+```
 
 * `JSMpeg.VideoElement` config:
   * `videoWrapper`: [String | Element] The wrapper of the video. The height and width of the wrapper are recommended to be initialized.
@@ -88,7 +93,7 @@
 ## CDN
 To use via a CDN include this in your HTML:
 ```text
-<script src="https://cdn.jsdelivr.net/npm/jsmpeg-player@3/build/jsmpeg-player.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@cycjimmy/jsmpeg-player@4/build/jsmpeg-player.min.js"></script>
 ```
 
 ## Encoding Video/Audio for [jsmpeg](https://github.com/phoboslab/jsmpeg) by [ffmpeg](https://ffmpeg.org/). E.g:

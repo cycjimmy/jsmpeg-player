@@ -1,0 +1,29 @@
+name: Node Test CI
+on:
+  push:
+
+  pull_request:
+    branches:
+      - master
+
+  schedule:
+    - cron: 0 2 * * 0
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        node-version: [10.x, 12.x]
+        os: [ubuntu-latest, windows-latest, macOS-latest]
+
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: npm install -g yarn
+      - run: yarn install
+      - run: npm run build
+      - run: npm test
+
