@@ -4,8 +4,8 @@ import _style from '../theme/style.scss';
 import {PLAY_BUTTON, UNMUTE_BUTTON,} from '../buttonView';
 // service
 import Player from './player';
-import isString from 'awesome-js-funcs/judgeBasic/isString';
-import functionToPromise from 'awesome-js-funcs/typeConversion/functionToPromise';
+import isString from '@cycjimmy/awesome-js-funcs/judgeBasic/isString';
+import functionToPromise from '@cycjimmy/awesome-js-funcs/typeConversion/functionToPromise';
 
 export default class VideoElement {
   constructor(wrapper, videoUrl, {

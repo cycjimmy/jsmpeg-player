@@ -1,6 +1,6 @@
 {
   "name": "jsmpeg-player",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "description": "MPEG1 Video Player Based On JSMpeg",
   "main": "build/jsmpeg-player.js",
   "scripts": {
@@ -27,17 +27,17 @@
   },
   "homepage": "https://github.com/cycdpo/jsmpeg-player#readme",
   "devDependencies": {
-    "@babel/core": "^7.5.5",
+    "@babel/core": "^7.6.4",
     "@babel/plugin-syntax-dynamic-import": "^7.2.0",
     "@babel/plugin-transform-object-assign": "^7.2.0",
-    "@babel/preset-env": "^7.5.5",
-    "autoprefixer": "^9.6.1",
+    "@babel/preset-env": "^7.6.3",
+    "autoprefixer": "^9.6.4",
     "babel-jest": "^24.9.0",
     "babel-loader": "^8.0.6",
     "browser-sync": "^2.26.7",
     "browser-sync-webpack-plugin": "^2.2.2",
     "clean-webpack-plugin": "^3.0.0",
-    "cross-env": "^5.2.0",
+    "cross-env": "^6.0.3",
     "css-loader": "^3.2.0",
     "cssnano": "^4.1.10",
     "file-loader": "^4.2.0",
@@ -49,16 +49,16 @@
     "postcss-loader": "^3.0.0",
     "pug": "^2.0.4",
     "pug-loader": "^2.4.0",
-    "sass-loader": "^7.2.0",
+    "sass-loader": "^8.0.0",
     "style-loader": "^1.0.0",
-    "uglify-js": "^3.6.0",
+    "uglify-js": "^3.6.1",
     "uglifyjs-webpack-plugin": "^2.2.0",
-    "webpack": "^4.39.2",
-    "webpack-cli": "^3.3.7",
+    "webpack": "^4.41.1",
+    "webpack-cli": "^3.3.9",
     "ws": "^7.1.2"
   },
   "dependencies": {
-    "@cycjimmy/sass-lib": "^0.0.3",
-    "awesome-js-funcs": "^0.1.6"
+    "@cycjimmy/awesome-js-funcs": "^1.0.1",
+    "@cycjimmy/sass-lib": "^0.1.0"
   }
 }

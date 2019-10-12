@@ -24,9 +24,9 @@ const config = {
     path: IS_DEVELOPMENT
       ? path.resolve('dist')
       : path.resolve('build'),
-    filename: IS_PRODUCTION
-      ? 'jsmpeg-player.min.js'
-      : 'jsmpeg-player.js',
+    filename: packageJson.name.replace(/^.+\//g, '') + (() => IS_PRODUCTION
+      ? '.min.js'
+      : '.js')(),
     library: 'JSMpeg',
     libraryTarget: 'umd',
     libraryExport: 'default'
@@ -76,7 +76,9 @@ const config = {
           {
             loader: 'sass-loader',
             options: {
-              outputStyle: 'expanded',
+              sassOptions: {
+                outputStyle: 'expanded',
+              },
             },
           },
         ]

@@ -1,5 +1,5 @@
 /*!
- * jsmpeg-player v3.0.1
+ * jsmpeg-player v3.0.2
  * Homepage: https://github.com/cycdpo/jsmpeg-player#readme
  * Released under the MIT License.
  */
@@ -875,8 +875,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _theme_style_scss__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_theme_style_scss__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _buttonView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(10);
 /* harmony import */ var _player__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(1);
-/* harmony import */ var awesome_js_funcs_judgeBasic_isString__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(11);
-/* harmony import */ var awesome_js_funcs_typeConversion_functionToPromise__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(12);
+/* harmony import */ var _cycjimmy_awesome_js_funcs_judgeBasic_isString__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(11);
+/* harmony import */ var _cycjimmy_awesome_js_funcs_typeConversion_functionToPromise__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(12);
 function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 
 // style
@@ -943,7 +943,7 @@ function () {
     this.player = null; // Setup canvas and play button
 
     this.els = {
-      wrapper: Object(awesome_js_funcs_judgeBasic_isString__WEBPACK_IMPORTED_MODULE_3__["default"])(wrapper) ? document.querySelector(wrapper) : wrapper,
+      wrapper: Object(_cycjimmy_awesome_js_funcs_judgeBasic_isString__WEBPACK_IMPORTED_MODULE_3__["default"])(wrapper) ? document.querySelector(wrapper) : wrapper,
       canvas: null,
       playButton: document.createElement('div'),
       unmuteButton: null,
@@ -964,7 +964,7 @@ function () {
 
   _proto.initCanvas = function initCanvas() {
     if (this.options.canvas) {
-      this.els.canvas = Object(awesome_js_funcs_judgeBasic_isString__WEBPACK_IMPORTED_MODULE_3__["default"])(this.options.canvas) ? document.querySelector(this.options.canvas) : this.options.canvas;
+      this.els.canvas = Object(_cycjimmy_awesome_js_funcs_judgeBasic_isString__WEBPACK_IMPORTED_MODULE_3__["default"])(this.options.canvas) ? document.querySelector(this.options.canvas) : this.options.canvas;
     } else {
       this.els.canvas = document.createElement('canvas');
       this.els.canvas.classList.add(_theme_style_scss__WEBPACK_IMPORTED_MODULE_0___default.a.canvas);
@@ -1091,7 +1091,7 @@ function () {
     }
 
     return Promise.resolve().then(function () {
-      return Object(awesome_js_funcs_typeConversion_functionToPromise__WEBPACK_IMPORTED_MODULE_4__["default"])(function () {
+      return Object(_cycjimmy_awesome_js_funcs_typeConversion_functionToPromise__WEBPACK_IMPORTED_MODULE_4__["default"])(function () {
         _this2.els.wrapper.style.width = destination.width + 'px';
         _this2.els.wrapper.style.height = destination.height + 'px';
       });
@@ -4710,9 +4710,9 @@ MP2.QUANT_TAB = [{
 {
   levels: 65535,
   group: 0,
-  bits: 16 // 17
-
-}];
+  bits: 16
+} // 17
+];
 /* harmony default export */ __webpack_exports__["default"] = (MP2);
 
 /***/ }),

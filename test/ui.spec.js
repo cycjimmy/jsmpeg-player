@@ -11,11 +11,9 @@ describe('ui spec', () => {
   videoWrapper.style.width = '640px';
   videoWrapper.style.height = '360px';
 
-  let
-    videoDefault = new JSMpeg.VideoElement(videoWrapper, videoUrl, {
-      poster,
-    })
-  ;
+  const videoDefault = new JSMpeg.VideoElement(videoWrapper, videoUrl, {
+    poster,
+  });
 
   test('videoDefault.wrapper should be videoWrapper', () => {
     expect(videoDefault.els.wrapper.id).toBe('videoWrapper');
