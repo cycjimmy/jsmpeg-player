@@ -22,16 +22,12 @@
 [jsdelivr-url]: https://www.jsdelivr.com/package/npm/@cycjimmy/jsmpeg-player
 [license-image]: https://img.shields.io/npm/l/@cycjimmy/jsmpeg-player.svg?style=flat-square
 
+* **[jsmpeg-player](https://github.com/cycdpo/jsmpeg-player) has been renamed to @cycjimmy/jsmpeg-player for scoped NPM package.**
 * JSMpeg player is based on [jsmpeg](https://github.com/phoboslab/jsmpeg).
 * The video must be compressed into the TS format of MPEG1 / MP2.
 * Apple device automatically plays without sound, you need to guide the user to click on the video in the lower right corner of the video icon to unlock the sound. (no similar problem in non-autoplay mode)
 
 [Releases](https://github.com/cycjimmy/jsmpeg-player/releases) | [Demo](https://cycjimmy.github.io/jsmpeg-player/)
-
-## This package has been deprecated
-[new-url]: https://github.com/cycjimmy/jsmpeg-player
-
-**This package has been migrated to [@cycjimmy/jsmpeg-player][new-url] for scoped NPM package. Please switch to [@cycjimmy/jsmpeg-player][new-url] to stay up to date.**
 
 ## How to use
 ### Install
