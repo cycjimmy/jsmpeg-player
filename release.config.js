@@ -8,6 +8,6 @@ module.exports = makeCommonConfig({
   },
   exec: true,
   execOptions: {
-    prepareCmd: 'npm run build'
+    prepareCmd: 'npm ci && npm rebuild node-sass && npm run build'
   }
 });
