@@ -2,7 +2,7 @@
   "name": "@cycjimmy/jsmpeg-player",
   "version": "4.0.1",
   "description": "MPEG1 Video Player Based On JSMpeg",
-  "main": "build/jsmpeg-player.js",
+  "main": "build/jsmpeg-player.min.js",
   "scripts": {
     "test": "jest",
     "start": "cross-env NODE_ENV=development webpack --display-modules --display-reasons --display-error-details --watch --color",
@@ -23,11 +23,16 @@
     "url": "https://github.com/cycjimmy/jsmpeg-player/issues"
   },
   "homepage": "https://github.com/cycjimmy/jsmpeg-player#readme",
+  "dependencies": {
+    "@cycjimmy/awesome-js-funcs": "^1.1.1",
+    "@cycjimmy/sass-lib": "^1.0.2"
+  },
   "devDependencies": {
     "@babel/core": "^7.6.4",
     "@babel/plugin-syntax-dynamic-import": "^7.2.0",
     "@babel/plugin-transform-object-assign": "^7.2.0",
     "@babel/preset-env": "^7.6.3",
+    "@cycjimmy/config-lib": "^1.1.4",
     "autoprefixer": "^9.6.4",
     "babel-jest": "^24.9.0",
     "babel-loader": "^8.0.6",
@@ -37,6 +42,7 @@
     "cross-env": "^6.0.3",
     "css-loader": "^3.2.0",
     "cssnano": "^4.1.10",
+    "cz-conventional-changelog": "^3.0.2",
     "file-loader": "^4.2.0",
     "html-webpack-plugin": "^3.2.0",
     "jest": "^24.9.0",
@@ -51,8 +57,9 @@
     "webpack": "^4.41.1",
     "webpack-cli": "^3.3.9"
   },
-  "dependencies": {
-    "@cycjimmy/awesome-js-funcs": "^1.0.1",
-    "@cycjimmy/sass-lib": "^0.1.0"
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   }
 }

@@ -15,4 +15,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           BRANCH: gh-pages
           FOLDER: dist
-          BUILD_SCRIPT: npm install -g yarn && yarn install && npm run build:dev
+          BUILD_SCRIPT: npm ci && npm run build:dev
