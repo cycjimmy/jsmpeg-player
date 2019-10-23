@@ -25,7 +25,7 @@ jobs:
       - name: Setup Node.js with GitHub Package Registry
         uses: actions/setup-node@v1
         with:
-          node-version: 12
+          node-version: 10
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           registry-url: 'https://npm.pkg.github.com'
           scope: 'cycjimmy'
@@ -34,7 +34,7 @@ jobs:
       - name: Setup Node.js with Npm Package Registry
         uses: actions/setup-node@v1
         with:
-          node-version: 12
+          node-version: 10
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           registry-url: 'https://registry.npmjs.org'
           always-auth: true
