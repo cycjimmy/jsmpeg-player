@@ -94,9 +94,9 @@ To use via a CDN include this in your HTML:
 
 ## Encoding Video/Audio for [jsmpeg](https://github.com/phoboslab/jsmpeg) by [ffmpeg](https://ffmpeg.org/). E.g:
 ```shell
-$ ffmpeg -i input.mp4 -f mpegts
-         -codec:v mpeg1video -s 640x360 -b:v 700k -r 25 -bf 0
-         -codec:a mp2 -ar 44100 -ac 1 -b:a 64k
+$ ffmpeg -i input.mp4 -f mpegts \
+         -codec:v mpeg1video -s 640x360 -b:v 700k -r 25 -bf 0 \
+         -codec:a mp2 -ar 44100 -ac 1 -b:a 64k \
          output.ts
 ```
 
