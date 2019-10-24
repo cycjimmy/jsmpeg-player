@@ -52,8 +52,7 @@
     "pug-loader": "^2.4.0",
     "sass-loader": "^8.0.0",
     "style-loader": "^1.0.0",
-    "uglify-js": "^3.6.1",
-    "uglifyjs-webpack-plugin": "^2.2.0",
+    "terser-webpack-plugin": "^2.2.1",
     "webpack": "^4.41.1",
     "webpack-cli": "^3.3.9"
   },

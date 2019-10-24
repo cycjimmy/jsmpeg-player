@@ -6,8 +6,11 @@ const
   // webpack plugin
   , BrowserSyncPlugin = require('browser-sync-webpack-plugin')
   , HtmlWebpackPlugin = require('html-webpack-plugin')
-  , UglifyJsPlugin = require('uglifyjs-webpack-plugin')
+  , TerserPlugin = require('terser-webpack-plugin')
   , {CleanWebpackPlugin} = require('clean-webpack-plugin')
+
+  // config
+  , terserConfig = require('@cycjimmy/config-lib/terserWebpackPlugin/2.x/production')
 ;
 
 const
@@ -15,6 +18,11 @@ const
   , IS_PRODUCTION = process.env.NODE_ENV === 'production'
   , cssIdentifier = IS_PRODUCTION ? '[hash:base64:10]' : '[path][name]__[local]'
 ;
+
+const OPTIMIZATION_OPTIONS = {
+  minimize: true,
+  minimizer: [new TerserPlugin(terserConfig)],
+};
 
 const config = {
   mode: 'none',
@@ -162,30 +170,7 @@ if (IS_PRODUCTION) {
     }),
   );
 
-  config.optimization = {
-    minimizer: [
-      // Uglify Js
-      new UglifyJsPlugin({
-        uglifyOptions: {
-          ie8: false,
-          safari10: true,
-          ecma: 5,
-          output: {
-            comments: /^!/,
-            beautify: false
-          },
-          compress: {
-            drop_debugger: true,
-            drop_console: true,
-            collapse_vars: true,
-            reduce_vars: true
-          },
-          warnings: false,
-          sourceMap: true
-        }
-      }),
-    ]
-  };
+  config.optimization = OPTIMIZATION_OPTIONS;
 }
 
 module.exports = config;
