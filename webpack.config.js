@@ -100,12 +100,6 @@ const config = {
       // media
       {
         test: /\.(wav|mp3|mpeg|mp4|webm|ogv|flv|ts)$/i,
-        exclude: [
-          path.resolve('node_modules')
-        ],
-        include: [
-          path.resolve('static', 'media')
-        ],
         use: [
           {
             loader: 'file-loader',
