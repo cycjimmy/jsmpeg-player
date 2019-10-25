@@ -7,23 +7,14 @@ node_js:
 notifications:
   email: false
 
-sudo: required
-
-before_install:
-  - sudo apt-key adv --fetch-keys http://dl.yarnpkg.com/debian/pubkey.gpg
-  - echo "deb http://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
-  - sudo apt-get update -qq
-  - sudo apt-get install -y -qq yarn
-
 install:
-  - yarn install
+  - npm ci
 
 cache:
-  yarn: true
   directories:
     - "node_modules"
 
 script:
-  - yarn --version
+  - npm --version
   - npm run build
-  - jest
+  - npm test
