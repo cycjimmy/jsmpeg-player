@@ -4,6 +4,7 @@ const WASM = function () {
   this.stackSize = 5 * 1024 * 1024; // emscripten default
   this.pageSize = 64 * 1024; // wasm page size
   this.onInitCallback = null;
+  this.ready = false;
 };
 
 WASM.prototype.write = function (buffer) {
@@ -12,7 +13,7 @@ WASM.prototype.write = function (buffer) {
 
 WASM.prototype.loadFromFile = function (url, callback) {
   this.onInitCallback = callback;
-  const ajax = new AjaxSource(url);
+  const ajax = new AjaxSource(url, {});
   ajax.connect(this);
   ajax.start();
 };
@@ -44,6 +45,7 @@ WASM.prototype.loadFromBuffer = function (buffer, callback) {
       this.instance.exports.__post_instantiate();
     }
     this.createHeapViews();
+    this.ready = true;
     callback && callback(this);
   }.bind(this))
 };
@@ -141,6 +143,11 @@ WASM.prototype.readDylinkSection = function (buffer) {
 
 WASM.IsSupported = function () {
   return (!!window.WebAssembly);
+};
+
+WASM.GetModule = function() {
+  WASM.CACHED_MODULE = WASM.CACHED_MODULE || new WASM();
+  return WASM.CACHED_MODULE;
 };
 
 export default WASM;
