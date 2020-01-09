@@ -1,105 +1,103 @@
-const BaseDecoder = function (options) {
-  this.destination = null;
-  this.canPlay = false;
+/* eslint class-methods-use-this: ["error", { "exceptMethods": ["destroy"] }] */
+export default class BaseDecoder {
+  constructor(options) {
+    this.destination = null;
+    this.canPlay = false;
 
-  this.collectTimestamps = !options.streaming;
-  this.bytesWritten = 0;
-  this.timestamps = [];
-  this.timestampIndex = 0;
+    this.collectTimestamps = !options.streaming;
+    this.bytesWritten = 0;
+    this.timestamps = [];
+    this.timestampIndex = 0;
 
-  this.startTime = 0;
-  this.decodedTime = 0;
+    this.startTime = 0;
+    this.decodedTime = 0;
 
-  Object.defineProperty(this, 'currentTime', {get: this.getCurrentTime});
-};
-
-BaseDecoder.prototype.destroy = function () {
-};
-
-BaseDecoder.prototype.connect = function (destination) {
-  this.destination = destination;
-};
-
-BaseDecoder.prototype.bufferGetIndex = function () {
-  return this.bits.index;
-};
-BaseDecoder.prototype.bufferSetIndex = function (index) {
-  this.bits.index = index;
-};
-BaseDecoder.prototype.bufferWrite = function (buffers) {
-  return this.bits.write(buffers);
-};
-
-BaseDecoder.prototype.write = function (pts, buffers) {
-  if (this.collectTimestamps) {
-    if (this.timestamps.length === 0) {
-      this.startTime = pts;
-      this.decodedTime = pts;
-    }
-    this.timestamps.push({index: this.bytesWritten << 3, time: pts});
+    Object.defineProperty(this, 'currentTime', { get: this.getCurrentTime });
   }
 
-  this.bytesWritten += this.bufferWrite(buffers);
-  this.canPlay = true;
-};
+  destroy() {}
 
-BaseDecoder.prototype.seek = function (time) {
-  if (!this.collectTimestamps) {
-    return;
+  connect(destination) {
+    this.destination = destination;
   }
 
-  this.timestampIndex = 0;
-  for (let i = 0; i < this.timestamps.length; i++) {
-    if (this.timestamps[i].time > time) {
-      break;
-    }
-    this.timestampIndex = i;
+  bufferGetIndex() {
+    return this.bits.index;
   }
 
-  let ts = this.timestamps[this.timestampIndex];
-  if (ts) {
-    this.bufferSetIndex(ts.index);
-    this.decodedTime = ts.time;
+  bufferSetIndex(index) {
+    this.bits.index = index;
   }
-  else {
-    this.bits.index = 0;
-    this.decodedTime = this.startTime;
+
+  bufferWrite(buffers) {
+    return this.bits.write(buffers);
   }
-};
 
-BaseDecoder.prototype.decode = function () {
-  this.advanceDecodedTime(0);
-};
-
-BaseDecoder.prototype.advanceDecodedTime = function (seconds) {
-  if (this.collectTimestamps) {
-    let newTimestampIndex = -1;
-    const currentIndex = this.bufferGetIndex();
-    for (let i = this.timestampIndex; i < this.timestamps.length; i++) {
-      if (this.timestamps[i].index > currentIndex) {
-        break;
+  write(pts, buffers) {
+    if (this.collectTimestamps) {
+      if (this.timestamps.length === 0) {
+        this.startTime = pts;
+        this.decodedTime = pts;
       }
-      newTimestampIndex = i;
+      this.timestamps.push({ index: this.bytesWritten << 3, time: pts });
     }
 
-    // Did we find a new PTS, different from the last? If so, we don't have
-    // to advance the decoded time manually and can instead sync it exactly
-    // to the PTS.
-    if (
-      newTimestampIndex !== -1 &&
-      newTimestampIndex !== this.timestampIndex
-    ) {
-      this.timestampIndex = newTimestampIndex;
-      this.decodedTime = this.timestamps[this.timestampIndex].time;
+    this.bytesWritten += this.bufferWrite(buffers);
+    this.canPlay = true;
+  }
+
+  seek(time) {
+    if (!this.collectTimestamps) {
       return;
     }
+
+    this.timestampIndex = 0;
+    for (let i = 0; i < this.timestamps.length; i++) {
+      if (this.timestamps[i].time > time) {
+        break;
+      }
+      this.timestampIndex = i;
+    }
+
+    const ts = this.timestamps[this.timestampIndex];
+    if (ts) {
+      this.bufferSetIndex(ts.index);
+      this.decodedTime = ts.time;
+    } else {
+      this.bits.index = 0;
+      this.decodedTime = this.startTime;
+    }
   }
 
-  this.decodedTime += seconds;
-};
+  decode() {
+    this.advanceDecodedTime(0);
+  }
 
-BaseDecoder.prototype.getCurrentTime = function () {
-  return this.decodedTime;
-};
+  advanceDecodedTime(seconds) {
+    if (this.collectTimestamps) {
+      let newTimestampIndex = -1;
+      const currentIndex = this.bufferGetIndex();
+      for (let i = this.timestampIndex; i < this.timestamps.length; i++) {
+        if (this.timestamps[i].index > currentIndex) {
+          break;
+        }
+        newTimestampIndex = i;
+      }
 
-export default BaseDecoder;
+      // Did we find a new PTS, different from the last? If so, we don't have
+      // to advance the decoded time manually and can instead sync it exactly
+      // to the PTS.
+      if (newTimestampIndex !== -1 && newTimestampIndex !== this.timestampIndex) {
+        this.timestampIndex = newTimestampIndex;
+        this.decodedTime = this.timestamps[this.timestampIndex].time;
+        return;
+      }
+    }
+
+    this.decodedTime += seconds;
+  }
+
+  getCurrentTime() {
+    return this.decodedTime;
+  }
+}

@@ -1,13 +1,14 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
 const makeCommonConfig = require('@cycjimmy/config-lib/semanticRelease/15.x/makeCommonConfig');
+
+const pkg = require('./package.json');
 
 module.exports = makeCommonConfig({
   githubOptions: {
-    "assets": [
-      "build/jsmpeg-player.min.js"
-    ]
+    assets: [pkg.browser]
   },
   exec: true,
   execOptions: {
-    publishCmd: 'npm rebuild node-sass && npm run build'
+    publishCmd: 'npm run build'
   }
 });

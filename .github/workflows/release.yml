@@ -1,17 +1,33 @@
 name: Release
 
 on:
-  pull_request:
-    branches:
-      - master
   push:
     branches:
       - master
 
 jobs:
+  test:
+    name: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Test
+        run: npm run test
+
   release:
     name: release
     runs-on: ubuntu-latest
+    needs: test
     steps:
       - name: Checkout
         uses: actions/checkout@v1
@@ -19,34 +35,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Setup Node.js with GitHub Package Registry
-        uses: actions/setup-node@v1
-        with:
-          node-version: 12
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          registry-url: 'https://npm.pkg.github.com'
-          scope: 'cycjimmy'
-          always-auth: true
-
-      - name: Setup Node.js with Npm Package Registry
-        uses: actions/setup-node@v1
-        with:
-          node-version: 12
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-          registry-url: 'https://registry.npmjs.org'
-          always-auth: true
-
-      - name: Set .npmrc
-        env:
-          CI: true
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: |
-          echo "//npm.pkg.github.com/:_authToken=$GITHUB_TOKEN" > /home/runner/work/_temp/.npmrc
-          echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> /home/runner/work/_temp/.npmrc
-
       - name: Semantic Release
-        uses: cycjimmy/semantic-release-action@master
+        uses: cycjimmy/semantic-release-action@v2
         id: semantic
         with:
           branch: master
@@ -58,15 +48,22 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
+      - name: Setup Node.js with GitHub Package Registry
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          registry-url: 'https://npm.pkg.github.com'
+          scope: 'cycjimmy'
+
       - name: Publish To GitHub Package Registry
         if: steps.semantic.outputs.new_release_published == 'true'
-        run: npm publish --@cycjimmy:registry='https://npm.pkg.github.com'
+        run: npm publish
         env:
-          NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Push updates to branch for major version
         if: steps.semantic.outputs.new_release_published == 'true'
-        run: "git push https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git HEAD:refs/heads/v${{steps.semantic.outputs.new_release_major_version}}"
+        run: git push https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git HEAD:refs/heads/v${{steps.semantic.outputs.new_release_major_version}}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-

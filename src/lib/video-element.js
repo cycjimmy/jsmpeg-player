@@ -1,50 +1,59 @@
 // style
-import _style from '../theme/style.scss';
-// button view
-import {PLAY_BUTTON, UNMUTE_BUTTON,} from '../buttonView';
-// service
-import Player from './player';
 import isString from '@cycjimmy/awesome-js-funcs/judgeBasic/isString';
+
 import functionToPromise from '@cycjimmy/awesome-js-funcs/typeConversion/functionToPromise';
 
-export default class VideoElement {
-  constructor(wrapper, videoUrl, {
-    canvas = '',
-    poster = '',
-    autoplay = false,
-    autoSetWrapperSize = false,
-    loop = false,
-    control = true,
-    decodeFirstFrame = true,
-    picMode = false,
-    progressive = true,
-    chunkSize = 1024 * 1024,
-    hooks = {}
-  } = {}, overlayOptions = {}) {
+import _style from '../theme/style.scss';
+// button view
+import { PLAY_BUTTON, UNMUTE_BUTTON } from '../buttonView';
 
-    this.options = Object.assign({
-      videoUrl,
-      canvas,
-      poster,
-      picMode,
-      autoplay,
-      autoSetWrapperSize,
-      loop,
-      control,
-      decodeFirstFrame,
-      progressive,
-      chunkSize,
-      hooks: Object.assign({
-        play: () => {
-        },
-        pause: () => {
-        },
-        stop: () => {
-        },
-        load: () => {
-        },
-      }, hooks),
-    }, overlayOptions);
+// service
+import Player from './player';
+
+export default class VideoElement {
+  constructor(
+    wrapper,
+    videoUrl,
+    {
+      canvas = '',
+      poster = '',
+      autoplay = false,
+      autoSetWrapperSize = false,
+      loop = false,
+      control = true,
+      decodeFirstFrame = true,
+      picMode = false,
+      progressive = true,
+      chunkSize = 1024 * 1024,
+      hooks = {}
+    } = {},
+    overlayOptions = {}
+  ) {
+    this.options = Object.assign(
+      {
+        videoUrl,
+        canvas,
+        poster,
+        picMode,
+        autoplay,
+        autoSetWrapperSize,
+        loop,
+        control,
+        decodeFirstFrame,
+        progressive,
+        chunkSize,
+        hooks: Object.assign(
+          {
+            play: () => {},
+            pause: () => {},
+            stop: () => {},
+            load: () => {}
+          },
+          hooks
+        )
+      },
+      overlayOptions
+    );
 
     this.options.needPlayButton = this.options.control && !this.options.picMode;
 
@@ -52,13 +61,11 @@ export default class VideoElement {
 
     // Setup canvas and play button
     this.els = {
-      wrapper: isString(wrapper)
-        ? document.querySelector(wrapper)
-        : wrapper,
+      wrapper: isString(wrapper) ? document.querySelector(wrapper) : wrapper,
       canvas: null,
       playButton: document.createElement('div'),
       unmuteButton: null,
-      poster: null,
+      poster: null
     };
 
     if (window.getComputedStyle(this.els.wrapper).getPropertyValue('position') === 'static') {
@@ -70,7 +77,7 @@ export default class VideoElement {
     this.initCanvas();
     this.initPlayButton();
     this.initPlayer();
-  };
+  }
 
   initCanvas() {
     if (this.options.canvas) {
@@ -82,18 +89,18 @@ export default class VideoElement {
       this.els.canvas.classList.add(_style.canvas);
       this.els.wrapper.appendChild(this.els.canvas);
     }
-  };
+  }
 
   initPlayer() {
     // Parse the data-options - we try to decode the values as json. This way
     // we can get proper boolean and number values. If JSON.parse() fails,
     // treat it as a string.
     this.options = Object.assign(this.options, {
-      canvas: this.els.canvas,
+      canvas: this.els.canvas
     });
 
     const _options = Object.assign({}, this.options, {
-      autoplay: false,
+      autoplay: false
     });
 
     // Create the player instance
@@ -174,7 +181,7 @@ export default class VideoElement {
       unlockAudioElement.addEventListener('touchstart', this.unlockAudioBound, false);
       unlockAudioElement.addEventListener('click', this.unlockAudioBound, true);
     }
-  };
+  }
 
   initPlayButton() {
     if (!this.options.needPlayButton) {
@@ -184,25 +191,26 @@ export default class VideoElement {
     this.els.playButton.classList.add(_style.playButton);
     this.els.playButton.innerHTML = PLAY_BUTTON;
     this.els.wrapper.appendChild(this.els.playButton);
-  };
+  }
 
   _autoSetWrapperSize() {
     if (!this.options.autoSetWrapperSize) {
       return Promise.resolve();
     }
 
-    const destination = this.player.video.destination;
+    const { destination } = this.player.video;
 
     if (!destination) {
       return Promise.resolve();
     }
 
-    return Promise.resolve()
-      .then(() => functionToPromise(() => {
-        this.els.wrapper.style.width = destination.width + 'px';
-        this.els.wrapper.style.height = destination.height + 'px';
-      }));
-  };
+    return Promise.resolve().then(() =>
+      functionToPromise(() => {
+        this.els.wrapper.style.width = `${destination.width}px`;
+        this.els.wrapper.style.height = `${destination.height}px`;
+      })
+    );
+  }
 
   onUnlockAudio(element, ev) {
     if (this.els.unmuteButton) {
@@ -216,7 +224,7 @@ export default class VideoElement {
       element.removeEventListener('touchstart', this.unlockAudioBound);
       element.removeEventListener('click', this.unlockAudioBound);
     });
-  };
+  }
 
   onClick() {
     if (!this.options.control) {
@@ -228,7 +236,7 @@ export default class VideoElement {
     } else {
       this.play();
     }
-  };
+  }
 
   /**
    * copy player functions
@@ -243,6 +251,5 @@ export default class VideoElement {
       this.els.wrapper.innerHTML = '';
       this.els.wrapper.playerInstance = null;
     };
-  };
-};
-
+  }
+}

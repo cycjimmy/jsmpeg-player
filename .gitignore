@@ -47,15 +47,15 @@ Temporary Items
 .apdisk
 
 # IDE
-.idea/
+.idea
 
-# nodejs
+# node
 node_modules/
-npm-debug.log
-yarn-error.log
+*.log
 
 # project
-.publish
-dist
-temp
+.publish/
+dist/
+temp/
+coverage
 
