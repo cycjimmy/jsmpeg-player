@@ -59,7 +59,7 @@ const Player = function (url, options = {}, hooks = {}) {
   this.source.connect(this.demuxer);
 
   if (!options.disableWebAssembly && WASMModule.IsSupported()) {
-    this.wasmModule = JSMpeg.WASMModule.GetModule();
+    this.wasmModule = WASMModule.GetModule();
     options.wasmModule = this.wasmModule;
   }
 
@@ -107,7 +107,7 @@ const Player = function (url, options = {}, hooks = {}) {
     if (this.wasmModule.ready) {
       this.startLoading();
     }
-    else if (JSMpeg.WASM_BINARY_INLINED) {
+    else if (WASM_BINARY) {
       const wasm = Base64ToArrayBuffer(WASM_BINARY);
       this.wasmModule.loadFromBuffer(wasm, this.startLoading.bind(this));
     }

@@ -321,7 +321,7 @@ var Player = function Player(url, options, hooks) {
   this.source.connect(this.demuxer);
 
   if (!options.disableWebAssembly && _wasm_module__WEBPACK_IMPORTED_MODULE_11__["default"].IsSupported()) {
-    this.wasmModule = JSMpeg.WASMModule.GetModule();
+    this.wasmModule = _wasm_module__WEBPACK_IMPORTED_MODULE_11__["default"].GetModule();
     options.wasmModule = this.wasmModule;
   }
 
@@ -360,7 +360,7 @@ var Player = function Player(url, options, hooks) {
   if (this.wasmModule) {
     if (this.wasmModule.ready) {
       this.startLoading();
-    } else if (JSMpeg.WASM_BINARY_INLINED) {
+    } else if (_wasm_WASM_BINARY__WEBPACK_IMPORTED_MODULE_12__["default"]) {
       var wasm = Object(_utils__WEBPACK_IMPORTED_MODULE_13__["Base64ToArrayBuffer"])(_wasm_WASM_BINARY__WEBPACK_IMPORTED_MODULE_12__["default"]);
       this.wasmModule.loadFromBuffer(wasm, this.startLoading.bind(this));
     } else {
