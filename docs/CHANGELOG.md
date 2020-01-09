@@ -1,3 +1,11 @@
+## [4.0.4](https://github.com/cycjimmy/jsmpeg-player/compare/v4.0.3...v4.0.4) (2020-01-09)
+
+
+### Bug Fixes
+
+* fix error `JSMpeg is not defined` ([556be62](https://github.com/cycjimmy/jsmpeg-player/commit/556be621890382d2cebdff89a15ace30af1bd364))
+* **upgrade:** update from origin jsmpeg ([9dd8098](https://github.com/cycjimmy/jsmpeg-player/commit/9dd8098c46d88161efdf6334ddc81c621be02b93))
+
 ## [4.0.3](https://github.com/cycjimmy/jsmpeg-player/compare/v4.0.2...v4.0.3) (2019-10-24)
 
 
