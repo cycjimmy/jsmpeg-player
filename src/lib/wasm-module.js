@@ -58,6 +58,7 @@ export default class WASM {
   }
 
   align(addr) {
+    // eslint-disable-next-line no-restricted-properties
     const a = Math.pow(2, this.moduleInfo.memoryAlignment);
     return Math.ceil(addr / a) * a;
   }
@@ -75,14 +76,19 @@ export default class WASM {
     return previousBrk;
   }
 
+  // eslint-disable-next-line no-unused-vars,class-methods-use-this
   c_abort(size) {
+    // eslint-disable-next-line prefer-rest-params
     console.warn('JSMPeg: WASM abort', arguments);
   }
 
+  // eslint-disable-next-line no-unused-vars,class-methods-use-this
   c_assertFail(size) {
+    // eslint-disable-next-line prefer-rest-params
     console.warn('JSMPeg: WASM ___assert_fail', arguments);
   }
 
+  // eslint-disable-next-line class-methods-use-this
   readDylinkSection(buffer) {
     // Read the WASM header and dylink section of the .wasm binary data
     // to get the needed table size and static data size.
@@ -93,9 +99,10 @@ export default class WASM {
     const bytes = new Uint8Array(buffer);
     let next = 0;
 
-    const readVarUint = function() {
+    const readVarUint = () => {
       let ret = 0;
       let mul = 1;
+      // eslint-disable-next-line no-constant-condition
       while (1) {
         const byte = bytes[next++];
         ret += (byte & 0x7f) * mul;
@@ -106,7 +113,7 @@ export default class WASM {
       }
     };
 
-    const matchNextBytes = function(expected) {
+    const matchNextBytes = (expected) => {
       for (let i = 0; i < expected.length; i++) {
         const b = typeof expected[i] === 'string' ? expected[i].charCodeAt(0) : expected[i];
         if (bytes[next++] !== b) {
@@ -124,6 +131,7 @@ export default class WASM {
 
     // Make sure we have a dylink section
     next = 9;
+    // eslint-disable-next-line no-unused-vars
     const sectionSize = readVarUint();
     if (!matchNextBytes([6, 'd', 'y', 'l', 'i', 'n', 'k'])) {
       console.warn('JSMpeg: No dylink section found in WASM');

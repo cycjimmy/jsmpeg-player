@@ -1,7 +1,7 @@
 import { Now } from '../utils';
 
 class WebAudioOut {
-  constructor(options) {
+  constructor() {
     this.context = WebAudioOut.CachedContext =
       WebAudioOut.CachedContext || new (window.AudioContext || window.webkitAudioContext)();
 

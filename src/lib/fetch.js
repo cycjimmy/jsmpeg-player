@@ -32,6 +32,7 @@ export default class FetchSource {
 
     self
       .fetch(this.url, params)
+      // eslint-disable-next-line consistent-return
       .then((res) => {
         if (res.ok && res.status >= 200 && res.status <= 299) {
           this.progress = 1;
@@ -46,29 +47,32 @@ export default class FetchSource {
   }
 
   pump(reader) {
-    return reader
-      .read()
-      .then((result) => {
-        if (result.done) {
-          this.completed = true;
-        } else {
-          if (this.aborted) {
-            return reader.cancel();
-          }
+    return (
+      reader
+        .read()
+        // eslint-disable-next-line consistent-return
+        .then((result) => {
+          if (result.done) {
+            this.completed = true;
+          } else {
+            if (this.aborted) {
+              return reader.cancel();
+            }
 
-          if (this.destination) {
-            this.destination.write(result.value.buffer);
-          }
+            if (this.destination) {
+              this.destination.write(result.value.buffer);
+            }
 
-          return this.pump(reader);
-        }
-      })
-      .catch((err) => {
-        throw err;
-      });
+            return this.pump(reader);
+          }
+        })
+        .catch((err) => {
+          throw err;
+        })
+    );
   }
 
-  resume(secondsHeadroom) {
+  resume() {
     // Nothing to do here
   }
 

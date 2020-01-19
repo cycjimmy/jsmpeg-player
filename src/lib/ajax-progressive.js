@@ -35,12 +35,12 @@ export default class AjaxProgressiveSource {
   start() {
     this.request = new XMLHttpRequest();
 
-    this.request.onreadystatechange = function() {
+    this.request.onreadystatechange = () => {
       if (this.request.readyState === this.request.DONE) {
-        this.fileSize = parseInt(this.request.getResponseHeader('Content-Length'));
+        this.fileSize = parseInt(this.request.getResponseHeader('Content-Length'), 10);
         this.loadNextChunk();
       }
-    }.bind(this);
+    };
 
     this.request.onprogress = this.onProgress.bind(this);
     this.request.open('HEAD', this.url);
@@ -81,7 +81,7 @@ export default class AjaxProgressiveSource {
     this.loadStartTime = Now();
     this.request = new XMLHttpRequest();
 
-    this.request.onreadystatechange = function() {
+    this.request.onreadystatechange = () => {
       if (
         this.request.readyState === this.request.DONE &&
         this.request.status >= 200 &&
@@ -94,7 +94,7 @@ export default class AjaxProgressiveSource {
           this.loadNextChunk();
         }
       }
-    }.bind(this);
+    };
 
     if (start === 0) {
       this.request.onprogress = this.onProgress.bind(this);

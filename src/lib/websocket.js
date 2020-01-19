@@ -9,6 +9,7 @@ export default class WSSource {
     this.destination = null;
 
     this.reconnectInterval =
+      // eslint-disable-next-line no-undefined
       options.reconnectInterval !== undefined ? options.reconnectInterval : 5;
     this.shouldAttemptReconnect = !!this.reconnectInterval;
 
@@ -49,7 +50,8 @@ export default class WSSource {
     this.socket.onclose = this.onClose.bind(this);
   }
 
-  resume(secondsHeadroom) {
+  // eslint-disable-next-line class-methods-use-this
+  resume() {
     // Nothing to do here
   }
 

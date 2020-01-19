@@ -8,7 +8,6 @@
   "scripts": {
     "start": "npm run dev",
     "test": "jest --color",
-    "coveralls": "jest --color --coverage",
     "lint": "eslint -c .eslintrc 'src/**/*.js'",
     "lint:fix": "eslint --fix -c .eslintrc 'src/**/*.js' --fix",
     "dev": "cross-env NODE_ENV=development rollup -c rollup/rollup.config.dev.js --watch",

@@ -25,6 +25,7 @@ class MPEG1 extends BaseDecoder {
     this.decodeFirstFrame = options.decodeFirstFrame !== false;
   }
 
+  // eslint-disable-next-line consistent-return
   write(pts, buffers) {
     BaseDecoder.prototype.write.call(this, pts, buffers);
 
@@ -48,7 +49,6 @@ class MPEG1 extends BaseDecoder {
     }
 
     if (this.bits.findStartCode(MPEG1.START.PICTURE) === -1) {
-      const bufferedBytes = this.bits.byteLength - (this.bits.index >> 3);
       return false;
     }
 
@@ -148,7 +148,7 @@ class MPEG1 extends BaseDecoder {
     this.forwardCb32 = new Uint32Array(this.forwardCb.buffer);
   }
 
-  decodePicture(skipOutput) {
+  decodePicture() {
     this.currentFrame++;
 
     this.bits.skip(10); // skip temporalReference
@@ -709,10 +709,13 @@ class MPEG1 extends BaseDecoder {
 
       // Save predictor value
       if (block < 4) {
+        // eslint-disable-next-line prefer-destructuring
         this.dcPredictorY = this.blockData[0];
       } else if (block === 4) {
+        // eslint-disable-next-line prefer-destructuring
         this.dcPredictorCr = this.blockData[0];
       } else {
+        // eslint-disable-next-line prefer-destructuring
         this.dcPredictorCb = this.blockData[0];
       }
 
@@ -727,6 +730,7 @@ class MPEG1 extends BaseDecoder {
 
     // Decode AC coefficients (+DC for non-intra)
     let level = 0;
+    // eslint-disable-next-line no-constant-condition
     while (true) {
       let run = 0;
       const coeff = this.readHuffman(MPEG1.DCT_COEFF);
@@ -810,6 +814,7 @@ class MPEG1 extends BaseDecoder {
       }
     } else {
       // Add data to the predicted macroblock
+      // eslint-disable-next-line no-lonely-if
       if (n === 1) {
         MPEG1.AddValueToDestination((this.blockData[0] + 128) >> 8, destArray, destIndex, scan);
         this.blockData[0] = 0;

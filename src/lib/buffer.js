@@ -99,7 +99,7 @@ class BitBuffer {
 
   findNextStartCode() {
     for (let i = (this.index + 7) >> 3; i < this.byteLength; i++) {
-      if (this.bytes[i] == 0x00 && this.bytes[i + 1] == 0x00 && this.bytes[i + 2] == 0x01) {
+      if (this.bytes[i] === 0x00 && this.bytes[i + 1] === 0x00 && this.bytes[i + 2] === 0x01) {
         this.index = (i + 4) << 3;
         return this.bytes[i + 3];
       }
@@ -109,12 +109,9 @@ class BitBuffer {
   }
 
   findStartCode(code) {
-    let current = 0;
-    while (true) {
-      current = this.findNextStartCode();
-      if (current === code || current === -1) {
-        return current;
-      }
+    const current = this.findNextStartCode();
+    if (current === code || current === -1) {
+      return current;
     }
     return -1;
   }
@@ -123,7 +120,7 @@ class BitBuffer {
     const i = (this.index + 7) >> 3;
     return (
       i >= this.byteLength ||
-      (this.bytes[i] == 0x00 && this.bytes[i + 1] == 0x00 && this.bytes[i + 2] == 0x01)
+      (this.bytes[i] === 0x00 && this.bytes[i + 1] === 0x00 && this.bytes[i + 2] === 0x01)
     );
   }
 

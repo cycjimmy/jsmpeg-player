@@ -99,6 +99,7 @@ export default class VideoElement {
       canvas: this.els.canvas
     });
 
+    // eslint-disable-next-line no-underscore-dangle
     const _options = Object.assign({}, this.options, {
       autoplay: false
     });

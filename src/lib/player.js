@@ -32,6 +32,7 @@ export default class Player {
     };
 
     if (options.source) {
+      // eslint-disable-next-line new-cap
       this.source = new options.source(url, this.options);
       options.streaming = !!this.source.streaming;
     } else if (url.match(/^wss?:\/\//)) {
@@ -115,7 +116,7 @@ export default class Player {
     }
   }
 
-  showHide(ev) {
+  showHide() {
     if (document.visibilityState === 'hidden') {
       this.unpauseOnShow = this.wantsToPlay;
       this.pause();
@@ -124,7 +125,7 @@ export default class Player {
     }
   }
 
-  play(ev) {
+  play() {
     if (this.animationId) {
       return;
     }
@@ -134,7 +135,7 @@ export default class Player {
     this.paused = false;
   }
 
-  pause(ev) {
+  pause() {
     if (this.paused) {
       return;
     }
@@ -171,7 +172,7 @@ export default class Player {
     }
   }
 
-  stop(ev) {
+  stop() {
     this.pause();
     this.seek(0);
     if (this.video && this.options.decodeFirstFrame !== false) {

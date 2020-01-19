@@ -38,6 +38,7 @@ export default class MPEG1WASM extends BaseDecoder {
     if (!this.decoder) {
       return;
     }
+    // eslint-disable-next-line consistent-return
     return this.functions._mpeg1_decoder_get_index(this.decoder);
   }
 

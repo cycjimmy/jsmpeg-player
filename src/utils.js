@@ -5,6 +5,7 @@ export const Now = () => (window.performance ? window.performance.now() / 1000 :
 export const CreateVideoElements = () => {
   const elements = document.querySelectorAll('.jsmpeg');
   for (let i = 0; i < elements.length; i++) {
+    // eslint-disable-next-line no-new
     new VideoElement(elements[i]);
   }
 };

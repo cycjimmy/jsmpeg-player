@@ -104,6 +104,7 @@ class MP2 extends BaseDecoder {
       bitrateIndex += 14;
     }
     const padding = this.bits.read(1);
+    // eslint-disable-next-line no-unused-vars
     const privat = this.bits.read(1);
     const mode = this.bits.read(2);
 
@@ -197,8 +198,11 @@ class MP2 extends BaseDecoder {
         }
       }
       if (mode === MP2.MODE.MONO) {
+        // eslint-disable-next-line prefer-destructuring
         this.scaleFactor[1][sb][0] = this.scaleFactor[0][sb][0];
+        // eslint-disable-next-line prefer-destructuring
         this.scaleFactor[1][sb][1] = this.scaleFactor[0][sb][1];
+        // eslint-disable-next-line prefer-destructuring
         this.scaleFactor[1][sb][2] = this.scaleFactor[0][sb][2];
       }
     }
@@ -214,8 +218,11 @@ class MP2 extends BaseDecoder {
         }
         for (let sb = bound; sb < sblimit; sb++) {
           this.readSamples(0, sb, part);
+          // eslint-disable-next-line prefer-destructuring
           this.sample[1][sb][0] = this.sample[0][sb][0];
+          // eslint-disable-next-line prefer-destructuring
           this.sample[1][sb][1] = this.sample[0][sb][1];
+          // eslint-disable-next-line prefer-destructuring
           this.sample[1][sb][2] = this.sample[0][sb][2];
         }
         for (let sb = sblimit; sb < 32; sb++) {

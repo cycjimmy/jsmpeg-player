@@ -4,7 +4,6 @@
 [![build status][travis-image]][travis-url]
 [![libraries dependency status][libraries-status-image]][libraries-status-url]
 [![libraries sourcerank][libraries-sourcerank-image]][libraries-sourcerank-url]
-[![Coverage Status][coverage-image]][coverage-url]
 [![Release date][release-date-image]][release-url]
 [![rollup][rollup-image]][rollup-url]
 [![semantic-release][semantic-image]][semantic-url]
@@ -123,9 +122,6 @@ $ ffmpeg -i input.mp4 -f mpegts \
 [libraries-sourcerank-image]: https://img.shields.io/librariesio/sourcerank/npm/@cycjimmy/jsmpeg-player
 [libraries-status-url]: https://libraries.io/github/cycjimmy/jsmpeg-player
 [libraries-sourcerank-url]: https://libraries.io/npm/@cycjimmy%2Fjsmpeg-player
-
-[coverage-image]: https://img.shields.io/coveralls/github/cycjimmy/jsmpeg-player
-[coverage-url]: https://coveralls.io/github/cycjimmy/jsmpeg-player
 
 [release-date-image]: https://img.shields.io/github/release-date/cycjimmy/jsmpeg-player
 [release-url]: https://github.com/cycjimmy/jsmpeg-player/releases

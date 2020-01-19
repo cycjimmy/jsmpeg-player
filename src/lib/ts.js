@@ -1,7 +1,7 @@
 import BitBuffer from './buffer';
 
 class TS {
-  constructor(options) {
+  constructor() {
     this.bits = null;
     this.leftoverBytes = null;
 
@@ -32,6 +32,7 @@ class TS {
       this.bits = new BitBuffer(buffer);
     }
 
+    // eslint-disable-next-line no-empty
     while (this.bits.has(188 << 3) && this.parsePacket()) {}
 
     const leftoverCount = this.bits.byteLength - (this.bits.index >> 3);
@@ -48,12 +49,16 @@ class TS {
     }
 
     const end = (this.bits.index >> 3) + 187;
+    // eslint-disable-next-line no-unused-vars
     const transportError = this.bits.read(1);
     const payloadStart = this.bits.read(1);
+    // eslint-disable-next-line no-unused-vars
     const transportPriority = this.bits.read(1);
     const pid = this.bits.read(13);
+    // eslint-disable-next-line no-unused-vars
     const transportScrambling = this.bits.read(2);
     const adaptationField = this.bits.read(2);
+    // eslint-disable-next-line no-unused-vars
     const continuityCounter = this.bits.read(4);
 
     // If this is the start of a new payload; signal the end of the previous
@@ -182,6 +187,7 @@ class TS {
     return false;
   }
 
+  // eslint-disable-next-line class-methods-use-this
   packetStart(pi, pts, payloadLength) {
     pi.totalLength = payloadLength;
     pi.currentLength = 0;
@@ -195,6 +201,7 @@ class TS {
     return pi.totalLength !== 0 && pi.currentLength >= pi.totalLength;
   }
 
+  // eslint-disable-next-line class-methods-use-this
   packetComplete(pi) {
     pi.destination.write(pi.pts, pi.buffers);
     pi.totalLength = 0;

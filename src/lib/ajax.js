@@ -25,6 +25,7 @@ export default class AjaxSource {
   start() {
     this.request = new XMLHttpRequest();
 
+    // eslint-disable-next-line func-names
     this.request.onreadystatechange = function() {
       if (this.request.readyState === this.request.DONE && this.request.status === 200) {
         this.onLoad(this.request.response);
@@ -37,7 +38,7 @@ export default class AjaxSource {
     this.request.send();
   }
 
-  resume(secondsHeadroom) {
+  resume() {
     // Nothing to do here
   }
 
