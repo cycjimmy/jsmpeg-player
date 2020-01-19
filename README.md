@@ -1,36 +1,28 @@
 # JSMpeg Player(TS Player)
 
-[![NPM version][npm-image]][npm-url]
+![][workflows-badge-image]
 [![build status][travis-image]][travis-url]
-[![David deps][david-image]][david-url]
-[![devDependencies Status][david-dev-image]][david-dev-url]
-[![npm download][download-image]][download-url]
-[![jsdelivr][jsdelivr-image]][jsdelivr-url]
+[![libraries dependency status][libraries-status-image]][libraries-status-url]
+[![libraries sourcerank][libraries-sourcerank-image]][libraries-sourcerank-url]
+[![Release date][release-date-image]][release-url]
+[![rollup][rollup-image]][rollup-url]
+[![semantic-release][semantic-image]][semantic-url]
+[![jest][jest-image]][jest-url]
 [![npm license][license-image]][download-url]
 
-[npm-image]: https://img.shields.io/npm/v/@cycjimmy/jsmpeg-player.svg?style=flat-square
-[npm-url]: https://npmjs.org/package/@cycjimmy/jsmpeg-player
-[travis-image]: https://img.shields.io/travis/cycjimmy/jsmpeg-player.svg?style=flat-square
-[travis-url]: https://travis-ci.org/cycjimmy/jsmpeg-player
-[david-image]: https://img.shields.io/david/cycjimmy/jsmpeg-player.svg?style=flat-square
-[david-url]: https://david-dm.org/cycjimmy/jsmpeg-player
-[david-dev-image]: https://david-dm.org/cycjimmy/jsmpeg-player/dev-status.svg?style=flat-square
-[david-dev-url]: https://david-dm.org/cycjimmy/jsmpeg-player?type=dev
-[download-image]: https://img.shields.io/npm/dm/@cycjimmy/jsmpeg-player.svg?style=flat-square
-[download-url]: https://npmjs.org/package/@cycjimmy/jsmpeg-player
-[jsdelivr-image]: https://data.jsdelivr.com/v1/package/npm/@cycjimmy/jsmpeg-player/badge
-[jsdelivr-url]: https://www.jsdelivr.com/package/npm/@cycjimmy/jsmpeg-player
-[license-image]: https://img.shields.io/npm/l/@cycjimmy/jsmpeg-player.svg?style=flat-square
 
 * **[jsmpeg-player](https://github.com/cycdpo/jsmpeg-player) has been renamed to @cycjimmy/jsmpeg-player for scoped NPM package.**
 * JSMpeg player is based on [jsmpeg](https://github.com/phoboslab/jsmpeg).
 * The video must be compressed into the TS format of MPEG1 / MP2.
 * Apple device automatically plays without sound, you need to guide the user to click on the video in the lower right corner of the video icon to unlock the sound. (no similar problem in non-autoplay mode)
-
-[Releases](https://github.com/cycjimmy/jsmpeg-player/releases) | [Demo](https://cycjimmy.github.io/jsmpeg-player/)
+* [Demo][github-pages-url]
 
 ## How to use
 ### Install
+[![NPM version][npm-image]][npm-url]
+[![NPM bundle size][npm-bundle-size-image]][npm-url]
+[![npm download][download-image]][download-url]
+
 ```shell
 $ npm install @cycjimmy/jsmpeg-player --save
 # or
@@ -77,9 +69,11 @@ new JSMpeg.VideoElement(videoWrapper, videoUrl [, options] [, overlayOptions])
 * `JSMpeg.VideoElement.player` instance API can view the [JSMpeg.Player API](https://github.com/phoboslab/jsmpeg#jsmpegplayer-api)
 
 ### Use in browser
+[![jsdelivr][jsdelivr-image]][jsdelivr-url]
+
 ```html
 <div id="videoWrapper"></div>
-<script src="jsmpeg-player.min.js"></script>
+<script src="jsmpeg-player.umd.min.js"></script>
 <script>
   var videoUrl = '../static/media/test_video.ts';
   new JSMpeg.VideoElement('#videoWrapper', videoUrl);
@@ -89,7 +83,7 @@ new JSMpeg.VideoElement(videoWrapper, videoUrl [, options] [, overlayOptions])
 ## CDN
 To use via a CDN include this in your HTML:
 ```text
-<script src="https://cdn.jsdelivr.net/npm/@cycjimmy/jsmpeg-player@4/build/jsmpeg-player.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@cycjimmy/jsmpeg-player@5/dist/jsmpeg-player.umd.min.js"></script>
 ```
 
 ## Encoding Video/Audio for [jsmpeg](https://github.com/phoboslab/jsmpeg) by [ffmpeg](https://ffmpeg.org/). E.g:
@@ -108,7 +102,39 @@ $ ffmpeg -i input.mp4 -f mpegts \
   * `-ac`: number of audio channels
   * `-b:a`: audio bit rate
 
-## Earlier Version
-* [2.x](https://github.com/cycdpo/jsmpeg-player/tree/2.x)
-* [1.x](https://github.com/cycdpo/jsmpeg-player/tree/1.x)
 
+<!-- Links: -->
+[npm-image]: https://img.shields.io/npm/v/@cycjimmy/jsmpeg-player
+[npm-url]: https://npmjs.org/package/@cycjimmy/jsmpeg-player
+[npm-bundle-size-image]: https://img.shields.io/bundlephobia/min/@cycjimmy/jsmpeg-player
+
+[download-image]: https://img.shields.io/npm/dt/@cycjimmy/jsmpeg-player
+[download-url]: https://npmjs.org/package/@cycjimmy/jsmpeg-player
+
+[jsdelivr-image]: https://img.shields.io/jsdelivr/npm/hy/@cycjimmy/jsmpeg-player
+[jsdelivr-url]: https://www.jsdelivr.com/package/npm/@cycjimmy/jsmpeg-player
+
+[workflows-badge-image]: https://github.com/cycjimmy/jsmpeg-player/workflows/Test%20CI/badge.svg
+[travis-image]: https://img.shields.io/travis/cycjimmy/jsmpeg-player
+[travis-url]: https://travis-ci.org/cycjimmy/jsmpeg-player
+
+[libraries-status-image]: https://img.shields.io/librariesio/release/npm/@cycjimmy/jsmpeg-player
+[libraries-sourcerank-image]: https://img.shields.io/librariesio/sourcerank/npm/@cycjimmy/jsmpeg-player
+[libraries-status-url]: https://libraries.io/github/cycjimmy/jsmpeg-player
+[libraries-sourcerank-url]: https://libraries.io/npm/@cycjimmy%2Fjsmpeg-player
+
+[release-date-image]: https://img.shields.io/github/release-date/cycjimmy/jsmpeg-player
+[release-url]: https://github.com/cycjimmy/jsmpeg-player/releases
+
+[rollup-image]: https://img.shields.io/github/package-json/dependency-version/cycjimmy/jsmpeg-player/dev/rollup
+[rollup-url]: https://github.com/rollup/rollup
+
+[semantic-image]: https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg
+[semantic-url]: https://github.com/semantic-release/semantic-release
+
+[jest-image]: https://img.shields.io/badge/tested_with-jest-99424f.svg
+[jest-url]: https://github.com/facebook/jest
+
+[license-image]: https://img.shields.io/npm/l/@cycjimmy/jsmpeg-player
+
+[github-pages-url]: https://cycjimmy.github.io/jsmpeg-player/

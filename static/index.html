@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="shortcut icon" href="./favicon.ico">
+  <title>JSMpeg Video Demo</title>
+
+  <style>
+    #videoWrapper {
+      margin: 20px auto;
+      width: 640px;
+      height: 360px;
+    }
+
+    .buttons-wrapper {
+      display: flex;
+      margin: 0 auto;
+      width: 640px;
+      height: 50px;
+    }
+
+    .button {
+      text-decoration: none;
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      margin: 0 10px;
+      border: 1px solid #666;
+      border-radius: 10px;
+      color: #666;
+    }
+  </style>
+</head>
+
+<body>
+<div id="videoWrapper"></div>
+<div class="buttons-wrapper">
+  <a class="button" href="javascript:" data-action="play">play</a>
+  <a class="button" href="javascript:" data-action="pause">pause</a>
+  <a class="button" href="javascript:" data-action="stop">stop</a>
+  <a class="button" href="javascript:" data-action="destroy">destroy</a>
+</div>
+
+<script src="./jsmpeg-player.umd.js"></script>
+<script>
+  const videoUrl = 'https://cycjimmy.github.io/staticFiles/media/big_buck_bunny_640x360.ts';
+
+  const video = new JSMpeg.VideoElement('#videoWrapper', videoUrl, {
+    poster: 'https://cycjimmy.github.io/staticFiles/images/screenshot/big_buck_bunny_640x360.jpg'
+  });
+
+  console.log(video);
+
+  document.querySelector('.buttons-wrapper').addEventListener('click', function (e) {
+    const target = e.target;
+
+    if (target === this) {
+      return;
+    }
+
+    const sAction = target.dataset.action;
+
+    if (!sAction) {
+      return;
+    }
+
+    video[sAction]();
+  });
+</script>
+</body>
+</html>

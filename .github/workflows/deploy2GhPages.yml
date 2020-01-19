@@ -12,7 +12,7 @@ jobs:
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@master
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
           BRANCH: gh-pages
-          FOLDER: dist
-          BUILD_SCRIPT: npm ci && npm run build:dev
+          FOLDER: .publish
+          BUILD_SCRIPT: npm ci && npm run build:deployment

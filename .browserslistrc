@@ -1,5 +1,4 @@
 [production staging]
-last 4 versions
 ie >= 10
 ie_mob >= 10
 ff >= 30
