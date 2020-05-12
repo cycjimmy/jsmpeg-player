@@ -1,6 +1,6 @@
 {
   "name": "@cycjimmy/jsmpeg-player",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "description": "MPEG1 Video Player Based On JSMpeg",
   "main": "dist/jsmpeg-player.cjs.js",
   "module": "dist/jsmpeg-player.esm.js",

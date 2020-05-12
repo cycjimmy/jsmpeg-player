@@ -1,3 +1,10 @@
+## [5.0.1](https://github.com/cycjimmy/jsmpeg-player/compare/v5.0.0...v5.0.1) (2020-05-12)
+
+
+### Bug Fixes
+
+* **mp2:** fix audio only using the right channel for volume ([628844f](https://github.com/cycjimmy/jsmpeg-player/commit/628844febcc75ed6857e421becfbf8fafe72216d)), closes [#24](https://github.com/cycjimmy/jsmpeg-player/issues/24) [#24](https://github.com/cycjimmy/jsmpeg-player/issues/24)
+
 # [5.0.0](https://github.com/cycjimmy/jsmpeg-player/compare/v4.0.4...v5.0.0) (2020-01-19)
 
 
