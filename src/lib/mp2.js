@@ -24,7 +24,7 @@ class MP2 extends BaseDecoder {
     this.D = new Float32Array(1024);
     this.D.set(MP2.SYNTHESIS_WINDOW, 0);
     this.D.set(MP2.SYNTHESIS_WINDOW, 512);
-    this.V = new Float32Array(1024);
+    this.V = [new Float32Array(1024), new Float32Array(1024)];
     this.U = new Int32Array(32);
     this.VPos = 0;
 
@@ -240,7 +240,7 @@ class MP2 extends BaseDecoder {
           this.VPos = (this.VPos - 64) & 1023;
 
           for (let ch = 0; ch < 2; ch++) {
-            MP2.MatrixTransform(this.sample[ch], p, this.V, this.VPos);
+            MP2.MatrixTransform(this.sample[ch], p, this.V[ch], this.VPos);
 
             // Build U, windowing, calculate output
             Fill(this.U, 0);
@@ -249,7 +249,7 @@ class MP2 extends BaseDecoder {
             let vIndex = this.VPos % 128 >> 1;
             while (vIndex < 1024) {
               for (let i = 0; i < 32; ++i) {
-                this.U[i] += this.D[dIndex++] * this.V[vIndex++];
+                this.U[i] += this.D[dIndex++] * this.V[ch][vIndex++];
               }
 
               vIndex += 128 - 32;
@@ -260,7 +260,7 @@ class MP2 extends BaseDecoder {
             dIndex -= 512 - 32;
             while (vIndex < 1024) {
               for (let i = 0; i < 32; ++i) {
-                this.U[i] += this.D[dIndex++] * this.V[vIndex++];
+                this.U[i] += this.D[dIndex++] * this.V[ch][vIndex++];
               }
 
               vIndex += 128 - 32;
