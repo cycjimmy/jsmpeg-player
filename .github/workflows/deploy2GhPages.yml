@@ -8,11 +8,19 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          persist-credentials: false
+
+      - name: Pre-built
+        run: |
+          npm ci
+          npm run build:deployment
+
       - name: Deploy to GitHub Pages
-        uses: JamesIves/github-pages-deploy-action@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-          BRANCH: gh-pages
-          FOLDER: .publish
-          BUILD_SCRIPT: npm ci && npm run build:deployment
+        uses: JamesIves/github-pages-deploy-action@releases/v4
+        with:
+          branch: gh-pages
+          folder: .publish
+          ssh-key: ${{ secrets.ACCESS_TOKEN }}
