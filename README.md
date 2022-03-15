@@ -7,7 +7,6 @@
 [![Release date][release-date-image]][release-url]
 [![rollup][rollup-image]][rollup-url]
 [![semantic-release][semantic-image]][semantic-url]
-[![jest][jest-image]][jest-url]
 [![npm license][license-image]][download-url]
 
 
@@ -131,9 +130,6 @@ $ ffmpeg -i input.mp4 -f mpegts \
 
 [semantic-image]: https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg
 [semantic-url]: https://github.com/semantic-release/semantic-release
-
-[jest-image]: https://img.shields.io/badge/tested_with-jest-99424f.svg
-[jest-url]: https://github.com/facebook/jest
 
 [license-image]: https://img.shields.io/npm/l/@cycjimmy/jsmpeg-player
 

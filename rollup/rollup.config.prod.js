@@ -5,7 +5,10 @@ import { banner, input, name, plugins, terserPlugins } from './rollup.common';
 export default [
   {
     input,
-    output: [{ file: pkg.main, format: 'cjs' }, { file: pkg.module, format: 'es' }],
+    output: [
+      { file: pkg.main, format: 'cjs', exports: 'default' },
+      { file: pkg.module, format: 'es', exports: 'default' }
+    ],
     plugins
   },
   {

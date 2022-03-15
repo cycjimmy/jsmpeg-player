@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-const makeCommonConfig = require('@cycjimmy/config-lib/semanticRelease/15.x/makeCommonConfig');
+const makeCommonConfig = require('@cycjimmy/config-lib/cjs/semanticRelease/15.x/makeCommonConfig');
 
 const pkg = require('./package.json');
 

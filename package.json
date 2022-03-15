@@ -7,7 +7,6 @@
   "browser": "dist/jsmpeg-player.umd.min.js",
   "scripts": {
     "start": "npm run dev",
-    "test": "jest --color",
     "lint": "eslint -c .eslintrc 'src/**/*.js'",
     "lint:fix": "eslint --fix -c .eslintrc 'src/**/*.js' --fix",
     "dev": "cross-env NODE_ENV=development rollup -c rollup/rollup.config.dev.js --watch",
@@ -33,32 +32,33 @@
   "files": [
     "/dist"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "dependencies": {
-    "@cycjimmy/awesome-js-funcs": "^2.3.0",
-    "@cycjimmy/sass-lib": "^1.0.3"
+    "@cycjimmy/awesome-js-funcs": "^3.1.0",
+    "@cycjimmy/sass-lib": "^1.1.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.9.6",
+    "@babel/core": "^7.17.5",
     "@babel/plugin-syntax-dynamic-import": "^7.8.3",
-    "@babel/plugin-transform-object-assign": "^7.8.3",
-    "@babel/preset-env": "^7.9.6",
-    "@cycjimmy/config-lib": "^1.6.1",
-    "autoprefixer": "^9.7.6",
-    "babel-jest": "^26.0.1",
-    "cross-env": "^7.0.2",
-    "eslint": "^7.0.0",
+    "@babel/plugin-transform-object-assign": "^7.16.7",
+    "@babel/preset-env": "^7.16.11",
+    "@cycjimmy/config-lib": "^2.0.0",
+    "@rollup/plugin-babel": "^5.3.1",
+    "@rollup/plugin-commonjs": "^21.0.2",
+    "@rollup/plugin-json": "^4.1.0",
+    "@rollup/plugin-node-resolve": "^13.1.3",
+    "autoprefixer": "^10.4.2",
+    "cross-env": "^7.0.3",
+    "eslint": "^8.11.0",
     "eslint-config-rollup": "^0.1.0",
-    "jest": "^26.0.1",
-    "node-sass": "^4.14.1",
-    "rollup": "^2.9.1",
-    "rollup-plugin-babel": "^4.4.0",
-    "rollup-plugin-browsersync": "^1.1.0",
-    "rollup-plugin-commonjs": "^10.1.0",
-    "rollup-plugin-copy": "^3.3.0",
+    "node-sass": "^7.0.1",
+    "rollup": "^2.70.1",
+    "rollup-plugin-browsersync": "^1.3.3",
+    "rollup-plugin-copy": "^3.4.0",
     "rollup-plugin-eslint": "^7.0.0",
-    "rollup-plugin-json": "^4.0.0",
-    "rollup-plugin-node-resolve": "^5.2.0",
-    "rollup-plugin-postcss": "^3.1.1",
-    "rollup-plugin-terser": "^5.3.0"
+    "rollup-plugin-postcss": "^4.0.2",
+    "rollup-plugin-terser": "^7.0.2"
   }
 }

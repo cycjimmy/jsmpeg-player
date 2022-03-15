@@ -1,8 +1,8 @@
+// utils
+import isString from '@cycjimmy/awesome-js-funcs/cjs/judgeBasic/isString';
+import functionToPromise from '@cycjimmy/awesome-js-funcs/cjs/typeConversion/functionToPromise';
+
 // style
-import isString from '@cycjimmy/awesome-js-funcs/judgeBasic/isString';
-
-import functionToPromise from '@cycjimmy/awesome-js-funcs/typeConversion/functionToPromise';
-
 import _style from '../theme/style.scss';
 // button view
 import { PLAY_BUTTON, UNMUTE_BUTTON } from '../buttonView';

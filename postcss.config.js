@@ -1,7 +1,7 @@
 module.exports = {
   plugins: {
-    'autoprefixer': {},
-    'cssnano': {
+    autoprefixer: {},
+    cssnano: {
       discardComments: {
         removeAll: true
       }

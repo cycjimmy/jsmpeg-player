@@ -17,4 +17,3 @@ cache:
 script:
   - npm --version
   - npm run build
-  - npm run test
