@@ -4,15 +4,29 @@ export default class WASM {
   constructor() {
     this.stackSize = 5 * 1024 * 1024; // emscripten default
     this.pageSize = 64 * 1024; // wasm page size
-    this.onInitCallback = null;
+    this.onInitCallbacks = [];
     this.ready = false;
+    this.loadingFromFileStarted = false;
+    this.loadingFromBufferStarted = false;
   }
 
   write(buffer) {
-    this.loadFromBuffer(buffer, this.onInitCallback);
+    this.loadFromBuffer(buffer);
   }
 
   loadFromFile(url, callback) {
+    if (callback) {
+      this.onInitCallbacks.push(callback);
+    }
+
+    // Make sure this WASM Module is only instantiated once. If loadFromFile()
+    // was already called, bail out here. On instantiation all pending
+    // onInitCallbacks will be called.
+    if (this.loadingFromFileStarted) {
+      return;
+    }
+    this.loadingFromFileStarted = true;
+
     this.onInitCallback = callback;
     const ajax = new AjaxSource(url, {});
     ajax.connect(this);
@@ -20,9 +34,23 @@ export default class WASM {
   }
 
   loadFromBuffer(buffer, callback) {
+    if (callback) {
+      this.onInitCallbacks.push(callback);
+    }
+
+    // Make sure this WASM Module is only instantiated once. If loadFromBuffer()
+    // was already called, bail out here. On instantiation all pending
+    // onInitCallbacks will be called.
+    if (this.loadingFromBufferStarted) {
+      return;
+    }
+    this.loadingFromBufferStarted = true;
+
     this.moduleInfo = this.readDylinkSection(buffer);
     if (!this.moduleInfo) {
-      this.callback && this.callback(null);
+      for (let i = 0; i < this.onInitCallbacks.length; i++) {
+        this.onInitCallbacks[i](null);
+      }
       return;
     }
 
@@ -47,7 +75,9 @@ export default class WASM {
       }
       this.createHeapViews();
       this.ready = true;
-      callback && callback(this);
+      for (let i = 0; i < this.onInitCallbacks.length; i++) {
+        this.onInitCallbacks[i](this);
+      }
     });
   }
 
