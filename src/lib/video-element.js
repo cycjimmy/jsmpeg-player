@@ -1,6 +1,6 @@
 // utils
-import isString from '@cycjimmy/awesome-js-funcs/cjs/judgeBasic/isString';
-import functionToPromise from '@cycjimmy/awesome-js-funcs/cjs/typeConversion/functionToPromise';
+import isString from '@cycjimmy/awesome-js-funcs/esm/judgeBasic/isString';
+import functionToPromise from '@cycjimmy/awesome-js-funcs/esm/typeConversion/functionToPromise';
 
 // style
 import _style from '../theme/style.scss';
