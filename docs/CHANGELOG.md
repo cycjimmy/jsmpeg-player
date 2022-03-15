@@ -1,3 +1,10 @@
+# [5.1.0](https://github.com/cycjimmy/jsmpeg-player/compare/v5.0.1...v5.1.0) (2022-03-15)
+
+
+### Features
+
+* **deps:** upgrade deps ([2cfdb8e](https://github.com/cycjimmy/jsmpeg-player/commit/2cfdb8e26a58c3c1f6e4f6b66a6b36bde388c1b9))
+
 ## [5.0.1](https://github.com/cycjimmy/jsmpeg-player/compare/v5.0.0...v5.0.1) (2020-05-12)
 
 
