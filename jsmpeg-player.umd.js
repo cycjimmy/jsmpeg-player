@@ -1,8 +1,8 @@
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
-  (global = global || self, global.JSMpeg = factory());
-}(this, (function () { 'use strict';
+  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.JSMpeg = factory());
+})(this, (function () { 'use strict';
 
   function _extends() {
     _extends = Object.assign || function (target) {
@@ -25,18 +25,26 @@
   function _inheritsLoose(subClass, superClass) {
     subClass.prototype = Object.create(superClass.prototype);
     subClass.prototype.constructor = subClass;
-    subClass.__proto__ = superClass;
+
+    _setPrototypeOf(subClass, superClass);
   }
 
-  function unwrapExports (x) {
+  function _setPrototypeOf(o, p) {
+    _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) {
+      o.__proto__ = p;
+      return o;
+    };
+
+    return _setPrototypeOf(o, p);
+  }
+
+  function getDefaultExportFromCjs (x) {
   	return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x['default'] : x;
   }
 
-  function createCommonjsModule(fn, module) {
-  	return module = { exports: {} }, fn(module, module.exports), module.exports;
-  }
+  var isString$1 = {};
 
-  var isString = createCommonjsModule(function (module, exports) {
+  (function (exports) {
 
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -53,11 +61,15 @@
   };
 
   exports["default"] = _default;
-  });
+  }(isString$1));
 
-  var isString$1 = unwrapExports(isString);
+  var isString = /*@__PURE__*/getDefaultExportFromCjs(isString$1);
 
-  var isPromise = createCommonjsModule(function (module, exports) {
+  var functionToPromise$1 = {};
+
+  var isPromise = {};
+
+  (function (exports) {
 
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -74,11 +86,9 @@
   };
 
   exports["default"] = _default;
-  });
+  }(isPromise));
 
-  unwrapExports(isPromise);
-
-  var functionToPromise = createCommonjsModule(function (module, exports) {
+  (function (exports) {
 
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -115,9 +125,9 @@
   };
 
   exports["default"] = _default;
-  });
+  }(functionToPromise$1));
 
-  var functionToPromise$1 = unwrapExports(functionToPromise);
+  var functionToPromise = /*@__PURE__*/getDefaultExportFromCjs(functionToPromise$1);
 
   function styleInject(css, ref) {
     if (ref === void 0) ref = {};
@@ -148,7 +158,7 @@
     }
   }
 
-  var css_248z = ".style__canvas,.style__playButton,.style__poster,.style__unmuteButton{position:absolute;z-index:1;left:0;top:0;width:100%;height:100%}.style__playButton{display:flex;justify-content:center;align-items:center}.style__canvas,.style__poster{display:block}.style__poster.style__hidden{display:none}.style__playButton,.style__unmuteButton{opacity:.7;cursor:pointer;-webkit-tap-highlight-color:rgba(255,0,0,0)}.style__hidden.style__playButton,.style__hidden.style__unmuteButton{display:none}.style__playButton{z-index:10}.style__playButton>svg{width:12vw;height:12vw;max-width:60px;max-height:60px;fill:#fff}.style__unmuteButton{z-index:10;display:flex;justify-content:flex-end;align-items:flex-end}.style__unmuteButton>svg{margin:0 15px 15px 0;width:9vw;height:9vw;max-width:40px;max-height:40px;fill:#fff}";
+  var css_248z = ".style__canvas,.style__playButton,.style__poster,.style__unmuteButton{height:100%;left:0;position:absolute;top:0;width:100%;z-index:1}.style__playButton{align-items:center;display:flex;justify-content:center}.style__canvas,.style__poster{display:block}.style__poster.style__hidden{display:none}.style__playButton,.style__unmuteButton{-webkit-tap-highlight-color:rgba(255,0,0,0);cursor:pointer;opacity:.7}.style__hidden.style__playButton,.style__hidden.style__unmuteButton{display:none}.style__playButton{z-index:10}.style__playButton>svg{fill:#fff;height:12vw;max-height:60px;max-width:60px;width:12vw}.style__unmuteButton{align-items:flex-end;display:flex;justify-content:flex-end;z-index:10}.style__unmuteButton>svg{fill:#fff;height:9vw;margin:0 15px 15px 0;max-height:40px;max-width:40px;width:9vw}";
   var _style = {"canvas":"style__canvas","poster":"style__poster","playButton":"style__playButton","unmuteButton":"style__unmuteButton","hidden":"style__hidden"};
   styleInject(css_248z);
 
@@ -217,7 +227,7 @@
       this.player = null; // Setup canvas and play button
 
       this.els = {
-        wrapper: isString$1(wrapper) ? document.querySelector(wrapper) : wrapper,
+        wrapper: isString(wrapper) ? document.querySelector(wrapper) : wrapper,
         canvas: null,
         playButton: document.createElement('div'),
         unmuteButton: null,
@@ -238,7 +248,7 @@
 
     _proto.initCanvas = function initCanvas() {
       if (this.options.canvas) {
-        this.els.canvas = isString$1(this.options.canvas) ? document.querySelector(this.options.canvas) : this.options.canvas;
+        this.els.canvas = isString(this.options.canvas) ? document.querySelector(this.options.canvas) : this.options.canvas;
       } else {
         this.els.canvas = document.createElement('canvas');
         this.els.canvas.classList.add(_style.canvas);
@@ -365,7 +375,7 @@
       }
 
       return Promise.resolve().then(function () {
-        return functionToPromise$1(function () {
+        return functionToPromise(function () {
           _this2.els.wrapper.style.width = destination.width + "px";
           _this2.els.wrapper.style.height = destination.height + "px";
         });
@@ -807,10 +817,10 @@
 
       if (this.index === this.byteLength << 3 || sizeNeeded > available + bytePos // emergency evac
       ) {
-          this.byteLength = 0;
-          this.index = 0;
-          return;
-        } else if (bytePos === 0) {
+        this.byteLength = 0;
+        this.index = 0;
+        return;
+      } else if (bytePos === 0) {
         // Nothing read yet - we can't evict anything
         return;
       } // Some browsers don't support copyWithin() yet - we may have to do
@@ -992,16 +1002,16 @@
 
       var end = (this.bits.index >> 3) + 187; // eslint-disable-next-line no-unused-vars
 
-      var transportError = this.bits.read(1);
+      this.bits.read(1);
       var payloadStart = this.bits.read(1); // eslint-disable-next-line no-unused-vars
 
-      var transportPriority = this.bits.read(1);
+      this.bits.read(1);
       var pid = this.bits.read(13); // eslint-disable-next-line no-unused-vars
 
-      var transportScrambling = this.bits.read(2);
+      this.bits.read(2);
       var adaptationField = this.bits.read(2); // eslint-disable-next-line no-unused-vars
 
-      var continuityCounter = this.bits.read(4); // If this is the start of a new payload; signal the end of the previous
+      this.bits.read(4); // If this is the start of a new payload; signal the end of the previous
       // frame, if we didn't do so already.
 
       var streamId = this.pidsToStreamIds[pid];
@@ -3106,7 +3116,7 @@
 
       var padding = this.bits.read(1); // eslint-disable-next-line no-unused-vars
 
-      var privat = this.bits.read(1);
+      this.bits.read(1);
       var mode = this.bits.read(2); // Parse the mode_extension, set up the stereo bound
 
       var bound = 0;
@@ -4507,7 +4517,7 @@
 
       next = 9; // eslint-disable-next-line no-unused-vars
 
-      var sectionSize = readVarUint();
+      readVarUint();
 
       if (!matchNextBytes([6, 'd', 'y', 'l', 'i', 'n', 'k'])) {
         console.warn('JSMpeg: No dylink section found in WASM');
@@ -4863,8 +4873,8 @@
       } // If there's not enough data and the source is not completed, we have
       // just stalled.
       else if (notEnoughData && this.options.onStalled) {
-          this.options.onStalled(this);
-        }
+        this.options.onStalled(this);
+      }
     };
 
     return Player;
@@ -5045,4 +5055,4 @@
 
   return JSMpeg;
 
-})));
+}));
