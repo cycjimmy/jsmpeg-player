@@ -1,3 +1,12 @@
+## [5.1.1](https://github.com/cycjimmy/jsmpeg-player/compare/v5.1.0...v5.1.1) (2022-03-15)
+
+
+### Bug Fixes
+
+* fix race condition where WASM-Module is instantiated twice; and rebuild ([490801a](https://github.com/cycjimmy/jsmpeg-player/commit/490801a9605c883944b5ff53c3900d9c56ea469c))
+* fix typo (https://github.com/phoboslab/jsmpeg/commit/55886464d289623af9c9dd39e8080a29a0719591) ([d3cc3a5](https://github.com/cycjimmy/jsmpeg-player/commit/d3cc3a5a580170c0d3847dbc46a1904f59f77a8a))
+* handle WebGL contextLost ([b04df7e](https://github.com/cycjimmy/jsmpeg-player/commit/b04df7e128be71c87fbc95b4e22acf8776f668fc))
+
 # [5.1.0](https://github.com/cycjimmy/jsmpeg-player/compare/v5.0.1...v5.1.0) (2022-03-15)
 
 
