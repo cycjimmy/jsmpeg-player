@@ -76,11 +76,11 @@ export default class MPEG1WASM extends BaseDecoder {
       !this.hasSequenceHeader &&
       this.functions._mpeg1_decoder_has_sequence_header(this.decoder)
     ) {
-      this.loadSequnceHeader();
+      this.loadSequenceHeader();
     }
   }
 
-  loadSequnceHeader() {
+  loadSequenceHeader() {
     this.hasSequenceHeader = true;
     this.frameRate = this.functions._mpeg1_decoder_get_frame_rate(this.decoder);
     this.codedSize = this.functions._mpeg1_decoder_get_coded_size(this.decoder);
