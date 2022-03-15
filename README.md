@@ -1,7 +1,6 @@
 # JSMpeg Player(TS Player)
 
 ![][workflows-badge-image]
-[![build status][travis-image]][travis-url]
 [![libraries dependency status][libraries-status-image]][libraries-status-url]
 [![libraries sourcerank][libraries-sourcerank-image]][libraries-sourcerank-url]
 [![Release date][release-date-image]][release-url]
@@ -114,8 +113,6 @@ $ ffmpeg -i input.mp4 -f mpegts \
 [jsdelivr-url]: https://www.jsdelivr.com/package/npm/@cycjimmy/jsmpeg-player
 
 [workflows-badge-image]: https://github.com/cycjimmy/jsmpeg-player/workflows/Test%20CI/badge.svg
-[travis-image]: https://img.shields.io/travis/cycjimmy/jsmpeg-player
-[travis-url]: https://travis-ci.org/cycjimmy/jsmpeg-player
 
 [libraries-status-image]: https://img.shields.io/librariesio/release/npm/@cycjimmy/jsmpeg-player
 [libraries-sourcerank-image]: https://img.shields.io/librariesio/sourcerank/npm/@cycjimmy/jsmpeg-player
