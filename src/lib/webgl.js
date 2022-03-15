@@ -4,6 +4,7 @@ class WebGLRenderer {
     this.width = this.canvas.width;
     this.height = this.canvas.height;
     this.enabled = true;
+    this.contextLost = false;
 
     this.hasTextureData = {};
 
@@ -23,6 +24,19 @@ class WebGLRenderer {
     if (!this.gl) {
       throw new Error('Failed to get WebGL Context');
     }
+
+    this.canvas.addEventListener('webglcontextlost', this.handleContextLost.bind(this), false);
+    this.canvas.addEventListener(
+      'webglcontextrestored',
+      this.handleContextRestored.bind(this),
+      false
+    );
+
+    this.initGL();
+  }
+
+  initGL() {
+    this.hasTextureData = {};
 
     const { gl } = this;
     let vertexAttr = null;
@@ -60,7 +74,22 @@ class WebGLRenderer {
     this.shouldCreateUnclampedViews = !this.allowsClampedTextureData();
   }
 
+  handleContextLost(ev) {
+    ev.preventDefault();
+    this.contextLost = true;
+  }
+
+  handleContextRestored() {
+    this.initGL();
+    this.contextLost = false;
+  }
+
   destroy() {
+    if (this.contextLost) {
+      // Nothing to do here
+      return;
+    }
+
     const { gl } = this;
 
     this.deleteTexture(gl.TEXTURE0, this.textureY);
@@ -76,6 +105,7 @@ class WebGLRenderer {
 
     gl.getExtension('WEBGL_lose_context').loseContext();
     this.canvas.remove();
+    this.contextLost = true;
   }
 
   resize(width, height) {
