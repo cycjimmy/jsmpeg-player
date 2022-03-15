@@ -38,70 +38,20 @@
     return _setPrototypeOf(o, p);
   }
 
-  function getDefaultExportFromCjs (x) {
-  	return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x['default'] : x;
-  }
-
-  var isString$1 = {};
-
-  (function (exports) {
-
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-  exports["default"] = void 0;
   /**
    * determine a string type
    * @param str
    * @returns {boolean}
    */
+  var isString = (str => typeof str === 'string' && str.constructor === String);
 
-  var _default = function _default(str) {
-    return typeof str === 'string' && str.constructor === String;
-  };
-
-  exports["default"] = _default;
-  }(isString$1));
-
-  var isString = /*@__PURE__*/getDefaultExportFromCjs(isString$1);
-
-  var functionToPromise$1 = {};
-
-  var isPromise = {};
-
-  (function (exports) {
-
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-  exports["default"] = void 0;
   /**
    * determine a promise type
    * @param promise
    * @returns {boolean}
    */
+  var isPromise = (promise => Object.prototype.toString.call(promise).slice(8, -1) === 'Promise');
 
-  var _default = function _default(promise) {
-    return Object.prototype.toString.call(promise).slice(8, -1) === 'Promise';
-  };
-
-  exports["default"] = _default;
-  }(isPromise));
-
-  (function (exports) {
-
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-  exports["default"] = void 0;
-
-  var _isPromise = _interopRequireDefault(isPromise);
-
-  function _interopRequireDefault(obj) {
-    return obj && obj.__esModule ? obj : {
-      "default": obj
-    };
-  }
   /**
    * function to promise
    * @param normalFunction
@@ -109,25 +59,19 @@
    * @returns {Promise<any>}
    */
 
-
-  var _default = function _default(normalFunction) {
+  var functionToPromise = (function (normalFunction) {
     var timeout = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
 
-    if ((0, _isPromise["default"])(normalFunction)) {
+    if (isPromise(normalFunction)) {
       return normalFunction;
     } // eslint-disable-next-line no-undef
 
 
-    return new Promise(function (resolve) {
+    return new Promise(resolve => {
       normalFunction();
       setTimeout(resolve, timeout);
     });
-  };
-
-  exports["default"] = _default;
-  }(functionToPromise$1));
-
-  var functionToPromise = /*@__PURE__*/getDefaultExportFromCjs(functionToPromise$1);
+  });
 
   function styleInject(css, ref) {
     if (ref === void 0) ref = {};
