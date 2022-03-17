@@ -52,7 +52,7 @@
     "autoprefixer": "^10.4.2",
     "cross-env": "^7.0.3",
     "eslint": "^8.11.0",
-    "eslint-config-rollup": "^0.1.0",
+    "eslint-config-rollup": "^2.0.4",
     "node-sass": "^7.0.1",
     "rollup": "^2.70.1",
     "rollup-plugin-browsersync": "^1.3.3",
