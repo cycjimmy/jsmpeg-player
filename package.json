@@ -36,7 +36,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@cycjimmy/awesome-js-funcs": "^3.1.0",
+    "@cycjimmy/awesome-js-funcs": "^4.0.4",
     "@cycjimmy/sass-lib": "^1.1.0"
   },
   "devDependencies": {
