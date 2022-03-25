@@ -14,12 +14,11 @@ class WebGLRenderer {
       depth: false,
       stencil: false,
       antialias: false,
-      premultipliedAlpha: false
+      premultipliedAlpha: false,
     };
 
-    this.gl =
-      this.canvas.getContext('webgl', contextCreateOptions) ||
-      this.canvas.getContext('experimental-webgl', contextCreateOptions);
+    this.gl = this.canvas.getContext('webgl', contextCreateOptions)
+      || this.canvas.getContext('experimental-webgl', contextCreateOptions);
 
     if (!this.gl) {
       throw new Error('Failed to get WebGL Context');
@@ -29,7 +28,7 @@ class WebGLRenderer {
     this.canvas.addEventListener(
       'webglcontextrestored',
       this.handleContextRestored.bind(this),
-      false
+      false,
     );
 
     this.initGL();
@@ -52,7 +51,7 @@ class WebGLRenderer {
     // Setup the main YCrCbToRGBA shader
     this.program = this.createProgram(
       WebGLRenderer.SHADER.VERTEX_IDENTITY,
-      WebGLRenderer.SHADER.FRAGMENT_YCRCB_TO_RGBA
+      WebGLRenderer.SHADER.FRAGMENT_YCRCB_TO_RGBA,
     );
     vertexAttr = gl.getAttribLocation(this.program, 'vertex');
     gl.enableVertexAttribArray(vertexAttr);
@@ -65,7 +64,7 @@ class WebGLRenderer {
     // Setup the loading animation shader
     this.loadingProgram = this.createProgram(
       WebGLRenderer.SHADER.VERTEX_IDENTITY,
-      WebGLRenderer.SHADER.FRAGMENT_LOADING
+      WebGLRenderer.SHADER.FRAGMENT_LOADING,
     );
     vertexAttr = gl.getAttribLocation(this.loadingProgram, 'vertex');
     gl.enableVertexAttribArray(vertexAttr);
@@ -173,7 +172,7 @@ class WebGLRenderer {
       0,
       gl.LUMINANCE,
       gl.UNSIGNED_BYTE,
-      new Uint8ClampedArray([0])
+      new Uint8ClampedArray([0]),
     );
     return gl.getError() === 0;
   }
@@ -273,7 +272,7 @@ WebGLRenderer.SHADER = {
     'float cr = texture2D(textureCr, texCoord).r;',
 
     'gl_FragColor = vec4(y, cr, cb, 1.0) * rec601;',
-    '}'
+    '}',
   ].join('\n'),
 
   FRAGMENT_LOADING: [
@@ -284,7 +283,7 @@ WebGLRenderer.SHADER = {
     'void main() {',
     'float c = ceil(progress-(1.0-texCoord.y));',
     'gl_FragColor = vec4(c,c,c,1);',
-    '}'
+    '}',
   ].join('\n'),
 
   VERTEX_IDENTITY: [
@@ -294,8 +293,8 @@ WebGLRenderer.SHADER = {
     'void main() {',
     'texCoord = vertex;',
     'gl_Position = vec4((vertex * 2.0 - 1.0) * vec2(1, -1), 0.0, 1.0);',
-    '}'
-  ].join('\n')
+    '}',
+  ].join('\n'),
 };
 
 export default WebGLRenderer;

@@ -81,7 +81,7 @@ new JSMpeg.VideoElement(videoWrapper, videoUrl [, options] [, overlayOptions])
 ## CDN
 To use via a CDN include this in your HTML:
 ```text
-<script src="https://cdn.jsdelivr.net/npm/@cycjimmy/jsmpeg-player@5/dist/jsmpeg-player.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@cycjimmy/jsmpeg-player@6/dist/jsmpeg-player.umd.min.js"></script>
 ```
 
 ## Encoding Video/Audio for [jsmpeg](https://github.com/phoboslab/jsmpeg) by [ffmpeg](https://ffmpeg.org/). E.g:

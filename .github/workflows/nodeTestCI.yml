@@ -6,6 +6,10 @@ on:
     branches:
       - master
       - main
+      - next
+      - next-major
+      - alpha
+      - beta
 
   schedule:
     - cron: 0 2 * * 0
@@ -15,14 +19,40 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        node: [ '16', '17' ]
+        node: [ '16' ]
         os: [ubuntu-latest, windows-latest, macOS-latest]
 
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: ${{ matrix.node }}
       - run: npm ci
-      - run: npm run build
+      - run: npm run package
 
+      - name: Semantic Release Test
+        uses: cycjimmy/semantic-release-action@v3
+        with:
+          dry_run: true
+          branches: |
+            [
+              'master',
+              'main',
+              'next',
+              'next-major',
+              {
+                name: 'beta',
+                prerelease: true
+              },
+              {
+                name: 'alpha',
+                prerelease: true
+              }
+            ]
+          extra_plugins: |
+            @semantic-release/git
+            @semantic-release/changelog
+            @semantic-release/exec
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

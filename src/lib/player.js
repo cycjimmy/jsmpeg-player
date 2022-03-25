@@ -61,10 +61,9 @@ export default class Player {
     if (options.video !== false) {
       this.video = options.wasmModule ? new MPEG1WASM(options) : new MPEG1(options);
 
-      this.renderer =
-        !options.disableGl && WebGLRenderer.IsSupported()
-          ? new WebGLRenderer(options)
-          : new CanvasRenderer(options);
+      this.renderer = !options.disableGl && WebGLRenderer.IsSupported()
+        ? new WebGLRenderer(options)
+        : new CanvasRenderer(options);
 
       this.demuxer.connect(TS.STREAM.VIDEO_1, this.video);
       this.video.connect(this.renderer);
@@ -79,11 +78,11 @@ export default class Player {
 
     Object.defineProperty(this, 'currentTime', {
       get: this.getCurrentTime,
-      set: this.setCurrentTime
+      set: this.setCurrentTime,
     });
     Object.defineProperty(this, 'volume', {
       get: this.getVolume,
-      set: this.setVolume
+      set: this.setVolume,
     });
 
     this.paused = true;
@@ -194,8 +193,9 @@ export default class Player {
   }
 
   seek(time) {
-    const startOffset =
-      this.audio && this.audio.canPlay ? this.audio.startTime : this.video.startTime;
+    const startOffset = this.audio && this.audio.canPlay
+      ? this.audio.startTime
+      : this.video.startTime;
 
     if (this.video) {
       this.video.seek(time + startOffset);
@@ -332,11 +332,9 @@ export default class Player {
           this.options.onEnded(this);
         }
       }
-    }
-
-    // If there's not enough data and the source is not completed, we have
-    // just stalled.
-    else if (notEnoughData && this.options.onStalled) {
+    } else if (notEnoughData && this.options.onStalled) {
+      // If there's not enough data and the source is not completed, we have
+      // just stalled.
       this.options.onStalled(this);
     }
   }

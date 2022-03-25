@@ -1,10 +1,12 @@
 {
-  "extends": "rollup",
+  "root": true,
+  "extends": "airbnb-base",
   "env": {
     "browser": true,
     "node": true
   },
   "rules": {
+    "import/no-cycle": 0,
     "no-param-reassign": 0,
     "no-bitwise": [
       "error",
@@ -29,7 +31,7 @@
         ]
       }
     ],
-    "line-comment-position": 0,
+//    "line-comment-position": 0,
     "no-underscore-dangle": 0,
     "no-multi-assign": 0,
     "no-plusplus": 0,

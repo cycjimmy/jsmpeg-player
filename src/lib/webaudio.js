@@ -2,8 +2,8 @@ import { Now } from '../utils';
 
 class WebAudioOut {
   constructor() {
-    this.context = WebAudioOut.CachedContext =
-      WebAudioOut.CachedContext || new (window.AudioContext || window.webkitAudioContext)();
+    this.context = WebAudioOut.CachedContext = WebAudioOut.CachedContext
+      || new (window.AudioContext || window.webkitAudioContext)();
 
     this.gain = this.context.createGain();
     this.destination = this.gain;
@@ -119,8 +119,8 @@ class WebAudioOut {
 
   checkIfUnlocked(source, attempt) {
     if (
-      source.playbackState === source.PLAYING_STATE ||
-      source.playbackState === source.FINISHED_STATE
+      source.playbackState === source.PLAYING_STATE
+      || source.playbackState === source.FINISHED_STATE
     ) {
       this.unlocked = true;
       if (this.unlockCallback) {
