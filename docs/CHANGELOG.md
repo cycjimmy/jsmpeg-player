@@ -1,3 +1,10 @@
+## [6.0.1](https://github.com/cycjimmy/jsmpeg-player/compare/v6.0.0...v6.0.1) (2022-03-25)
+
+
+### Bug Fixes
+
+* fix root version after releasing ([d586ed2](https://github.com/cycjimmy/jsmpeg-player/commit/d586ed2ff98784c5d686dbf82665ef61bb1f4899))
+
 # [6.0.0](https://github.com/cycjimmy/jsmpeg-player/compare/v5.1.1...v6.0.0) (2022-03-25)
 
 
