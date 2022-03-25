@@ -1,3 +1,15 @@
+# [6.0.0](https://github.com/cycjimmy/jsmpeg-player/compare/v5.1.1...v6.0.0) (2022-03-25)
+
+
+### Features
+
+* change to module mode ([cff7d05](https://github.com/cycjimmy/jsmpeg-player/commit/cff7d057d4a33cb6eeb35669638f2b17c8bec33f))
+
+
+### BREAKING CHANGES
+
+* change to module mode
+
 ## [5.1.1](https://github.com/cycjimmy/jsmpeg-player/compare/v5.1.0...v5.1.1) (2022-03-15)
 
 
