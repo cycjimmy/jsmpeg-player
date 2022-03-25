@@ -647,8 +647,7 @@
         data: []
       };
       this.destination = null;
-      this.reconnectInterval = // eslint-disable-next-line no-undefined
-      options.reconnectInterval !== undefined ? options.reconnectInterval : 5;
+      this.reconnectInterval = options.reconnectInterval !== undefined ? options.reconnectInterval : 5;
       this.shouldAttemptReconnect = !!this.reconnectInterval;
       this.completed = false;
       this.established = false;
@@ -764,7 +763,9 @@
         this.byteLength = 0;
         this.index = 0;
         return;
-      } else if (bytePos === 0) {
+      }
+
+      if (bytePos === 0) {
         // Nothing read yet - we can't evict anything
         return;
       } // Some browsers don't support copyWithin() yet - we may have to do
@@ -877,6 +878,7 @@
     };
 
     _proto.skip = function skip(count) {
+      // eslint-disable-next-line no-return-assign
       return this.index += count;
     };
 
@@ -1539,6 +1541,7 @@
         this.decodeMotionVectors();
         this.copyMacroblock(this.motionFwH, this.motionFwV, this.forwardY, this.forwardCr, this.forwardCb);
       } // Decode blocks
+      // eslint-disable-next-line no-nested-ternary
 
 
       var cbp = (this.macroblockType & 0x02) !== 0 ? this.readHuffman(MPEG1.CODE_BLOCK_PATTERN) : this.macroblockIntra ? 0x3f : 0;
@@ -3648,7 +3651,7 @@
   MP2.QUANT_LUT_STEP_2 = [//   44.1 kHz,        48 kHz,          32 kHz
   [MP2.QUANT_TAB.C, MP2.QUANT_TAB.C, MP2.QUANT_TAB.D], // 32 - 48 kbit/sec/ch
   [MP2.QUANT_TAB.A, MP2.QUANT_TAB.A, MP2.QUANT_TAB.A], // 56 - 80 kbit/sec/ch
-  [MP2.QUANT_TAB.B, MP2.QUANT_TAB.A, MP2.QUANT_TAB.B] // 96+	 kbit/sec/ch
+  [MP2.QUANT_TAB.B, MP2.QUANT_TAB.A, MP2.QUANT_TAB.B] // 96+  kbit/sec/ch
   ]; // Quantizer lookup, step 3: B2 table, subband -> nbal, row index
   // (upper 4 bits: nbal, lower 4 bits: row index)
 
@@ -4870,9 +4873,9 @@
             this.options.onEnded(this);
           }
         }
-      } // If there's not enough data and the source is not completed, we have
-      // just stalled.
-      else if (notEnoughData && this.options.onStalled) {
+      } else if (notEnoughData && this.options.onStalled) {
+        // If there's not enough data and the source is not completed, we have
+        // just stalled.
         this.options.onStalled(this);
       }
     };
@@ -4912,7 +4915,8 @@
         method: 'GET',
         headers: new Headers(),
         cache: 'default'
-      };
+      }; // eslint-disable-next-line no-restricted-globals
+
       self.fetch(this.url, params) // eslint-disable-next-line consistent-return
       .then(function (res) {
         if (res.ok && res.status >= 200 && res.status <= 299) {
