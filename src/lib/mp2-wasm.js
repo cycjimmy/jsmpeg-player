@@ -97,11 +97,11 @@ class MP2WASM extends BaseDecoder {
 
       const left = this.instance.heapF32.subarray(
         leftOffset,
-        leftOffset + MP2WASM.SAMPLES_PER_FRAME
+        leftOffset + MP2WASM.SAMPLES_PER_FRAME,
       );
       const right = this.instance.heapF32.subarray(
         rightOffset,
-        rightOffset + MP2WASM.SAMPLES_PER_FRAME
+        rightOffset + MP2WASM.SAMPLES_PER_FRAME,
       );
 
       this.destination.play(this.sampleRate, left, right);

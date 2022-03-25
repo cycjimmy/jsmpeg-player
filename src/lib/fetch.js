@@ -27,9 +27,10 @@ export default class FetchSource {
     const params = {
       method: 'GET',
       headers: new Headers(),
-      cache: 'default'
+      cache: 'default',
     };
 
+    // eslint-disable-next-line no-restricted-globals
     self
       .fetch(this.url, params)
       // eslint-disable-next-line consistent-return

@@ -73,8 +73,8 @@ export default class MPEG1WASM extends BaseDecoder {
     BaseDecoder.prototype.write.call(this, pts, buffers);
 
     if (
-      !this.hasSequenceHeader &&
-      this.functions._mpeg1_decoder_has_sequence_header(this.decoder)
+      !this.hasSequenceHeader
+      && this.functions._mpeg1_decoder_has_sequence_header(this.decoder)
     ) {
       this.loadSequenceHeader();
     }

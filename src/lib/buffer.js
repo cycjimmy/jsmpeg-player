@@ -1,8 +1,9 @@
 class BitBuffer {
   constructor(bufferOrLength, mode) {
     if (typeof bufferOrLength === 'object') {
-      this.bytes =
-        bufferOrLength instanceof Uint8Array ? bufferOrLength : new Uint8Array(bufferOrLength);
+      this.bytes = bufferOrLength instanceof Uint8Array
+        ? bufferOrLength
+        : new Uint8Array(bufferOrLength);
 
       this.byteLength = this.bytes.length;
     } else {
@@ -32,13 +33,13 @@ class BitBuffer {
     // to 0. Also reset (and throw away yet unread data) if we won't be able
     // to fit the new data in even after a normal eviction.
     if (
-      this.index === this.byteLength << 3 ||
-      sizeNeeded > available + bytePos // emergency evac
+      this.index === this.byteLength << 3
+      || sizeNeeded > available + bytePos // emergency evac
     ) {
       this.byteLength = 0;
       this.index = 0;
       return;
-    } else if (bytePos === 0) {
+    } if (bytePos === 0) {
       // Nothing read yet - we can't evict anything
       return;
     }
@@ -119,8 +120,8 @@ class BitBuffer {
   nextBytesAreStartCode() {
     const i = (this.index + 7) >> 3;
     return (
-      i >= this.byteLength ||
-      (this.bytes[i] === 0x00 && this.bytes[i + 1] === 0x00 && this.bytes[i + 2] === 0x01)
+      i >= this.byteLength
+      || (this.bytes[i] === 0x00 && this.bytes[i + 1] === 0x00 && this.bytes[i + 2] === 0x01)
     );
   }
 
@@ -150,6 +151,7 @@ class BitBuffer {
   }
 
   skip(count) {
+    // eslint-disable-next-line no-return-assign
     return (this.index += count);
   }
 
@@ -164,7 +166,7 @@ class BitBuffer {
 
 BitBuffer.MODE = {
   EVICT: 1,
-  EXPAND: 2
+  EXPAND: 2,
 };
 
 export default BitBuffer;

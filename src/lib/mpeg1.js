@@ -195,8 +195,8 @@ class MPEG1 extends BaseDecoder {
 
     // If this is a reference picutre then rotate the prediction pointers
     if (
-      this.pictureType === MPEG1.PICTURE_TYPE.INTRA ||
-      this.pictureType === MPEG1.PICTURE_TYPE.PREDICTIVE
+      this.pictureType === MPEG1.PICTURE_TYPE.INTRA
+      || this.pictureType === MPEG1.PICTURE_TYPE.PREDICTIVE
     ) {
       const tmpY = this.forwardY;
       const tmpY32 = this.forwardY32;
@@ -294,7 +294,7 @@ class MPEG1 extends BaseDecoder {
           this.motionFwV,
           this.forwardY,
           this.forwardCr,
-          this.forwardCb
+          this.forwardCb,
         );
         increment--;
       }
@@ -330,15 +330,15 @@ class MPEG1 extends BaseDecoder {
         this.motionFwV,
         this.forwardY,
         this.forwardCr,
-        this.forwardCb
+        this.forwardCb,
       );
     }
 
     // Decode blocks
-    const cbp =
-      (this.macroblockType & 0x02) !== 0
-        ? this.readHuffman(MPEG1.CODE_BLOCK_PATTERN)
-        : this.macroblockIntra
+    // eslint-disable-next-line no-nested-ternary
+    const cbp = (this.macroblockType & 0x02) !== 0
+      ? this.readHuffman(MPEG1.CODE_BLOCK_PATTERN)
+      : this.macroblockIntra
         ? 0x3f
         : 0;
 
@@ -1011,31 +1011,31 @@ MPEG1.prototype.blockData = null;
 
 // VLC Tables and Constants
 MPEG1.PICTURE_RATE = [
-  0.0, 23.976, 24.0, 25.0, 29.97, 30.0, 50.0, 59.94, 60.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
+  0.0, 23.976, 24.0, 25.0, 29.97, 30.0, 50.0, 59.94, 60.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
 ];
 
 MPEG1.ZIG_ZAG = new Uint8Array([
   0, 1, 8, 16, 9, 2, 3, 10, 17, 24, 32, 25, 18, 11, 4, 5, 12, 19, 26, 33, 40, 48, 41, 34, 27, 20,
   13, 6, 7, 14, 21, 28, 35, 42, 49, 56, 57, 50, 43, 36, 29, 22, 15, 23, 30, 37, 44, 51, 58, 59, 52,
-  45, 38, 31, 39, 46, 53, 60, 61, 54, 47, 55, 62, 63
+  45, 38, 31, 39, 46, 53, 60, 61, 54, 47, 55, 62, 63,
 ]);
 
 MPEG1.DEFAULT_INTRA_QUANT_MATRIX = new Uint8Array([
   8, 16, 19, 22, 26, 27, 29, 34, 16, 16, 22, 24, 27, 29, 34, 37, 19, 22, 26, 27, 29, 34, 34, 38, 22,
   22, 26, 27, 29, 34, 37, 40, 22, 26, 27, 29, 32, 35, 40, 48, 26, 27, 29, 32, 35, 40, 48, 58, 26,
-  27, 29, 34, 38, 46, 56, 69, 27, 29, 35, 38, 46, 56, 69, 83
+  27, 29, 34, 38, 46, 56, 69, 27, 29, 35, 38, 46, 56, 69, 83,
 ]);
 
 MPEG1.DEFAULT_NON_INTRA_QUANT_MATRIX = new Uint8Array([
   16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16,
   16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16,
-  16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16
+  16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16,
 ]);
 
 MPEG1.PREMULTIPLIER_MATRIX = new Uint8Array([
   32, 44, 42, 38, 32, 25, 17, 9, 44, 62, 58, 52, 44, 35, 24, 12, 42, 58, 55, 49, 42, 33, 23, 12, 38,
   52, 49, 44, 38, 30, 20, 10, 32, 44, 42, 38, 32, 25, 17, 9, 25, 35, 33, 30, 25, 20, 14, 7, 17, 24,
-  23, 20, 17, 14, 9, 5, 9, 12, 12, 10, 9, 7, 5, 2
+  23, 20, 17, 14, 9, 5, 9, 12, 12, 10, 9, 7, 5, 2,
 ]);
 
 // MPEG-1 VLC
@@ -1268,7 +1268,7 @@ MPEG1.MACROBLOCK_ADDRESS_INCREMENT = new Int16Array([
   23, //  73  0000 0100 010.
   0,
   0,
-  22 //  74  0000 0100 011.
+  22, //  74  0000 0100 011.
 ]);
 
 //  macroblock_type bitmap:
@@ -1291,7 +1291,7 @@ MPEG1.MACROBLOCK_TYPE_INTRA = new Int8Array([
   0x01, //   2  1.
   0,
   0,
-  0x11 //   3  01.
+  0x11, //   3  01.
 ]);
 
 MPEG1.MACROBLOCK_TYPE_PREDICTIVE = new Int8Array([
@@ -1336,7 +1336,7 @@ MPEG1.MACROBLOCK_TYPE_PREDICTIVE = new Int8Array([
   0x01, // 12  00011.
   0,
   0,
-  0x11 // 13  000001.
+  0x11, // 13  000001.
 ]);
 
 MPEG1.MACROBLOCK_TYPE_B = new Int8Array([
@@ -1405,14 +1405,14 @@ MPEG1.MACROBLOCK_TYPE_B = new Int8Array([
   0x16, // 20  000010.
   0,
   0,
-  0x1a // 21  000011.
+  0x1a, // 21  000011.
 ]);
 
 MPEG1.MACROBLOCK_TYPE = [
   null,
   MPEG1.MACROBLOCK_TYPE_INTRA,
   MPEG1.MACROBLOCK_TYPE_PREDICTIVE,
-  MPEG1.MACROBLOCK_TYPE_B
+  MPEG1.MACROBLOCK_TYPE_B,
 ];
 
 MPEG1.CODE_BLOCK_PATTERN = new Int16Array([
@@ -1793,7 +1793,7 @@ MPEG1.CODE_BLOCK_PATTERN = new Int16Array([
   59, // 124  0000 0010 0.
   0,
   0,
-  31 // 125  0000 0011 1.
+  31, // 125  0000 0011 1.
 ]);
 
 MPEG1.MOTION = new Int16Array([
@@ -1997,7 +1997,7 @@ MPEG1.MOTION = new Int16Array([
   -11, //  65  0000 0100 011.
   0,
   0,
-  -13 //  66  0000 0011 111.
+  -13, //  66  0000 0011 111.
 ]);
 
 MPEG1.DCT_DC_SIZE_LUMINANCE = new Int8Array([
@@ -2054,7 +2054,7 @@ MPEG1.DCT_DC_SIZE_LUMINANCE = new Int8Array([
   7, //  16  1111 10.
   0,
   0,
-  8 //  17  1111 110.
+  8, //  17  1111 110.
 ]);
 
 MPEG1.DCT_DC_SIZE_CHROMINANCE = new Int8Array([
@@ -2111,7 +2111,7 @@ MPEG1.DCT_DC_SIZE_CHROMINANCE = new Int8Array([
   7, //  16  1111 110.
   0,
   0,
-  8 //  17  1111 1110.
+  8, //  17  1111 1110.
 ]);
 
 //  dct_coeff bitmap:
@@ -2799,13 +2799,13 @@ MPEG1.DCT_COEFF = new Int32Array([
   0x0c02, // 222  0000 0000 0001 1001.
   0,
   0,
-  0x0f02 // 223  0000 0000 0001 0110.
+  0x0f02, // 223  0000 0000 0001 0110.
 ]);
 
 MPEG1.PICTURE_TYPE = {
   INTRA: 1,
   PREDICTIVE: 2,
-  B: 3
+  B: 3,
 };
 
 MPEG1.START = {
@@ -2814,7 +2814,7 @@ MPEG1.START = {
   SLICE_LAST: 0xaf,
   PICTURE: 0x00,
   EXTENSION: 0xb5,
-  USER_DATA: 0xb2
+  USER_DATA: 0xb2,
 };
 
 export default MPEG1;

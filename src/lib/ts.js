@@ -19,7 +19,7 @@ class TS {
       currentLength: 0,
       totalLength: 0,
       pts: 0,
-      buffers: []
+      buffers: [],
     };
   }
 
@@ -219,7 +219,7 @@ TS.STREAM = {
   PRIVATE_2: 0xbf,
   AUDIO_1: 0xc0,
   VIDEO_1: 0xe0,
-  DIRECTORY: 0xff
+  DIRECTORY: 0xff,
 };
 
 export default TS;

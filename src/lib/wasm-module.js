@@ -64,7 +64,7 @@ export default class WASM {
       __table_base: 0,
       abort: this.c_abort.bind(this),
       ___assert_fail: this.c_assertFail.bind(this),
-      _sbrk: this.c_sbrk.bind(this)
+      _sbrk: this.c_sbrk.bind(this),
     };
 
     this.brk = this.align(this.moduleInfo.memorySize + this.stackSize);
@@ -89,7 +89,7 @@ export default class WASM {
 
   align(addr) {
     // eslint-disable-next-line no-restricted-properties
-    const a = Math.pow(2, this.moduleInfo.memoryAlignment);
+    const a = 2 ** this.moduleInfo.memoryAlignment;
     return Math.ceil(addr / a) * a;
   }
 
@@ -172,7 +172,7 @@ export default class WASM {
       memorySize: readVarUint(),
       memoryAlignment: readVarUint(),
       tableSize: readVarUint(),
-      tableAlignment: readVarUint()
+      tableAlignment: readVarUint(),
     };
   }
 

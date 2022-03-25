@@ -83,9 +83,9 @@ export default class AjaxProgressiveSource {
 
     this.request.onreadystatechange = () => {
       if (
-        this.request.readyState === this.request.DONE &&
-        this.request.status >= 200 &&
-        this.request.status < 300
+        this.request.readyState === this.request.DONE
+        && this.request.status >= 200
+        && this.request.status < 300
       ) {
         this.onChunkLoad(this.request.response);
       } else if (this.request.readyState === this.request.DONE) {

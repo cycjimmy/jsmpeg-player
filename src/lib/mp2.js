@@ -641,20 +641,20 @@ MP2.FRAME_SYNC = 0x7ff;
 MP2.VERSION = {
   MPEG_2_5: 0x0,
   MPEG_2: 0x2,
-  MPEG_1: 0x3
+  MPEG_1: 0x3,
 };
 
 MP2.LAYER = {
   III: 0x1,
   II: 0x2,
-  I: 0x3
+  I: 0x3,
 };
 
 MP2.MODE = {
   STEREO: 0x0,
   JOINT_STEREO: 0x1,
   DUAL_CHANNEL: 0x2,
-  MONO: 0x3
+  MONO: 0x3,
 };
 
 MP2.SAMPLE_RATE = new Uint16Array([
@@ -665,7 +665,7 @@ MP2.SAMPLE_RATE = new Uint16Array([
   22050,
   24000,
   16000,
-  0 // MPEG-2
+  0, // MPEG-2
 ]);
 
 MP2.BIT_RATE = new Uint16Array([
@@ -696,7 +696,7 @@ MP2.BIT_RATE = new Uint16Array([
   112,
   128,
   144,
-  160 // MPEG-2
+  160, // MPEG-2
 ]);
 
 MP2.SCALEFACTOR_BASE = new Uint32Array([0x02000000, 0x01965fea, 0x01428a30]);
@@ -743,7 +743,7 @@ MP2.SYNTHESIS_WINDOW = new Float32Array([
   73.5, 69.5, 66.0, 62.5, 58.5, 55.5, 52.0, 48.5, 45.5, 42.5, 39.5, 36.5, 34.0, 31.5, 29.0, 26.5,
   24.5, 22.5, 20.5, 19.0, 17.5, 15.5, 14.5, 13.0, 12.0, 10.5, 9.5, 8.5, 8.0, 7.0, 6.5, 5.5, 5.0,
   4.5, 4.0, 3.5, 3.5, 3.0, 2.5, 2.5, 2.0, 2.0, 1.5, 1.5, 1.0, 1.0, 1.0, 1.0, 0.5, 0.5, 0.5, 0.5,
-  0.5, 0.5
+  0.5, 0.5,
 ]);
 
 // Quantizer lookup, step 1: bitrate classes
@@ -751,7 +751,7 @@ MP2.QUANT_LUT_STEP_1 = [
   // 32, 48, 56, 64, 80, 96,112,128,160,192,224,256,320,384 <- bitrate
   [0, 0, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2], // mono
   // 16, 24, 28, 32, 40, 48, 56, 64, 80, 96,112,128,160,192 <- bitrate / chan
-  [0, 0, 0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2, 2] // stereo
+  [0, 0, 0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2, 2], // stereo
 ];
 
 // Quantizer lookup, step 2: bitrate class, sample rate -> B2 table idx, sblimit
@@ -759,14 +759,14 @@ MP2.QUANT_TAB = {
   A: 27 | 64, // Table 3-B.2a: high-rate, sblimit = 27
   B: 30 | 64, // Table 3-B.2b: high-rate, sblimit = 30
   C: 8, // Table 3-B.2c:  low-rate, sblimit =  8
-  D: 12 // Table 3-B.2d:  low-rate, sblimit = 12
+  D: 12, // Table 3-B.2d:  low-rate, sblimit = 12
 };
 
 MP2.QUANT_LUT_STEP_2 = [
   //   44.1 kHz,        48 kHz,          32 kHz
   [MP2.QUANT_TAB.C, MP2.QUANT_TAB.C, MP2.QUANT_TAB.D], // 32 - 48 kbit/sec/ch
   [MP2.QUANT_TAB.A, MP2.QUANT_TAB.A, MP2.QUANT_TAB.A], // 56 - 80 kbit/sec/ch
-  [MP2.QUANT_TAB.B, MP2.QUANT_TAB.A, MP2.QUANT_TAB.B] // 96+	 kbit/sec/ch
+  [MP2.QUANT_TAB.B, MP2.QUANT_TAB.A, MP2.QUANT_TAB.B], // 96+  kbit/sec/ch
 ];
 
 // Quantizer lookup, step 3: B2 table, subband -> nbal, row index
@@ -777,13 +777,13 @@ MP2.QUANT_LUT_STEP_3 = [
   // High-rate table (3-B.2a and 3-B.2b)
   [
     0x43, 0x43, 0x43, 0x42, 0x42, 0x42, 0x42, 0x42, 0x42, 0x42, 0x42, 0x31, 0x31, 0x31, 0x31, 0x31,
-    0x31, 0x31, 0x31, 0x31, 0x31, 0x31, 0x31, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20
+    0x31, 0x31, 0x31, 0x31, 0x31, 0x31, 0x31, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
   ],
   // MPEG-2 LSR table (B.2 in ISO 13818-3)
   [
     0x45, 0x45, 0x45, 0x45, 0x34, 0x34, 0x34, 0x34, 0x34, 0x34, 0x34, 0x24, 0x24, 0x24, 0x24, 0x24,
-    0x24, 0x24, 0x24, 0x24, 0x24, 0x24, 0x24, 0x24, 0x24, 0x24, 0x24, 0x24, 0x24, 0x24
-  ]
+    0x24, 0x24, 0x24, 0x24, 0x24, 0x24, 0x24, 0x24, 0x24, 0x24, 0x24, 0x24, 0x24, 0x24,
+  ],
 ];
 
 // Quantizer lookup, step 4: table row, allocation[] value -> quant table index
@@ -793,7 +793,7 @@ MP2.QUANT_LUT_STEP4 = [
   [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 17],
   [0, 1, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17],
   [0, 1, 2, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 17],
-  [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+  [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
 ];
 
 MP2.QUANT_TAB = [
@@ -813,7 +813,7 @@ MP2.QUANT_TAB = [
   { levels: 8191, group: 0, bits: 13 }, // 14
   { levels: 16383, group: 0, bits: 14 }, // 15
   { levels: 32767, group: 0, bits: 15 }, // 16
-  { levels: 65535, group: 0, bits: 16 } // 17
+  { levels: 65535, group: 0, bits: 16 }, // 17
 ];
 
 export default MP2;

@@ -25,35 +25,31 @@ export default class VideoElement {
       picMode = false,
       progressive = true,
       chunkSize = 1024 * 1024,
-      hooks = {}
+      hooks = {},
     } = {},
-    overlayOptions = {}
+    overlayOptions = {},
   ) {
-    this.options = Object.assign(
-      {
-        videoUrl,
-        canvas,
-        poster,
-        picMode,
-        autoplay,
-        autoSetWrapperSize,
-        loop,
-        control,
-        decodeFirstFrame,
-        progressive,
-        chunkSize,
-        hooks: Object.assign(
-          {
-            play: () => {},
-            pause: () => {},
-            stop: () => {},
-            load: () => {}
-          },
-          hooks
-        )
+    this.options = {
+      videoUrl,
+      canvas,
+      poster,
+      picMode,
+      autoplay,
+      autoSetWrapperSize,
+      loop,
+      control,
+      decodeFirstFrame,
+      progressive,
+      chunkSize,
+      hooks: {
+        play: () => {},
+        pause: () => {},
+        stop: () => {},
+        load: () => {},
+        ...hooks,
       },
-      overlayOptions
-    );
+      ...overlayOptions,
+    };
 
     this.options.needPlayButton = this.options.control && !this.options.picMode;
 
@@ -65,7 +61,7 @@ export default class VideoElement {
       canvas: null,
       playButton: document.createElement('div'),
       unmuteButton: null,
-      poster: null
+      poster: null,
     };
 
     if (window.getComputedStyle(this.els.wrapper).getPropertyValue('position') === 'static') {
@@ -96,13 +92,11 @@ export default class VideoElement {
     // we can get proper boolean and number values. If JSON.parse() fails,
     // treat it as a string.
     this.options = Object.assign(this.options, {
-      canvas: this.els.canvas
+      canvas: this.els.canvas,
     });
 
     // eslint-disable-next-line no-underscore-dangle
-    const _options = Object.assign({}, this.options, {
-      autoplay: false
-    });
+    const _options = { ...this.options, autoplay: false };
 
     // Create the player instance
     this.player = new Player(this.options.videoUrl, _options, {
@@ -138,7 +132,7 @@ export default class VideoElement {
 
         this._autoSetWrapperSize();
         this.options.hooks.load();
-      }
+      },
     });
 
     this._copyPlayerFuncs();
@@ -205,12 +199,10 @@ export default class VideoElement {
       return Promise.resolve();
     }
 
-    return Promise.resolve().then(() =>
-      functionToPromise(() => {
-        this.els.wrapper.style.width = `${destination.width}px`;
-        this.els.wrapper.style.height = `${destination.height}px`;
-      })
-    );
+    return Promise.resolve().then(() => functionToPromise(() => {
+      this.els.wrapper.style.width = `${destination.width}px`;
+      this.els.wrapper.style.height = `${destination.height}px`;
+    }));
   }
 
   onUnlockAudio(element, ev) {
