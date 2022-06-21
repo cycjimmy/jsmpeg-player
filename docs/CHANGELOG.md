@@ -1,3 +1,10 @@
+## [6.0.3](https://github.com/cycjimmy/jsmpeg-player/compare/v6.0.2...v6.0.3) (2022-06-21)
+
+
+### Bug Fixes
+
+* remove @rollup/plugin-commonjs ([15d5cfe](https://github.com/cycjimmy/jsmpeg-player/commit/15d5cfe8afb817b83541d44448f6d345e0f8acb8))
+
 ## [6.0.2](https://github.com/cycjimmy/jsmpeg-player/compare/v6.0.1...v6.0.2) (2022-03-26)
 
 
