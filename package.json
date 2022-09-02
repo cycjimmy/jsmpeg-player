@@ -35,6 +35,9 @@
     "url": "https://github.com/cycjimmy/jsmpeg-player/issues"
   },
   "homepage": "https://github.com/cycjimmy/jsmpeg-player#readme",
+  "engines": {
+    "node": ">=16"
+  },
   "publishConfig": {
     "access": "public"
   },

@@ -29,6 +29,10 @@ if (jsonData.config) {
   delete jsonData.config;
 }
 
+if (jsonData.engines) {
+  delete jsonData.engines;
+}
+
 outputJsonSync(
   path.resolve('.release', 'package.json'),
   jsonData,
