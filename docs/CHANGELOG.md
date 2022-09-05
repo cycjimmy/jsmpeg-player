@@ -1,3 +1,11 @@
+## [6.0.4](https://github.com/cycjimmy/jsmpeg-player/compare/v6.0.3...v6.0.4) (2022-09-05)
+
+
+### Bug Fixes
+
+* catch lost context when creating the WebGL renderer ([6a6fcc6](https://github.com/cycjimmy/jsmpeg-player/commit/6a6fcc6c75363f43f04ed2d3c980338c6095d9f6))
+* fix WebSocket constructor chocking on empty protocol string ([4caa818](https://github.com/cycjimmy/jsmpeg-player/commit/4caa8181bdabd32565ce2b8c44b4282460bc0e60))
+
 ## [6.0.3](https://github.com/cycjimmy/jsmpeg-player/compare/v6.0.2...v6.0.3) (2022-06-21)
 
 
