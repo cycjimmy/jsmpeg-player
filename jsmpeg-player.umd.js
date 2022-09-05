@@ -675,7 +675,13 @@
       this.shouldAttemptReconnect = !!this.reconnectInterval;
       this.progress = 0;
       this.established = false;
-      this.socket = new WebSocket(this.url, this.options.protocols || null);
+
+      if (this.options.protocols) {
+        this.socket = new WebSocket(this.url, this.options.protocols);
+      } else {
+        this.socket = new WebSocket(this.url);
+      }
+
       this.socket.binaryType = 'arraybuffer';
       this.socket.onmessage = this.onMessage.bind(this);
       this.socket.onopen = this.onOpen.bind(this);
@@ -3892,6 +3898,14 @@
 
       if (!this.gl) {
         throw new Error('Failed to get WebGL Context');
+      } // WebGLRenderer.destroy() will explicitly lose the GL context. Calling
+      // .getContext('webgl') on a Canvas element whose GL context has previously
+      // been lost, will return an un-restored GL context. So we try to catch this
+      // case here and try restore the GL context.
+
+
+      if (this.gl.isContextLost()) {
+        this.gl.getExtension('WEBGL_lose_context').restoreContext();
       }
 
       this.canvas.addEventListener('webglcontextlost', this.handleContextLost.bind(this), false);
