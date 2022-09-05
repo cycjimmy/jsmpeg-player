@@ -44,8 +44,7 @@ export default class WSSource {
 
     if (this.options.protocols) {
       this.socket = new WebSocket(this.url, this.options.protocols);
-    }
-    else {
+    } else {
       this.socket = new WebSocket(this.url);
     }
     this.socket.binaryType = 'arraybuffer';
