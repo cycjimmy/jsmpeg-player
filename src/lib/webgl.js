@@ -1,10 +1,15 @@
 class WebGLRenderer {
   constructor(options) {
-    this.canvas = options.canvas || document.createElement('canvas');
+    if (options.canvas) {
+      this.canvas = options.canvas;
+      this.ownsCanvasElement = false;
+    } else {
+      this.canvas = document.createElement('canvas');
+      this.ownsCanvasElement = true;
+    }
     this.width = this.canvas.width;
     this.height = this.canvas.height;
     this.enabled = true;
-    this.contextLost = false;
 
     this.hasTextureData = {};
 
@@ -24,20 +29,11 @@ class WebGLRenderer {
       throw new Error('Failed to get WebGL Context');
     }
 
-    // WebGLRenderer.destroy() will explicitly lose the GL context. Calling
-    // .getContext('webgl') on a Canvas element whose GL context has previously
-    // been lost, will return an un-restored GL context. So we try to catch this
-    // case here and try restore the GL context.
-    if (this.gl.isContextLost()) {
-      this.gl.getExtension('WEBGL_lose_context').restoreContext();
-    }
+    this.handleContextLostBound = this.handleContextLost.bind(this);
+    this.handleContextRestoredBound = this.handleContextRestored.bind(this);
 
-    this.canvas.addEventListener('webglcontextlost', this.handleContextLost.bind(this), false);
-    this.canvas.addEventListener(
-      'webglcontextrestored',
-      this.handleContextRestored.bind(this),
-      false,
-    );
+    this.canvas.addEventListener('webglcontextlost', this.handleContextLostBound, false);
+    this.canvas.addEventListener('webglcontextrestored', this.handleContextRestoredBound, false);
 
     this.initGL();
   }
@@ -88,15 +84,9 @@ class WebGLRenderer {
 
   handleContextRestored() {
     this.initGL();
-    this.contextLost = false;
   }
 
   destroy() {
-    if (this.contextLost) {
-      // Nothing to do here
-      return;
-    }
-
     const { gl } = this;
 
     this.deleteTexture(gl.TEXTURE0, this.textureY);
@@ -110,9 +100,12 @@ class WebGLRenderer {
     gl.bindBuffer(gl.ARRAY_BUFFER, null);
     gl.deleteBuffer(this.vertexBuffer);
 
-    gl.getExtension('WEBGL_lose_context').loseContext();
-    this.canvas.remove();
-    this.contextLost = true;
+    this.canvas.removeEventListener('webglcontextlost', this.handleContextLostBound, false);
+    this.canvas.removeEventListener('webglcontextrestored', this.handleContextRestoredBound, false);
+
+    if (this.ownsCanvasElement) {
+      this.canvas.remove();
+    }
   }
 
   resize(width, height) {

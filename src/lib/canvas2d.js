@@ -3,7 +3,13 @@ import { Fill } from '../utils';
 /* eslint class-methods-use-this: ["error", { "exceptMethods": ["destroy"] }] */
 export default class CanvasRenderer {
   constructor(options) {
-    this.canvas = options.canvas || document.createElement('canvas');
+    if (options.canvas) {
+      this.canvas = options.canvas;
+      this.ownsCanvasElement = false;
+    } else {
+      this.canvas = document.createElement('canvas');
+      this.ownsCanvasElement = true;
+    }
     this.width = this.canvas.width;
     this.height = this.canvas.height;
     this.enabled = true;
@@ -12,7 +18,9 @@ export default class CanvasRenderer {
   }
 
   destroy() {
-    // Nothing to do here
+    if (this.ownsCanvasElement) {
+      this.canvas.remove();
+    }
   }
 
   resize(width, height) {
