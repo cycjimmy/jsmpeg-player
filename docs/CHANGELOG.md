@@ -1,3 +1,10 @@
+## [6.0.5](https://github.com/cycjimmy/jsmpeg-player/compare/v6.0.4...v6.0.5) (2022-09-22)
+
+
+### Bug Fixes
+
+* fix problems with destroying WebGL context ([558c02e](https://github.com/cycjimmy/jsmpeg-player/commit/558c02e5dd13ead15d7eabf9a130de2adaba1c05))
+
 ## [6.0.4](https://github.com/cycjimmy/jsmpeg-player/compare/v6.0.3...v6.0.4) (2022-09-05)
 
 
