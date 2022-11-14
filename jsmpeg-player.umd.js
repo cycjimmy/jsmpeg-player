@@ -51,13 +51,13 @@
    * @param timeout
    * @returns {Promise<any>}
    */
-
   var functionToPromise = (function (normalFunction) {
     var timeout = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
     if (isPromise(normalFunction)) {
       return normalFunction;
-    } // eslint-disable-next-line no-undef
+    }
 
+    // eslint-disable-next-line no-undef
     return new Promise(resolve => {
       normalFunction();
       setTimeout(resolve, timeout);
