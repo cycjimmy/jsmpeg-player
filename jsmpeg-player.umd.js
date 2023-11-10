@@ -1036,7 +1036,7 @@
         this.bufferSetIndex(ts.index);
         this.decodedTime = ts.time;
       } else {
-        this.bits.index = 0;
+        this.bufferSetIndex(0);
         this.decodedTime = this.startTime;
       }
     };
