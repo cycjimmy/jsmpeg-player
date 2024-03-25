@@ -1072,7 +1072,6 @@
   }();
 
   var MPEG1 = /*#__PURE__*/function (_BaseDecoder) {
-    _inheritsLoose(MPEG1, _BaseDecoder);
     function MPEG1(options) {
       var _this;
       _this = _BaseDecoder.call(this, options) || this;
@@ -1089,6 +1088,7 @@
     }
 
     // eslint-disable-next-line consistent-return
+    _inheritsLoose(MPEG1, _BaseDecoder);
     var _proto = MPEG1.prototype;
     _proto.write = function write(pts, buffers) {
       BaseDecoder.prototype.write.call(this, pts, buffers);
@@ -3146,7 +3146,6 @@
   };
 
   var MPEG1WASM = /*#__PURE__*/function (_BaseDecoder) {
-    _inheritsLoose(MPEG1WASM, _BaseDecoder);
     function MPEG1WASM(options) {
       var _this;
       _this = _BaseDecoder.call(this, options) || this;
@@ -3158,6 +3157,7 @@
       _this.hasSequenceHeader = false;
       return _this;
     }
+    _inheritsLoose(MPEG1WASM, _BaseDecoder);
     var _proto = MPEG1WASM.prototype;
     _proto.initializeWasmDecoder = function initializeWasmDecoder() {
       if (!this.module.instance) {
@@ -3253,7 +3253,6 @@
   }(BaseDecoder);
 
   var MP2 = /*#__PURE__*/function (_BaseDecoder) {
-    _inheritsLoose(MP2, _BaseDecoder);
     function MP2(options) {
       var _this;
       _this = _BaseDecoder.call(this, options) || this;
@@ -3282,6 +3281,7 @@
       }
       return _this;
     }
+    _inheritsLoose(MP2, _BaseDecoder);
     var _proto = MP2.prototype;
     _proto.decode = function decode() {
       var startTime = Now();
@@ -4019,7 +4019,6 @@
   ];
 
   var MP2WASM = /*#__PURE__*/function (_BaseDecoder) {
-    _inheritsLoose(MP2WASM, _BaseDecoder);
     function MP2WASM(options) {
       var _this;
       _this = _BaseDecoder.call(this, options) || this;
@@ -4030,6 +4029,7 @@
       _this.sampleRate = 0;
       return _this;
     }
+    _inheritsLoose(MP2WASM, _BaseDecoder);
     var _proto = MP2WASM.prototype;
     _proto.initializeWasmDecoder = function initializeWasmDecoder() {
       if (!this.module.instance) {
