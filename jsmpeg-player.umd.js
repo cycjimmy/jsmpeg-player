@@ -5,30 +5,21 @@
 })(this, (function () { 'use strict';
 
   function _extends() {
-    _extends = Object.assign ? Object.assign.bind() : function (target) {
-      for (var i = 1; i < arguments.length; i++) {
-        var source = arguments[i];
-        for (var key in source) {
-          if (Object.prototype.hasOwnProperty.call(source, key)) {
-            target[key] = source[key];
-          }
-        }
+    return _extends = Object.assign ? Object.assign.bind() : function (n) {
+      for (var e = 1; e < arguments.length; e++) {
+        var t = arguments[e];
+        for (var r in t) ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]);
       }
-      return target;
-    };
-    return _extends.apply(this, arguments);
+      return n;
+    }, _extends.apply(null, arguments);
   }
-  function _inheritsLoose(subClass, superClass) {
-    subClass.prototype = Object.create(superClass.prototype);
-    subClass.prototype.constructor = subClass;
-    _setPrototypeOf(subClass, superClass);
+  function _inheritsLoose(t, o) {
+    t.prototype = Object.create(o.prototype), t.prototype.constructor = t, _setPrototypeOf(t, o);
   }
-  function _setPrototypeOf(o, p) {
-    _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function _setPrototypeOf(o, p) {
-      o.__proto__ = p;
-      return o;
-    };
-    return _setPrototypeOf(o, p);
+  function _setPrototypeOf(t, e) {
+    return _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) {
+      return t.__proto__ = e, t;
+    }, _setPrototypeOf(t, e);
   }
 
   /**
@@ -90,7 +81,7 @@
   }
 
   var css_248z = ".style__canvas,.style__playButton,.style__poster,.style__unmuteButton{height:100%;left:0;position:absolute;top:0;width:100%;z-index:1}.style__playButton{align-items:center;display:flex;justify-content:center}.style__canvas,.style__poster{display:block}.style__poster.style__hidden{display:none}.style__playButton,.style__unmuteButton{-webkit-tap-highlight-color:rgba(255,0,0,0);cursor:pointer;opacity:.7}.style__hidden.style__playButton,.style__hidden.style__unmuteButton{display:none}.style__playButton{z-index:10}.style__playButton>svg{fill:#fff;height:12vw;max-height:60px;max-width:60px;width:12vw}.style__unmuteButton{align-items:flex-end;display:flex;justify-content:flex-end;z-index:10}.style__unmuteButton>svg{fill:#fff;height:9vw;margin:0 15px 15px 0;max-height:40px;max-width:40px;width:9vw}";
-  var _style = {"canvas":"style__canvas","poster":"style__poster","playButton":"style__playButton","unmuteButton":"style__unmuteButton","hidden":"style__hidden"};
+  var _style = {"unmuteButton":"style__unmuteButton","playButton":"style__playButton","canvas":"style__canvas","poster":"style__poster","hidden":"style__hidden"};
   styleInject(css_248z);
 
   /**
