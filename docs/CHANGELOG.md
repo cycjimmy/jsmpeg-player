@@ -1,3 +1,10 @@
+# [6.1.0](https://github.com/cycjimmy/jsmpeg-player/compare/v6.0.5...v6.1.0) (2024-07-16)
+
+
+### Features
+
+* use dart-sass instead of node sass ([cbc2457](https://github.com/cycjimmy/jsmpeg-player/commit/cbc2457eef46f20a83c998fe527f2d241171baad))
+
 ## [6.0.5](https://github.com/cycjimmy/jsmpeg-player/compare/v6.0.4...v6.0.5) (2022-09-22)
 
 
