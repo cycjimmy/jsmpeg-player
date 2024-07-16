@@ -58,7 +58,7 @@
   function styleInject(css, ref) {
     if (ref === void 0) ref = {};
     var insertAt = ref.insertAt;
-    if (!css || typeof document === 'undefined') {
+    if (typeof document === 'undefined') {
       return;
     }
     var head = document.head || document.getElementsByTagName('head')[0];
@@ -5075,6 +5075,7 @@
   /**
    * According to jsmpeg project(https://github.com/phoboslab/jsmpeg)
    */
+
 
   // This sets up the JSMpeg "Namespace". The object is empty apart from the Now()
   // utility function and the automatic CreateVideoElements() after DOMReady.
