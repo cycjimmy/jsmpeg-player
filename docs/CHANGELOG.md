@@ -1,3 +1,10 @@
+## [6.1.1](https://github.com/cycjimmy/jsmpeg-player/compare/v6.1.0...v6.1.1) (2024-07-16)
+
+
+### Bug Fixes
+
+* upgrade rollup to v4 ([8de1ea0](https://github.com/cycjimmy/jsmpeg-player/commit/8de1ea0288dff53f39d4c443ac802e8fc6403b63))
+
 # [6.1.0](https://github.com/cycjimmy/jsmpeg-player/compare/v6.0.5...v6.1.0) (2024-07-16)
 
 
