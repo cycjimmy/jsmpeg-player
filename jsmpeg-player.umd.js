@@ -27,14 +27,14 @@
    * @param str
    * @returns {boolean}
    */
-  var isString = (str => typeof str === 'string' && str.constructor === String);
+  var isString = str => typeof str === 'string' && str.constructor === String;
 
   /**
    * determine a promise type
    * @param promise
    * @returns {boolean}
    */
-  var isPromise = (promise => Object.prototype.toString.call(promise).slice(8, -1) === 'Promise');
+  var isPromise = promise => Object.prototype.toString.call(promise).slice(8, -1) === 'Promise';
 
   /**
    * function to promise
