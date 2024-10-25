@@ -1,3 +1,10 @@
+## [6.1.2](https://github.com/cycjimmy/jsmpeg-player/compare/v6.1.1...v6.1.2) (2024-10-25)
+
+
+### Bug Fixes
+
+* use @cycjimmy/sass-lib@3 ([5c3e8ba](https://github.com/cycjimmy/jsmpeg-player/commit/5c3e8bae89cde7d03f6cb0b9fd6d47335138198e))
+
 ## [6.1.1](https://github.com/cycjimmy/jsmpeg-player/compare/v6.1.0...v6.1.1) (2024-07-16)
 
 
