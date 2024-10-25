@@ -81,7 +81,7 @@
   }
 
   var css_248z = ".style__canvas,.style__playButton,.style__poster,.style__unmuteButton{height:100%;left:0;position:absolute;top:0;width:100%;z-index:1}.style__playButton{align-items:center;display:flex;justify-content:center}.style__canvas,.style__poster{display:block}.style__poster.style__hidden{display:none}.style__playButton,.style__unmuteButton{-webkit-tap-highlight-color:rgba(255,0,0,0);cursor:pointer;opacity:.7}.style__hidden.style__playButton,.style__hidden.style__unmuteButton{display:none}.style__playButton{z-index:10}.style__playButton>svg{fill:#fff;height:12vw;max-height:60px;max-width:60px;width:12vw}.style__unmuteButton{align-items:flex-end;display:flex;justify-content:flex-end;z-index:10}.style__unmuteButton>svg{fill:#fff;height:9vw;margin:0 15px 15px 0;max-height:40px;max-width:40px;width:9vw}";
-  var _style = {"unmuteButton":"style__unmuteButton","playButton":"style__playButton","canvas":"style__canvas","poster":"style__poster","hidden":"style__hidden"};
+  var _style = {"canvas":"style__canvas","poster":"style__poster","playButton":"style__playButton","unmuteButton":"style__unmuteButton","hidden":"style__hidden"};
   styleInject(css_248z);
 
   /**
