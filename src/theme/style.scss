@@ -1,8 +1,8 @@
-@import "~@cycjimmy/sass-lib";
+@use "~@cycjimmy/sass-lib" as *;
 
 .canvas,
 .poster {
-  @extend %fullContainer;
+  @extend %full-container;
   display: block;
 }
 
@@ -13,8 +13,8 @@
 }
 
 // buttons
-%buttonCommon {
-  @extend %fullContainer;
+%button-common {
+  @extend %full-container;
 
   opacity: .7;
   cursor: pointer;
@@ -26,8 +26,8 @@
 }
 
 .playButton {
-  @extend %buttonCommon;
-  @extend %flexCenter;
+  @extend %button-common;
+  @extend %flex-center;
   z-index: 10;
 
   > svg {
@@ -40,7 +40,7 @@
 }
 
 .unmuteButton {
-  @extend %buttonCommon;
+  @extend %button-common;
   z-index: 10;
   display: flex;
   justify-content: flex-end;

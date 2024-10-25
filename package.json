@@ -43,7 +43,7 @@
   },
   "dependencies": {
     "@cycjimmy/awesome-js-funcs": "^4.0.9",
-    "@cycjimmy/sass-lib": "^2.3.0"
+    "@cycjimmy/sass-lib": "^3.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.24.9",
