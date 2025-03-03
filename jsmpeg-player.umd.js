@@ -56,7 +56,7 @@
   });
 
   function styleInject(css, ref) {
-    if (ref === undefined) ref = {};
+    if (ref === void 0) ref = {};
     var insertAt = ref.insertAt;
     if (typeof document === 'undefined') {
       return;
@@ -98,30 +98,30 @@
 
   var VideoElement = /*#__PURE__*/function () {
     function VideoElement(wrapper, videoUrl, _temp, overlayOptions) {
-      var _ref = _temp === undefined ? {} : _temp,
+      var _ref = _temp === void 0 ? {} : _temp,
         _ref$canvas = _ref.canvas,
-        canvas = _ref$canvas === undefined ? '' : _ref$canvas,
+        canvas = _ref$canvas === void 0 ? '' : _ref$canvas,
         _ref$poster = _ref.poster,
-        poster = _ref$poster === undefined ? '' : _ref$poster,
+        poster = _ref$poster === void 0 ? '' : _ref$poster,
         _ref$autoplay = _ref.autoplay,
-        autoplay = _ref$autoplay === undefined ? false : _ref$autoplay,
+        autoplay = _ref$autoplay === void 0 ? false : _ref$autoplay,
         _ref$autoSetWrapperSi = _ref.autoSetWrapperSize,
-        autoSetWrapperSize = _ref$autoSetWrapperSi === undefined ? false : _ref$autoSetWrapperSi,
+        autoSetWrapperSize = _ref$autoSetWrapperSi === void 0 ? false : _ref$autoSetWrapperSi,
         _ref$loop = _ref.loop,
-        loop = _ref$loop === undefined ? false : _ref$loop,
+        loop = _ref$loop === void 0 ? false : _ref$loop,
         _ref$control = _ref.control,
-        control = _ref$control === undefined ? true : _ref$control,
+        control = _ref$control === void 0 ? true : _ref$control,
         _ref$decodeFirstFrame = _ref.decodeFirstFrame,
-        decodeFirstFrame = _ref$decodeFirstFrame === undefined ? true : _ref$decodeFirstFrame,
+        decodeFirstFrame = _ref$decodeFirstFrame === void 0 ? true : _ref$decodeFirstFrame,
         _ref$picMode = _ref.picMode,
-        picMode = _ref$picMode === undefined ? false : _ref$picMode,
+        picMode = _ref$picMode === void 0 ? false : _ref$picMode,
         _ref$progressive = _ref.progressive,
-        progressive = _ref$progressive === undefined ? true : _ref$progressive,
+        progressive = _ref$progressive === void 0 ? true : _ref$progressive,
         _ref$chunkSize = _ref.chunkSize,
-        chunkSize = _ref$chunkSize === undefined ? 1024 * 1024 : _ref$chunkSize,
+        chunkSize = _ref$chunkSize === void 0 ? 1024 * 1024 : _ref$chunkSize,
         _ref$hooks = _ref.hooks,
-        hooks = _ref$hooks === undefined ? {} : _ref$hooks;
-      if (overlayOptions === undefined) {
+        hooks = _ref$hooks === void 0 ? {} : _ref$hooks;
+      if (overlayOptions === void 0) {
         overlayOptions = {};
       }
       this.options = _extends({
@@ -4727,10 +4727,10 @@
      */
     function Player(url, options, hooks) {
       var _this = this;
-      if (options === undefined) {
+      if (options === void 0) {
         options = {};
       }
-      if (hooks === undefined) {
+      if (hooks === void 0) {
         hooks = {};
       }
       this.options = options;
