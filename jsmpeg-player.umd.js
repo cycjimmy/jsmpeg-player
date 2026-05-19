@@ -586,7 +586,7 @@
     }
 
     // eslint-disable-next-line class-methods-use-this
-    ;
+  ;
     _proto.resume = function resume() {
       // Nothing to do here
     };
@@ -934,7 +934,7 @@
     }
 
     // eslint-disable-next-line class-methods-use-this
-    ;
+  ;
     _proto.packetStart = function packetStart(pi, pts, payloadLength) {
       pi.totalLength = payloadLength;
       pi.currentLength = 0;
@@ -947,7 +947,7 @@
     }
 
     // eslint-disable-next-line class-methods-use-this
-    ;
+  ;
     _proto.packetComplete = function packetComplete(pi) {
       pi.destination.write(pi.pts, pi.buffers);
       pi.totalLength = 0;
@@ -4637,21 +4637,21 @@
     }
 
     // eslint-disable-next-line no-unused-vars,class-methods-use-this
-    ;
+  ;
     _proto.c_abort = function c_abort(size) {
       // eslint-disable-next-line prefer-rest-params
       console.warn('JSMPeg: WASM abort', arguments);
     }
 
     // eslint-disable-next-line no-unused-vars,class-methods-use-this
-    ;
+  ;
     _proto.c_assertFail = function c_assertFail(size) {
       // eslint-disable-next-line prefer-rest-params
       console.warn('JSMPeg: WASM ___assert_fail', arguments);
     }
 
     // eslint-disable-next-line class-methods-use-this
-    ;
+  ;
     _proto.readDylinkSection = function readDylinkSection(buffer) {
       // Read the WASM header and dylink section of the .wasm binary data
       // to get the needed table size and static data size.
