@@ -61,3 +61,4 @@ jobs:
             @semantic-release/exec
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SKIP_NPM_AUTH: 'true'
