@@ -1,3 +1,10 @@
+## [6.1.3](https://github.com/cycjimmy/jsmpeg-player/compare/v6.1.2...v6.1.3) (2026-10-23)
+
+
+### Bug Fixes
+
+* remove duplicated --fix flag from lint:fix script ([9f778e2](https://github.com/cycjimmy/jsmpeg-player/commit/9f778e2c8f697bdd428f84358075ac194679853f))
+
 ## [6.1.2](https://github.com/cycjimmy/jsmpeg-player/compare/v6.1.1...v6.1.2) (2024-10-25)
 
 
