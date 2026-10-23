@@ -19,6 +19,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     permissions:
       id-token: write # for semantic-release to verify npm auth via trusted publishing (OIDC)
+      contents: write # for semantic-release to verify Git push access during dry-run
     strategy:
       fail-fast: false
       matrix:
