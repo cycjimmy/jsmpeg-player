@@ -1,0 +1,79 @@
+name: Bug report
+description: Create a report to help us improve
+labels: ['bug']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug! Please fill out the sections below so the issue can be triaged quickly.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe the bug
+      description: A clear and concise description of what the bug is.
+    validations:
+      required: true
+
+  - type: input
+    id: player-version
+    attributes:
+      label: JSMpeg Player version
+      description: The version of @cycjimmy/jsmpeg-player you are using.
+      placeholder: 6.1.2
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: The browser, OS and device where the problem occurs.
+      placeholder: |
+        - Browser: Chrome 141
+        - OS: macOS 15
+        - Device: Desktop
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to reproduce
+      description: Steps to reproduce the behavior, or a minimal demo (repository / code sandbox) that shows the problem.
+      placeholder: |
+        1. Go to '...'
+        2. Click on '....'
+        3. See error
+      render: text
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: Expected behavior
+      description: A clear and concise description of what you expected to happen.
+
+  - type: textarea
+    id: media-info
+    attributes:
+      label: Media file information
+      description: Container, video codec and audio codec of the stream, if applicable. Note that JSMpeg only supports MPEG1 video and MP2 audio.
+      placeholder: |
+        - Container: .ts
+        - Video codec: MPEG1
+        - Audio codec: MP2
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant log output
+      description: Browser console output around the failure, if available.
+      render: shell
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional context
+      description: Add any other context or screenshots about the problem here.

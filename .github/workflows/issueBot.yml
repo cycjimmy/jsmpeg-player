@@ -1,0 +1,151 @@
+name: Issue Bot
+
+# Rule-based triage for issues: label/reply on newly opened issues, and
+# release the needs-info label once the reporter comes back with details.
+# All untrusted issue content is passed through environment variables (never
+# interpolated into a shell command) so it cannot break out of the workflow.
+
+on:
+  issues:
+    types: [opened, edited]
+  issue_comment:
+    types: [created]
+
+permissions:
+  issues: write
+
+jobs:
+  triage:
+    name: Triage new issue
+    runs-on: ubuntu-latest
+    steps:
+      - name: Apply triage rules
+        uses: actions/github-script@v9
+        env:
+          ISSUE_AUTHOR: ${{ github.event.issue.user.login }}
+          COMMENT_AUTHOR: ${{ github.event.comment.user.login }}
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_BODY: ${{ github.event.issue.body }}
+        with:
+          script: |
+            const issueAuthor = process.env.ISSUE_AUTHOR || '';
+            const commentAuthor = process.env.COMMENT_AUTHOR || '';
+            // Never react to bot activity to avoid loops
+            if (issueAuthor.endsWith('[bot]') || commentAuthor.endsWith('[bot]')) return;
+
+            const body = process.env.ISSUE_BODY || '';
+            const lower = (process.env.ISSUE_TITLE + '\n' + body).toLowerCase();
+            const issueNumber = context.issue.number;
+            const isCommentEvent = context.payload.comment != null;
+            const isOpened = context.payload.action === 'opened' && !isCommentEvent;
+            const isEdited = context.payload.action === 'edited' && !isCommentEvent;
+
+            const labels = (names) => github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issueNumber,
+              labels: names,
+            });
+
+            const removeLabel = (name) => github.rest.issues.removeLabel({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issueNumber,
+              name,
+            }).catch((error) => {
+              // The label is already gone, nothing to do
+              if (error.status !== 404) throw error;
+            });
+
+            const hasLabel = async (name) => {
+              const { data } = await github.rest.issues.listLabelsOnIssue({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issueNumber,
+                per_page: 100,
+              });
+              return data.some((label) => label.name === name);
+            };
+
+            const reply = (message) => github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issueNumber,
+              body: message,
+            });
+
+            // User-filled content only: drop form headings, "_No response_"
+            // placeholders and empty lines before measuring information depth
+            const userContent = body
+              .split('\n')
+              .map((line) => line.trim())
+              .filter((line) => line && !line.startsWith('#') && !line.startsWith('_No response'))
+              .join('\n');
+
+            // The "Media file information" section of the bug form describes the
+            // actual playback stream; command examples inside the report body must
+            // not be treated as the played format
+            const mediaInfo = (() => {
+              const match = body.match(/###\s+Media file information\s*\n+([\s\S]*?)(?=\n###\s|\s*$)/i);
+              if (!match) return '';
+              return match[1].replace(/_No response[_:]?/gi, '').trim();
+            })();
+
+            if (isOpened || isEdited) {
+              // Rule 1: unsupported playback format, judged only from the declared
+              // media info section. JSMpeg only decodes MPEG1 video and MP2 audio.
+              if (isOpened && mediaInfo && /\.mp[24]\b|h\.?26[45]\b|hevc|webm|\baac\b|vorbis|opus|\bavi\b|\.mov\b|\.mkv\b|\bflv\b/.test(mediaInfo.toLowerCase())) {
+                await labels(['unsupported-format']);
+                await reply(
+                  'The media information you described does not look playable by ' +
+                  'JSMpeg: it only decodes **MPEG1 video** and **MP2 audio** ' +
+                  '(typically `.ts` or `.mpg` segments). Containers and codecs such ' +
+                  'as MP4, H.264/H.265, WebM or AAC are not supported.\n\n' +
+                  'Please re-encode your media to MPEG1/MP2 (for example with ffmpeg) ' +
+                  'and try again. See the README for encoding examples.'
+                );
+              }
+
+              // Rule 2: cross-origin loading failure
+              if (isOpened && /\bcors\b|cross.?origin|cross.?domain|opaque response/.test(lower)) {
+                await labels(['cross-origin']);
+                await reply(
+                  'This looks like a cross-origin request issue. Browsers block media ' +
+                  'loaded from another origin without proper CORS headers. Please make ' +
+                  'sure your media server responds with `Access-Control-Allow-Origin` ' +
+                  '(or serve the media from the same origin as the page).'
+                );
+              }
+
+              // Rule 3: low-information report (nearly every form field left empty)
+              if (isOpened && userContent.length < 200) {
+                await labels(['needs-info']);
+                await reply(
+                  'Thanks for opening this issue! Unfortunately, there is not enough ' +
+                  'information to investigate it yet. Please edit the issue and add:\n\n' +
+                  '- The version of `@cycjimmy/jsmpeg-player` you are using\n' +
+                  '- The browser, OS and device you tested on\n' +
+                  '- Console errors or warnings around the failure\n' +
+                  '- A minimal reproduction (demo link or code snippet)\n\n' +
+                  'The issue will be closed automatically if there is no response within 7 days.'
+                );
+              } else if (isEdited && (await hasLabel('needs-info'))) {
+                // The reporter came back with details on edit: release the issue
+                // from the 7-day needs-info lifecycle managed by the stale workflow
+                await removeLabel('needs-info');
+                await reply(
+                  'Thanks for the additional details! The `needs-info` label has ' +
+                  'been removed, so this issue is back in the normal review queue.'
+                );
+              }
+              return;
+            }
+
+            // Comment event: a reply from the reporter also counts as engagement
+            if (isCommentEvent && (await hasLabel('needs-info'))) {
+              await removeLabel('needs-info');
+              await reply(
+                'Thanks for the reply! The `needs-info` label has been removed, so ' +
+                'this issue is back in the normal review queue.'
+              );
+            }
