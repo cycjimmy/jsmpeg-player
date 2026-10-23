@@ -17,6 +17,8 @@ on:
 jobs:
   test:
     runs-on: ${{ matrix.os }}
+    permissions:
+      id-token: write # for semantic-release to verify npm auth via trusted publishing (OIDC)
     strategy:
       fail-fast: false
       matrix:
@@ -33,6 +35,7 @@ jobs:
       - run: npm run package
 
       - name: Semantic Release Test
+        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
         uses: cycjimmy/semantic-release-action@v6
         with:
           dry_run: true
@@ -57,4 +60,3 @@ jobs:
             @semantic-release/exec
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
