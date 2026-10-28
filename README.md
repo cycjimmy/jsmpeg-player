@@ -39,8 +39,8 @@ new JSMpeg.VideoElement(videoWrapper, videoUrl [, options] [, overlayOptions])
 ```
 
 * `JSMpeg.VideoElement` config:
-  * `videoWrapper`: [String | Element] The wrapper of the video. The height and width of the wrapper are recommended to be initialized.
-  * `videoUrl`: [String] A URL to an MPEG .ts file
+  * `videoWrapper`: [String | Element] The wrapper of the video — either a **CSS selector that must match an existing element**, or a DOM element itself. It must be a **container element** (e.g. a `div`); do not pass the `<canvas>` itself — the children of a canvas are fallback content and are never rendered, which results in a black screen. Pass the canvas via the `canvas` option instead. The height and width of the wrapper are recommended to be initialized.
+  * `videoUrl`: [String] A non-empty raw string. The built-in sources accept a relative or `http(s)://` URL to an MPEG-TS resource (the file name does not have to end with `.ts`), or a `ws://` / `wss://` URL delivering MPEG-TS. An already created `WebSocket` instance is not accepted. Custom sources (`source` in `overlayOptions`) define their own input.
   * `options`: [Object] support:
     * `canvas`: [String | Element] The HTML canvas element to use for video rendering. If none is given, the renderer will create its own canvas element. Default `''`.
     * `poster`: [String] URL to an image to use as the poster to show before the video plays. (Recommended to set it manually)
