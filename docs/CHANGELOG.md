@@ -1,3 +1,10 @@
+## [6.1.4](https://github.com/cycjimmy/jsmpeg-player/compare/v6.1.3...v6.1.4) (2026-10-28)
+
+
+### Bug Fixes
+
+* validate the url parameter with a clear TypeError ([490fd08](https://github.com/cycjimmy/jsmpeg-player/commit/490fd08bf0cf1b557766f8819aac7fefe970d150)), closes [#26](https://github.com/cycjimmy/jsmpeg-player/issues/26)
+
 ## [6.1.3](https://github.com/cycjimmy/jsmpeg-player/compare/v6.1.2...v6.1.3) (2026-10-23)
 
 
