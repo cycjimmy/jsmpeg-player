@@ -58,6 +58,7 @@ new JSMpeg.VideoElement(videoWrapper, videoUrl [, options] [, overlayOptions])
       * `stop`: [Function] The hook function when the video stop.
       * `load`: [Function] The hook function when the video established.
   * `overlayOptions`: [Object] More options can view the [jsmpeg options](https://github.com/phoboslab/jsmpeg#usage)
+    * `protocols`: [String | Array<String>] WebSocket subprotocols, forwarded to `new WebSocket(url, protocols)` (`wss://` URLs only). Can carry a Bearer token. Default `undefined`. See [WebSocket authentication](#websocket-authentication).
 
 * `JSMpeg.VideoElement` instance supports the following methods:
   * `play()`: Start playback
@@ -65,6 +66,24 @@ new JSMpeg.VideoElement(videoWrapper, videoUrl [, options] [, overlayOptions])
   * `stop()`: Stop playback and seek to the beginning
   * `destroy()`: Stop playback and empty video wrapper
 * `JSMpeg.VideoElement.player` instance API can view the [JSMpeg.Player API](https://github.com/phoboslab/jsmpeg#jsmpegplayer-api)
+
+### WebSocket authentication
+A browser can not set an `Authorization` header on a WebSocket handshake — `new WebSocket(url, protocols)` is all the WebSocket API offers. The closest browser-native option is to send the token as a subprotocol, which arrives on the server as the `Sec-WebSocket-Protocol` request header (kept out of the URL and out of access logs):
+
+```javascript
+new JSMpeg.VideoElement('#videoWrapper', 'wss://example.com/stream', {}, {
+  protocols: ['Bearer.<token>'],
+});
+```
+
+```javascript
+new JSMpeg.Player('wss://example.com/stream', {
+  protocols: ['Bearer.<token>'],
+});
+```
+
+* The server must accept the subprotocol and **echo it back** in the handshake response (`Sec-WebSocket-Protocol`). If none of the requested subprotocols is echoed, the browser aborts the connection.
+* Each value must be a valid HTTP token ([RFC 7230](https://www.rfc-editor.org/rfc/rfc7230#section-3.2.6)): no spaces, `+`, `/` or `=`. JWTs (base64url) fit; tokens containing those characters need cookie-based auth instead (the handshake sends cookies for the target origin automatically).
 
 ### Use in browser
 [![jsdelivr][jsdelivr-image]][jsdelivr-url]
