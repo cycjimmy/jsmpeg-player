@@ -4733,6 +4733,14 @@
       if (hooks === void 0) {
         hooks = {};
       }
+      // A custom source (options.source) may accept anything as its url, so the
+      // string check only applies to the built-in sources.
+      if (!options.source && typeof url !== 'string') {
+        throw new TypeError("[JSMpeg] The url parameter must be a String, but got " + (url === null ? 'null' : typeof url) + ". " + 'Pass the URL of the stream (e.g. "wss://example.com/stream" or "video.ts") ' + 'instead of an already created WebSocket instance.');
+      }
+      if (!options.source && url.trim().length === 0) {
+        throw new TypeError('[JSMpeg] The url parameter must be a non-empty string, e.g. "video.ts".');
+      }
       this.options = options;
       this.hooks = hooks;
       this.options.hookOnEstablished = function () {
