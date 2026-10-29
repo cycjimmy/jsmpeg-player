@@ -65,7 +65,7 @@ new JSMpeg.VideoElement(videoWrapper, videoUrl [, options] [, overlayOptions])
   * `play()`: Start playback
   * `pause()`: Pause playback
   * `stop()`: Stop playback and seek to the beginning
-  * `destroy()`: Stop playback and empty video wrapper
+  * `destroy()`: Stop playback, release the source, renderer, decoders and audio, and empty video wrapper. Required when the player is removed, see [Multiple players](#multiple-players).
 * `JSMpeg.VideoElement.player` instance API can view the [JSMpeg.Player API](https://github.com/phoboslab/jsmpeg#jsmpegplayer-api)
 
 ### Snapshot
@@ -102,6 +102,34 @@ new JSMpeg.Player('wss://example.com/stream', {
 
 * The server must accept the subprotocol and **echo it back** in the handshake response (`Sec-WebSocket-Protocol`). If none of the requested subprotocols is echoed, the browser aborts the connection.
 * Each value must be a valid HTTP token ([RFC 7230](https://www.rfc-editor.org/rfc/rfc7230#section-3.2.6)): no spaces, `+`, `/` or `=`. JWTs (base64url) fit; tokens containing those characters need cookie-based auth instead (the handshake sends cookies for the target origin automatically).
+
+### Multiple players
+Each `JSMpeg.VideoElement` is a complete, independent player: it opens its own source connection, creates its own WebGL context and runs its own decode loop. Only the `AudioContext` and the WASM module are shared, so how many players can play at once is bounded by the browser and the device, not by this library.
+
+* Browsers cap the number of live WebGL contexts per page (16 in Chrome, fewer on some mobile browsers). Past that limit the oldest contexts are dropped and their canvas stays black, without any exception being thrown.
+* Every stream is decoded in software on the main thread, and every player allocates its own decoder buffers (512 KB of video, 128 KB of audio by default). A grid of many streams competes for the same CPU time, whatever renderer is used.
+* `progressive: true` (the default) keeps one open request per player for the whole stream, which counts against the ~6 connections per origin of HTTP/1.1. This only applies to static files; `ws://` and `wss://` sources are not affected.
+
+**Call `destroy()` when a player goes away.** In a SPA, discarding the instance returned by the constructor — e.g. calling it in `componentDidMount` without storing the result — leaves the player running after its markup is gone: the socket, the WebGL context and the decode loop all survive. A few navigations are then enough to exhaust the page, and since nothing throws, a hard reload appears to be the only fix.
+
+```javascript
+// React
+componentDidMount() {
+  this.video = new JSMpeg.VideoElement('#videoWrapper', 'wss://example.com/stream');
+}
+
+componentWillUnmount() {
+  this.video.destroy();
+  this.video = null;
+}
+```
+
+To keep many cameras on screen:
+
+* `disableGl: true` — the Canvas 2D renderer does not consume a WebGL context, at the price of a higher CPU usage.
+* `audio: false` — skip audio decoding for camera grids.
+* Create players only for the tiles that are visible (e.g. with `IntersectionObserver`) and `destroy()` them when they leave the viewport.
+* Serve a low-bitrate sub-stream to the thumbnails; for software decoding the resolution and bitrate of each stream matter more than the number of tiles.
 
 ### Use in browser
 [![jsdelivr][jsdelivr-image]][jsdelivr-url]
