@@ -47,7 +47,7 @@ new JSMpeg.VideoElement(videoWrapper, videoUrl [, options] [, overlayOptions])
     * `autoplay`: [Boolean] Whether to start playing immediately. Default `false`.
     * `autoSetWrapperSize`: [Boolean] Whether to set the wrapper element size automatically when the video loaded. Default `false`.
     * `loop`: [Boolean] Whether to loop the video (static files only). Default `false`.**[overwrite]**
-    * `control`: [Boolean] Whether the user can control. Default `true`.
+    * `control`: [Boolean] Whether the user can control. The built-in play button and click-to-toggle apply to static files only: `ws://` / `wss://` live sources have no built-in playback control and must be driven with `play()` / `pause()`. Default `true`.
     * `decodeFirstFrame`: [Boolean] Whether to decode and display the first frame of the video. Default `true`.
     * `picMode`: [Boolean] Picture mode (no playButton). Default `false`.
     * `progressive`: [Boolean] whether to load data in chunks (static files only). Default `true`.
