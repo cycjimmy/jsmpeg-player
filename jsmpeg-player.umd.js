@@ -4794,7 +4794,11 @@
       this.paused = true;
       this.unpauseOnShow = false;
       if (options.pauseWhenHidden !== false) {
-        document.addEventListener('visibilitychange', this.showHide.bind(this));
+        // Keep the bound reference so destroy() can remove this listener again,
+        // otherwise every destroyed player would stay reachable from the document
+        // and be resumed by a tab switch after it has already been torn down.
+        this.showHideBound = this.showHide.bind(this);
+        document.addEventListener('visibilitychange', this.showHideBound);
       }
 
       // If we have WebAssembly support, wait until the module is compiled before
@@ -4881,6 +4885,10 @@
       this.renderer && this.renderer.destroy();
       this.audio && this.audio.destroy();
       this.audioOut && this.audioOut.destroy();
+      if (this.showHideBound) {
+        document.removeEventListener('visibilitychange', this.showHideBound);
+        this.showHideBound = null;
+      }
     };
     _proto.seek = function seek(time) {
       var startOffset = this.audio && this.audio.canPlay ? this.audio.startTime : this.video.startTime;
