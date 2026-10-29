@@ -1,5 +1,21 @@
 import { Now } from '../utils';
 
+// The `?start-end` suffix keeps caches from handing out a full body for a
+// ranged request, but it must never be added to a URL that already has a query
+// string: signed URLs (e.g. `...?sign=...`) are rejected once anything is
+// appended to their query.
+const RangeURL = (url, start, end) => {
+  const hashIndex = url.indexOf('#');
+  const base = hashIndex === -1 ? url : url.slice(0, hashIndex);
+  const hash = hashIndex === -1 ? '' : url.slice(hashIndex);
+
+  if (base.indexOf('?') !== -1) {
+    return url;
+  }
+
+  return `${base}?${start}-${end}${hash}`;
+};
+
 export default class AjaxProgressiveSource {
   constructor(url, options) {
     this.url = url;
@@ -17,6 +33,9 @@ export default class AjaxProgressiveSource {
 
     this.isLoading = false;
     this.loadStartTime = 0;
+    // Counter for the retries in loadNextChunk; it has to start at 0, an
+    // undefined value would make `this.loadFails++ < 3` always false.
+    this.loadFails = 0;
     this.throttled = options.throttled !== false;
     this.aborted = false;
 
@@ -61,8 +80,17 @@ export default class AjaxProgressiveSource {
   }
 
   destroy() {
-    this.request.abort();
+    // Mark the source as gone *before* aborting: abort() fires
+    // `readystatechange` synchronously, and with the retry in loadNextChunk now
+    // actually working, that callback would start a fresh request otherwise.
     this.aborted = true;
+    this.isLoading = false;
+
+    if (this.request) {
+      this.request.onreadystatechange = null;
+      this.request.onprogress = null;
+      this.request.abort();
+    }
   }
 
   loadNextChunk() {
@@ -100,7 +128,7 @@ export default class AjaxProgressiveSource {
       this.request.onprogress = this.onProgress.bind(this);
     }
 
-    this.request.open('GET', `${this.url}?${start}-${end}`);
+    this.request.open('GET', RangeURL(this.url, start, end));
     this.request.setRequestHeader('Range', `bytes=${start}-${end}`);
     this.request.responseType = 'arraybuffer';
     this.request.send();
