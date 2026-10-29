@@ -1,3 +1,10 @@
+## [6.1.6](https://github.com/cycjimmy/jsmpeg-player/compare/v6.1.5...v6.1.6) (2026-10-29)
+
+
+### Bug Fixes
+
+* retry failed progressive chunks and keep signed urls intact ([940d707](https://github.com/cycjimmy/jsmpeg-player/commit/940d7072579f119cd999a4802ff206f6dd94b5cb)), closes [#45](https://github.com/cycjimmy/jsmpeg-player/issues/45)
+
 ## [6.1.5](https://github.com/cycjimmy/jsmpeg-player/compare/v6.1.4...v6.1.5) (2026-10-29)
 
 
