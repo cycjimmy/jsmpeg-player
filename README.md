@@ -59,6 +59,7 @@ new JSMpeg.VideoElement(videoWrapper, videoUrl [, options] [, overlayOptions])
       * `load`: [Function] The hook function when the video established.
   * `overlayOptions`: [Object] More options can view the [jsmpeg options](https://github.com/phoboslab/jsmpeg#usage)
     * `protocols`: [String | Array<String>] WebSocket subprotocols, forwarded to `new WebSocket(url, protocols)` (`wss://` URLs only). Can carry a Bearer token. Default `undefined`. See [WebSocket authentication](#websocket-authentication).
+    * `preserveDrawingBuffer`: [Boolean] Keep the WebGL drawing buffer so the canvas can be read back, e.g. to take a snapshot with `canvas.toDataURL()`. Default `false`. See [Snapshot](#snapshot).
 
 * `JSMpeg.VideoElement` instance supports the following methods:
   * `play()`: Start playback
@@ -66,6 +67,23 @@ new JSMpeg.VideoElement(videoWrapper, videoUrl [, options] [, overlayOptions])
   * `stop()`: Stop playback and seek to the beginning
   * `destroy()`: Stop playback and empty video wrapper
 * `JSMpeg.VideoElement.player` instance API can view the [JSMpeg.Player API](https://github.com/phoboslab/jsmpeg#jsmpegplayer-api)
+
+### Snapshot
+The WebGL drawing buffer is cleared once a frame has been composited, so reading the canvas without preparation returns a black image. Set `preserveDrawingBuffer` in `overlayOptions`:
+
+```javascript
+const video = new JSMpeg.VideoElement('#videoWrapper', 'video.ts', {}, {
+  preserveDrawingBuffer: true,
+});
+
+// Any time after the first frame has been rendered
+const dataUrl = video.els.canvas.toDataURL('image/png');
+```
+
+* The flag is read when the WebGL context is created, so it must be passed at construction time — it can not be enabled on a player that is already running.
+* If you pass your own element through the `canvas` option and it already has a WebGL context (because `getContext('webgl')` was called on it before the player was created), that context is reused and the flag is ignored. Let the player create the context instead.
+* Keeping the buffer has a performance cost, so leave the flag off if you do not need snapshots.
+* WebGL is not required: with `disableGl: true` the player falls back to the Canvas 2D renderer, where `toDataURL()` always works, at the price of a higher CPU usage.
 
 ### WebSocket authentication
 A browser can not set an `Authorization` header on a WebSocket handshake — `new WebSocket(url, protocols)` is all the WebSocket API offers. The closest browser-native option is to send the token as a subprotocol, which arrives on the server as the `Sec-WebSocket-Protocol` request header (kept out of the URL and out of access logs):
