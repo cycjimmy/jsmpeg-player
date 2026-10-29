@@ -1,3 +1,10 @@
+## [6.1.5](https://github.com/cycjimmy/jsmpeg-player/compare/v6.1.4...v6.1.5) (2026-10-29)
+
+
+### Bug Fixes
+
+* release the visibilitychange listener on player destroy ([4b0016d](https://github.com/cycjimmy/jsmpeg-player/commit/4b0016d1c3bf729d415919402d35aac4051fb19a)), closes [#41](https://github.com/cycjimmy/jsmpeg-player/issues/41)
+
 ## [6.1.4](https://github.com/cycjimmy/jsmpeg-player/compare/v6.1.3...v6.1.4) (2026-10-28)
 
 
