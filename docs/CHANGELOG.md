@@ -1,3 +1,10 @@
+## [6.1.7](https://github.com/cycjimmy/jsmpeg-player/compare/v6.1.6...v6.1.7) (2026-10-30)
+
+
+### Bug Fixes
+
+* guard destroy when the player is torn down before the source starts ([918bff9](https://github.com/cycjimmy/jsmpeg-player/commit/918bff9e46f620f24399b12ced1c71e89d5fe0e2)), closes [#327](https://github.com/cycjimmy/jsmpeg-player/issues/327)
+
 ## [6.1.6](https://github.com/cycjimmy/jsmpeg-player/compare/v6.1.5...v6.1.6) (2026-10-29)
 
 
