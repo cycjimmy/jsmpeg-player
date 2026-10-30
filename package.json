@@ -1,19 +1,38 @@
 {
   "name": "@cycjimmy/jsmpeg-player",
+  "type": "module",
   "version": "6.1.8",
   "description": "MPEG1 Video Player Based On JSMpeg",
-  "type": "module",
+  "browser": "dist/jsmpeg-player.umd.min.js",
+  "author": "cycjimmy <cycjimmy@gmail.com> (https://github.com/cycjimmy)",
+  "license": "MIT",
+  "homepage": "https://github.com/cycjimmy/jsmpeg-player#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cycjimmy/jsmpeg-player.git"
+  },
+  "bugs": {
+    "url": "https://github.com/cycjimmy/jsmpeg-player/issues"
+  },
+  "keywords": [
+    "jsmpeg",
+    "TS"
+  ],
+  "exports": {
+    "import": "./dist/jsmpeg-player.esm.js",
+    "require": "./dist/jsmpeg-player.cjs"
+  },
   "main": "dist/jsmpeg-player.cjs",
   "module": "dist/jsmpeg-player.esm.js",
-  "browser": "dist/jsmpeg-player.umd.min.js",
-  "exports": {
-    "require": "./dist/jsmpeg-player.cjs",
-    "import": "./dist/jsmpeg-player.esm.js"
+  "engines": {
+    "node": ">=20"
   },
   "scripts": {
     "start": "npm run dev",
-    "lint": "eslint --ext .js,.cjs,.mjs -c .eslintrc .",
-    "lint:fix": "eslint --ext .js,.cjs,.mjs --fix -c .eslintrc .",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
+    "lint:style": "stylelint \"src/**/*.{css,scss}\"",
+    "lint:style:fix": "stylelint \"src/**/*.{css,scss}\" --fix",
     "test": "node --test",
     "dev": "cross-env NODE_ENV=development rollup -c rollup/rollup.config.dev.mjs --watch",
     "build": "trash dist && npm run build:prod:umd && npm run build:prod",
@@ -21,23 +40,6 @@
     "build:prod:umd": "cross-env NODE_ENV=production rollup -c rollup/rollup.config.dev.mjs",
     "build:deployment": "cross-env NODE_ENV=deployment rollup -c rollup/rollup.config.dev.mjs",
     "package": "trash .release && npm run build && node tasks/copyFiles.js && node tasks/handlePackageJson.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/cycjimmy/jsmpeg-player.git"
-  },
-  "keywords": [
-    "jsmpeg",
-    "TS"
-  ],
-  "author": "cycjimmy <cycjimmy@gmail.com> (https://github.com/cycjimmy)",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/cycjimmy/jsmpeg-player/issues"
-  },
-  "homepage": "https://github.com/cycjimmy/jsmpeg-player#readme",
-  "engines": {
-    "node": ">=20"
   },
   "publishConfig": {
     "access": "public"
@@ -47,27 +49,28 @@
     "@cycjimmy/sass-lib": "^3.0.1"
   },
   "devDependencies": {
+    "@antfu/eslint-config": "^10.0.0",
     "@babel/core": "^7.24.9",
     "@babel/plugin-syntax-dynamic-import": "^7.8.3",
     "@babel/plugin-transform-object-assign": "^7.24.7",
     "@babel/preset-env": "^7.24.8",
     "@cycjimmy/config-lib": "^3.2.1",
     "@rollup/plugin-babel": "^7.0.0",
-    "@rollup/plugin-eslint": "^9.0.5",
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-node-resolve": "^16.0.0",
     "@rollup/plugin-terser": "^1.0.2",
     "autoprefixer": "^10.4.19",
     "cross-env": "^10.0.0",
-    "eslint": "^8.57.0",
-    "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-plugin-import": "^2.29.1",
+    "eslint": "^10.0.0",
     "fs-extra": "^11.2.0",
     "rollup": "^4.18.1",
     "rollup-plugin-browsersync": "^1.3.3",
     "rollup-plugin-copy": "^3.5.0",
     "rollup-plugin-postcss": "^4.0.2",
     "sass": "^1.77.8",
+    "stylelint": "^17.0.0",
+    "stylelint-config-idiomatic-order": "^10.0.0",
+    "stylelint-config-standard-scss": "^17.0.0",
     "trash-cli": "^7.2.0"
   }
 }

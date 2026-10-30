@@ -1,6 +1,6 @@
 # JSMpeg Player(TS Player)
 
-![][workflows-badge-image]
+![Test CI][workflows-badge-image]
 [![libraries dependency status][libraries-status-image]][libraries-status-url]
 [![libraries sourcerank][libraries-sourcerank-image]][libraries-sourcerank-url]
 [![Release date][release-date-image]][release-url]
@@ -29,13 +29,11 @@ $ yarn add @cycjimmy/jsmpeg-player
 
 ### Usage
 ```javascript
-import JSMpeg from '@cycjimmy/jsmpeg-player';
-# OR
-const JSMpeg = require('@cycjimmy/jsmpeg-player');
+import JSMpeg from '@cycjimmy/jsmpeg-player'
 ```
 
 ```javascript
-new JSMpeg.VideoElement(videoWrapper, videoUrl [, options] [, overlayOptions])
+// new JSMpeg.VideoElement(videoWrapper, videoUrl [, options] [, overlayOptions])
 ```
 
 * `JSMpeg.VideoElement` config:
@@ -74,10 +72,10 @@ The WebGL drawing buffer is cleared once a frame has been composited, so reading
 ```javascript
 const video = new JSMpeg.VideoElement('#videoWrapper', 'video.ts', {}, {
   preserveDrawingBuffer: true,
-});
+})
 
 // Any time after the first frame has been rendered
-const dataUrl = video.els.canvas.toDataURL('image/png');
+const dataUrl = video.els.canvas.toDataURL('image/png')
 ```
 
 * The flag is read when the WebGL context is created, so it must be passed at construction time — it can not be enabled on a player that is already running.
@@ -89,15 +87,15 @@ const dataUrl = video.els.canvas.toDataURL('image/png');
 A browser can not set an `Authorization` header on a WebSocket handshake — `new WebSocket(url, protocols)` is all the WebSocket API offers. The closest browser-native option is to send the token as a subprotocol, which arrives on the server as the `Sec-WebSocket-Protocol` request header (kept out of the URL and out of access logs):
 
 ```javascript
-new JSMpeg.VideoElement('#videoWrapper', 'wss://example.com/stream', {}, {
+const video = new JSMpeg.VideoElement('#videoWrapper', 'wss://example.com/stream', {}, {
   protocols: ['Bearer.<token>'],
-});
+})
 ```
 
 ```javascript
-new JSMpeg.Player('wss://example.com/stream', {
+const player = new JSMpeg.Player('wss://example.com/stream', {
   protocols: ['Bearer.<token>'],
-});
+})
 ```
 
 * The server must accept the subprotocol and **echo it back** in the handshake response (`Sec-WebSocket-Protocol`). If none of the requested subprotocols is echoed, the browser aborts the connection.
@@ -112,7 +110,7 @@ Each `JSMpeg.VideoElement` is a complete, independent player: it opens its own s
 
 **Call `destroy()` when a player goes away.** In a SPA, discarding the instance returned by the constructor — e.g. calling it in `componentDidMount` without storing the result — leaves the player running after its markup is gone: the socket, the WebGL context and the decode loop all survive. A few navigations are then enough to exhaust the page, and since nothing throws, a hard reload appears to be the only fix.
 
-```javascript
+```text
 // React
 componentDidMount() {
   this.video = new JSMpeg.VideoElement('#videoWrapper', 'wss://example.com/stream');

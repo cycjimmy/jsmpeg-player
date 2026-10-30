@@ -1,9 +1,12 @@
-/* eslint import/extensions: ["error", "ignorePackages", {"mjs": off}] */
-import pkg from '../package.cjs';
+import pkg from '../package.cjs'
 
 import {
-  banner, input, name, plugins, terserPlugins,
-} from './rollup.common.mjs';
+  banner,
+  input,
+  name,
+  plugins,
+  terserPlugins,
+} from './rollup.common.mjs'
 
 export default [
   {
@@ -25,4 +28,4 @@ export default [
     },
     plugins: [...plugins, terserPlugins],
   },
-];
+]

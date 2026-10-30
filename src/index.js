@@ -2,28 +2,31 @@
  * According to jsmpeg project(https://github.com/phoboslab/jsmpeg)
  */
 
+import AjaxSource from './lib/ajax'
+import AjaxProgressiveSource from './lib/ajax-progressive'
+import BitBuffer from './lib/buffer'
+import CanvasRenderer from './lib/canvas2d'
+import BaseDecoder from './lib/decoder'
+import FetchSource from './lib/fetch'
+import MP2 from './lib/mp2'
+import MP2WASM from './lib/mp2-wasm'
+import MPEG1 from './lib/mpeg1'
+import MPEG1WASM from './lib/mpeg1-wasm'
 // ES6 modular
-import Player from './lib/player';
-import VideoElement from './lib/video-element';
-import BitBuffer from './lib/buffer';
-import AjaxSource from './lib/ajax';
-import FetchSource from './lib/fetch';
-import AjaxProgressiveSource from './lib/ajax-progressive';
-import WSSource from './lib/websocket';
-import TS from './lib/ts';
-import BaseDecoder from './lib/decoder';
-import MPEG1 from './lib/mpeg1';
-import MPEG1WASM from './lib/mpeg1-wasm';
-import MP2 from './lib/mp2';
-import MP2WASM from './lib/mp2-wasm';
-import WebGLRenderer from './lib/webgl';
-import CanvasRenderer from './lib/canvas2d';
-import WebAudioOut from './lib/webaudio';
+import Player from './lib/player'
+import TS from './lib/ts'
+import VideoElement from './lib/video-element'
+import WASMModule from './lib/wasm-module'
+import WASM_BINARY from './lib/wasm/WASM_BINARY'
+import WebAudioOut from './lib/webaudio'
+import WebGLRenderer from './lib/webgl'
+import WSSource from './lib/websocket'
 import {
-  Now, CreateVideoElements, Fill, Base64ToArrayBuffer,
-} from './utils';
-import WASMModule from './lib/wasm-module';
-import WASM_BINARY from './lib/wasm/WASM_BINARY';
+  Base64ToArrayBuffer,
+  CreateVideoElements,
+  Fill,
+  Now,
+} from './utils'
 
 // This sets up the JSMpeg "Namespace". The object is empty apart from the Now()
 // utility function and the automatic CreateVideoElements() after DOMReady.
@@ -124,6 +127,6 @@ const JSMpeg = {
   // If this property is present, jsmpeg will use the inlined binary data
   // instead of trying to load a jsmpeg.wasm file via Ajax.
   WASM_BINARY_INLINED: WASM_BINARY,
-};
+}
 
-export default JSMpeg;
+export default JSMpeg

@@ -3,6 +3,7 @@
 .canvas,
 .poster {
   @extend %full-container;
+
   display: block;
 }
 
@@ -16,42 +17,44 @@
 %button-common {
   @extend %full-container;
 
-  opacity: .7;
   cursor: pointer;
-  -webkit-tap-highlight-color: rgba(255, 0, 0, 0);
+  opacity: .7;
+  -webkit-tap-highlight-color: rgb(255 0 0 / 0%);
 
   &.hidden {
     display: none;
   }
 }
 
-.playButton {
+.play-button {
   @extend %button-common;
   @extend %flex-center;
+
   z-index: 10;
 
   > svg {
     width: 12vw;
-    height: 12vw;
     max-width: 60px;
+    height: 12vw;
     max-height: 60px;
     fill: #fff;
   }
 }
 
-.unmuteButton {
+.unmute-button {
   @extend %button-common;
+
   z-index: 10;
   display: flex;
-  justify-content: flex-end;
   align-items: flex-end;
+  justify-content: flex-end;
 
   > svg {
-    margin: 0 15px 15px 0;
     width: 9vw;
-    height: 9vw;
     max-width: 40px;
+    height: 9vw;
     max-height: 40px;
+    margin: 0 15px 15px 0;
     fill: #fff;
   }
 }

@@ -1,98 +1,98 @@
 export default class WSSource {
   constructor(url, options) {
-    this.url = url;
-    this.options = options;
-    this.socket = null;
-    this.streaming = true;
+    this.url = url
+    this.options = options
+    this.socket = null
+    this.streaming = true
 
-    this.callbacks = { connect: [], data: [] };
-    this.destination = null;
+    this.callbacks = { connect: [], data: [] }
+    this.destination = null
 
     this.reconnectInterval = options.reconnectInterval !== undefined
       ? options.reconnectInterval
-      : 5;
-    this.shouldAttemptReconnect = !!this.reconnectInterval;
+      : 5
+    this.shouldAttemptReconnect = !!this.reconnectInterval
 
-    this.completed = false;
-    this.established = false;
-    this.progress = 0;
+    this.completed = false
+    this.established = false
+    this.progress = 0
 
-    this.reconnectTimeoutId = 0;
+    this.reconnectTimeoutId = 0
 
-    this.onEstablishedCallback = options.onSourceEstablished;
-    this.onCompletedCallback = options.onSourceCompleted; // Never used
+    this.onEstablishedCallback = options.onSourceEstablished
+    this.onCompletedCallback = options.onSourceCompleted // Never used
 
     if (options.hookOnEstablished) {
-      this.hookOnEstablished = options.hookOnEstablished;
+      this.hookOnEstablished = options.hookOnEstablished
     }
   }
 
   connect(destination) {
-    this.destination = destination;
+    this.destination = destination
   }
 
   destroy() {
-    clearTimeout(this.reconnectTimeoutId);
-    this.shouldAttemptReconnect = false;
+    clearTimeout(this.reconnectTimeoutId)
+    this.shouldAttemptReconnect = false
 
     // destroy() may run before start(), e.g. when a player is torn down while
     // the WASM module is still compiling and the socket was never opened.
     if (!this.socket) {
-      return;
+      return
     }
 
-    this.socket.close();
+    this.socket.close()
   }
 
   start() {
-    this.shouldAttemptReconnect = !!this.reconnectInterval;
-    this.progress = 0;
-    this.established = false;
+    this.shouldAttemptReconnect = !!this.reconnectInterval
+    this.progress = 0
+    this.established = false
 
     if (this.options.protocols) {
-      this.socket = new WebSocket(this.url, this.options.protocols);
-    } else {
-      this.socket = new WebSocket(this.url);
+      this.socket = new WebSocket(this.url, this.options.protocols)
     }
-    this.socket.binaryType = 'arraybuffer';
-    this.socket.onmessage = this.onMessage.bind(this);
-    this.socket.onopen = this.onOpen.bind(this);
-    this.socket.onerror = this.onClose.bind(this);
-    this.socket.onclose = this.onClose.bind(this);
+    else {
+      this.socket = new WebSocket(this.url)
+    }
+    this.socket.binaryType = 'arraybuffer'
+    this.socket.onmessage = this.onMessage.bind(this)
+    this.socket.onopen = this.onOpen.bind(this)
+    this.socket.onerror = this.onClose.bind(this)
+    this.socket.onclose = this.onClose.bind(this)
   }
 
-  // eslint-disable-next-line class-methods-use-this
   resume() {
     // Nothing to do here
   }
 
   onOpen() {
-    this.progress = 1;
+    this.progress = 1
   }
 
   onClose() {
     if (this.shouldAttemptReconnect) {
-      clearTimeout(this.reconnectTimeoutId);
+      clearTimeout(this.reconnectTimeoutId)
       this.reconnectTimeoutId = setTimeout(() => {
-        this.start();
-      }, this.reconnectInterval * 1000);
+        this.start()
+      }, this.reconnectInterval * 1000)
     }
   }
 
   onMessage(ev) {
-    const isFirstChunk = !this.established;
-    this.established = true;
+    const isFirstChunk = !this.established
+    this.established = true
 
     if (isFirstChunk && this.hookOnEstablished) {
-      this.hookOnEstablished();
+      this.hookOnEstablished()
     }
 
     if (isFirstChunk && this.onEstablishedCallback) {
-      this.onEstablishedCallback(this);
+      this.onEstablishedCallback(this)
     }
 
     if (this.destination) {
-      this.destination.write(ev.data);
+      this.destination.write(ev.data)
     }
   }
 }

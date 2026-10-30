@@ -1,41 +1,40 @@
 /* eslint class-methods-use-this: ["error", { "exceptMethods": ["resume"] }] */
 export default class AjaxSource {
   constructor(url, options) {
-    this.url = url;
-    this.destination = null;
-    this.request = null;
-    this.streaming = false;
+    this.url = url
+    this.destination = null
+    this.request = null
+    this.streaming = false
 
-    this.completed = false;
-    this.established = false;
-    this.progress = 0;
+    this.completed = false
+    this.established = false
+    this.progress = 0
 
-    this.onEstablishedCallback = options.onSourceEstablished;
-    this.onCompletedCallback = options.onSourceCompleted;
+    this.onEstablishedCallback = options.onSourceEstablished
+    this.onCompletedCallback = options.onSourceCompleted
 
     if (options.hookOnEstablished) {
-      this.hookOnEstablished = options.hookOnEstablished;
+      this.hookOnEstablished = options.hookOnEstablished
     }
   }
 
   connect(destination) {
-    this.destination = destination;
+    this.destination = destination
   }
 
   start() {
-    this.request = new XMLHttpRequest();
+    this.request = new XMLHttpRequest()
 
-    // eslint-disable-next-line func-names
     this.request.onreadystatechange = function () {
       if (this.request.readyState === this.request.DONE && this.request.status === 200) {
-        this.onLoad(this.request.response);
+        this.onLoad(this.request.response)
       }
-    }.bind(this);
+    }.bind(this)
 
-    this.request.onprogress = this.onProgress.bind(this);
-    this.request.open('GET', this.url);
-    this.request.responseType = 'arraybuffer';
-    this.request.send();
+    this.request.onprogress = this.onProgress.bind(this)
+    this.request.open('GET', this.url)
+    this.request.responseType = 'arraybuffer'
+    this.request.send()
   }
 
   resume() {
@@ -46,34 +45,34 @@ export default class AjaxSource {
     // destroy() may run before start(), e.g. when a player is torn down while
     // the WASM module is still compiling and the source was never started.
     if (!this.request) {
-      return;
+      return
     }
 
-    this.request.abort();
+    this.request.abort()
   }
 
   onProgress(ev) {
-    this.progress = ev.loaded / ev.total;
+    this.progress = ev.loaded / ev.total
   }
 
   onLoad(data) {
-    this.established = true;
-    this.completed = true;
-    this.progress = 1;
+    this.established = true
+    this.completed = true
+    this.progress = 1
 
     if (this.hookOnEstablished) {
-      this.hookOnEstablished();
+      this.hookOnEstablished()
     }
 
     if (this.onEstablishedCallback) {
-      this.onEstablishedCallback(this);
+      this.onEstablishedCallback(this)
     }
     if (this.onCompletedCallback) {
-      this.onCompletedCallback(this);
+      this.onCompletedCallback(this)
     }
 
     if (this.destination) {
-      this.destination.write(data);
+      this.destination.write(data)
     }
   }
 }

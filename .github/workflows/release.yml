@@ -92,7 +92,7 @@ jobs:
         with:
           node-version: 24
           registry-url: 'https://npm.pkg.github.com'
-          scope: 'cycjimmy'
+          scope: cycjimmy
 
       - name: Publish To GitHub Package Registry
         if: steps.semantic.outputs.new_release_published == 'true'

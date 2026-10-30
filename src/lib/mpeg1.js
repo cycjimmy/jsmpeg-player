@@ -1,196 +1,195 @@
 // Inspired by Java MPEG-1 Video Decoder and Player by Zoltan Korandi
 // https://sourceforge.net/projects/javampeg1video/
 
-import { Now, Fill } from '../utils';
+import { Fill, Now } from '../utils'
 
-import BaseDecoder from './decoder';
-import BitBuffer from './buffer';
+import BitBuffer from './buffer'
+import BaseDecoder from './decoder'
 
 class MPEG1 extends BaseDecoder {
   constructor(options) {
-    super(options);
+    super(options)
 
-    this.onDecodeCallback = options.onVideoDecode;
+    this.onDecodeCallback = options.onVideoDecode
 
-    const bufferSize = options.videoBufferSize || 512 * 1024;
-    const bufferMode = options.streaming ? BitBuffer.MODE.EVICT : BitBuffer.MODE.EXPAND;
+    const bufferSize = options.videoBufferSize || 512 * 1024
+    const bufferMode = options.streaming ? BitBuffer.MODE.EVICT : BitBuffer.MODE.EXPAND
 
-    this.bits = new BitBuffer(bufferSize, bufferMode);
+    this.bits = new BitBuffer(bufferSize, bufferMode)
 
-    this.customIntraQuantMatrix = new Uint8Array(64);
-    this.customNonIntraQuantMatrix = new Uint8Array(64);
-    this.blockData = new Int32Array(64);
+    this.customIntraQuantMatrix = new Uint8Array(64)
+    this.customNonIntraQuantMatrix = new Uint8Array(64)
+    this.blockData = new Int32Array(64)
 
-    this.currentFrame = 0;
-    this.decodeFirstFrame = options.decodeFirstFrame !== false;
+    this.currentFrame = 0
+    this.decodeFirstFrame = options.decodeFirstFrame !== false
   }
 
-  // eslint-disable-next-line consistent-return
   write(pts, buffers) {
-    BaseDecoder.prototype.write.call(this, pts, buffers);
+    BaseDecoder.prototype.write.call(this, pts, buffers)
 
     if (!this.hasSequenceHeader) {
       if (this.bits.findStartCode(MPEG1.START.SEQUENCE) === -1) {
-        return false;
+        return false
       }
-      this.decodeSequenceHeader();
+      this.decodeSequenceHeader()
 
       if (this.decodeFirstFrame) {
-        this.decode();
+        this.decode()
       }
     }
   }
 
   decode() {
-    const startTime = Now();
+    const startTime = Now()
 
     if (!this.hasSequenceHeader) {
-      return false;
+      return false
     }
 
     if (this.bits.findStartCode(MPEG1.START.PICTURE) === -1) {
-      return false;
+      return false
     }
 
-    this.decodePicture();
-    this.advanceDecodedTime(1 / this.frameRate);
+    this.decodePicture()
+    this.advanceDecodedTime(1 / this.frameRate)
 
-    const elapsedTime = Now() - startTime;
+    const elapsedTime = Now() - startTime
     if (this.onDecodeCallback) {
-      this.onDecodeCallback(this, elapsedTime);
+      this.onDecodeCallback(this, elapsedTime)
     }
-    return true;
+    return true
   }
 
   readHuffman(codeTable) {
-    let state = 0;
+    let state = 0
     do {
-      state = codeTable[state + this.bits.read(1)];
-    } while (state >= 0 && codeTable[state] !== 0);
-    return codeTable[state + 2];
+      state = codeTable[state + this.bits.read(1)]
+    } while (state >= 0 && codeTable[state] !== 0)
+    return codeTable[state + 2]
   }
 
   decodeSequenceHeader() {
-    const newWidth = this.bits.read(12);
-    const newHeight = this.bits.read(12);
+    const newWidth = this.bits.read(12)
+    const newHeight = this.bits.read(12)
 
     // skip pixel aspect ratio
-    this.bits.skip(4);
+    this.bits.skip(4)
 
-    this.frameRate = MPEG1.PICTURE_RATE[this.bits.read(4)];
+    this.frameRate = MPEG1.PICTURE_RATE[this.bits.read(4)]
 
     // skip bitRate, marker, bufferSize and constrained bit
-    this.bits.skip(18 + 1 + 10 + 1);
+    this.bits.skip(18 + 1 + 10 + 1)
 
     if (newWidth !== this.width || newHeight !== this.height) {
-      this.width = newWidth;
-      this.height = newHeight;
+      this.width = newWidth
+      this.height = newHeight
 
-      this.initBuffers();
+      this.initBuffers()
 
       if (this.destination) {
-        this.destination.resize(newWidth, newHeight);
+        this.destination.resize(newWidth, newHeight)
       }
     }
 
     if (this.bits.read(1)) {
       // load custom intra quant matrix?
       for (let i = 0; i < 64; i++) {
-        this.customIntraQuantMatrix[MPEG1.ZIG_ZAG[i]] = this.bits.read(8);
+        this.customIntraQuantMatrix[MPEG1.ZIG_ZAG[i]] = this.bits.read(8)
       }
-      this.intraQuantMatrix = this.customIntraQuantMatrix;
+      this.intraQuantMatrix = this.customIntraQuantMatrix
     }
 
     if (this.bits.read(1)) {
       // load custom non intra quant matrix?
       for (let i = 0; i < 64; i++) {
-        const idx = MPEG1.ZIG_ZAG[i];
-        this.customNonIntraQuantMatrix[idx] = this.bits.read(8);
+        const idx = MPEG1.ZIG_ZAG[i]
+        this.customNonIntraQuantMatrix[idx] = this.bits.read(8)
       }
-      this.nonIntraQuantMatrix = this.customNonIntraQuantMatrix;
+      this.nonIntraQuantMatrix = this.customNonIntraQuantMatrix
     }
 
-    this.hasSequenceHeader = true;
+    this.hasSequenceHeader = true
   }
 
   initBuffers() {
-    this.intraQuantMatrix = MPEG1.DEFAULT_INTRA_QUANT_MATRIX;
-    this.nonIntraQuantMatrix = MPEG1.DEFAULT_NON_INTRA_QUANT_MATRIX;
+    this.intraQuantMatrix = MPEG1.DEFAULT_INTRA_QUANT_MATRIX
+    this.nonIntraQuantMatrix = MPEG1.DEFAULT_NON_INTRA_QUANT_MATRIX
 
-    this.mbWidth = (this.width + 15) >> 4;
-    this.mbHeight = (this.height + 15) >> 4;
-    this.mbSize = this.mbWidth * this.mbHeight;
+    this.mbWidth = (this.width + 15) >> 4
+    this.mbHeight = (this.height + 15) >> 4
+    this.mbSize = this.mbWidth * this.mbHeight
 
-    this.codedWidth = this.mbWidth << 4;
-    this.codedHeight = this.mbHeight << 4;
-    this.codedSize = this.codedWidth * this.codedHeight;
+    this.codedWidth = this.mbWidth << 4
+    this.codedHeight = this.mbHeight << 4
+    this.codedSize = this.codedWidth * this.codedHeight
 
-    this.halfWidth = this.mbWidth << 3;
-    this.halfHeight = this.mbHeight << 3;
+    this.halfWidth = this.mbWidth << 3
+    this.halfHeight = this.mbHeight << 3
 
     // Allocated buffers and resize the canvas
-    this.currentY = new Uint8ClampedArray(this.codedSize);
-    this.currentY32 = new Uint32Array(this.currentY.buffer);
+    this.currentY = new Uint8ClampedArray(this.codedSize)
+    this.currentY32 = new Uint32Array(this.currentY.buffer)
 
-    this.currentCr = new Uint8ClampedArray(this.codedSize >> 2);
-    this.currentCr32 = new Uint32Array(this.currentCr.buffer);
+    this.currentCr = new Uint8ClampedArray(this.codedSize >> 2)
+    this.currentCr32 = new Uint32Array(this.currentCr.buffer)
 
-    this.currentCb = new Uint8ClampedArray(this.codedSize >> 2);
-    this.currentCb32 = new Uint32Array(this.currentCb.buffer);
+    this.currentCb = new Uint8ClampedArray(this.codedSize >> 2)
+    this.currentCb32 = new Uint32Array(this.currentCb.buffer)
 
-    this.forwardY = new Uint8ClampedArray(this.codedSize);
-    this.forwardY32 = new Uint32Array(this.forwardY.buffer);
+    this.forwardY = new Uint8ClampedArray(this.codedSize)
+    this.forwardY32 = new Uint32Array(this.forwardY.buffer)
 
-    this.forwardCr = new Uint8ClampedArray(this.codedSize >> 2);
-    this.forwardCr32 = new Uint32Array(this.forwardCr.buffer);
+    this.forwardCr = new Uint8ClampedArray(this.codedSize >> 2)
+    this.forwardCr32 = new Uint32Array(this.forwardCr.buffer)
 
-    this.forwardCb = new Uint8ClampedArray(this.codedSize >> 2);
-    this.forwardCb32 = new Uint32Array(this.forwardCb.buffer);
+    this.forwardCb = new Uint8ClampedArray(this.codedSize >> 2)
+    this.forwardCb32 = new Uint32Array(this.forwardCb.buffer)
   }
 
   decodePicture() {
-    this.currentFrame++;
+    this.currentFrame++
 
-    this.bits.skip(10); // skip temporalReference
-    this.pictureType = this.bits.read(3);
-    this.bits.skip(16); // skip vbv_delay
+    this.bits.skip(10) // skip temporalReference
+    this.pictureType = this.bits.read(3)
+    this.bits.skip(16) // skip vbv_delay
 
     // Skip B and D frames or unknown coding type
     if (this.pictureType <= 0 || this.pictureType >= MPEG1.PICTURE_TYPE.B) {
-      return;
+      return
     }
 
     // full_pel_forward, forward_f_code
     if (this.pictureType === MPEG1.PICTURE_TYPE.PREDICTIVE) {
-      this.fullPelForward = this.bits.read(1);
-      this.forwardFCode = this.bits.read(3);
+      this.fullPelForward = this.bits.read(1)
+      this.forwardFCode = this.bits.read(3)
       if (this.forwardFCode === 0) {
         // Ignore picture with zero forward_f_code
-        return;
+        return
       }
-      this.forwardRSize = this.forwardFCode - 1;
-      this.forwardF = 1 << this.forwardRSize;
+      this.forwardRSize = this.forwardFCode - 1
+      this.forwardF = 1 << this.forwardRSize
     }
 
-    let code = 0;
+    let code = 0
     do {
-      code = this.bits.findNextStartCode();
-    } while (code === MPEG1.START.EXTENSION || code === MPEG1.START.USER_DATA);
+      code = this.bits.findNextStartCode()
+    } while (code === MPEG1.START.EXTENSION || code === MPEG1.START.USER_DATA)
 
     while (code >= MPEG1.START.SLICE_FIRST && code <= MPEG1.START.SLICE_LAST) {
-      this.decodeSlice(code & 0x000000ff);
-      code = this.bits.findNextStartCode();
+      this.decodeSlice(code & 0x000000FF)
+      code = this.bits.findNextStartCode()
     }
 
     if (code !== -1) {
       // We found the next start code; rewind 32bits and let the main loop
       // handle it.
-      this.bits.rewind(32);
+      this.bits.rewind(32)
     }
 
     // Invoke decode callbacks
     if (this.destination) {
-      this.destination.render(this.currentY, this.currentCr, this.currentCb, true);
+      this.destination.render(this.currentY, this.currentCr, this.currentCb, true)
     }
 
     // If this is a reference picutre then rotate the prediction pointers
@@ -198,685 +197,717 @@ class MPEG1 extends BaseDecoder {
       this.pictureType === MPEG1.PICTURE_TYPE.INTRA
       || this.pictureType === MPEG1.PICTURE_TYPE.PREDICTIVE
     ) {
-      const tmpY = this.forwardY;
-      const tmpY32 = this.forwardY32;
-      const tmpCr = this.forwardCr;
-      const tmpCr32 = this.forwardCr32;
-      const tmpCb = this.forwardCb;
-      const tmpCb32 = this.forwardCb32;
+      const tmpY = this.forwardY
+      const tmpY32 = this.forwardY32
+      const tmpCr = this.forwardCr
+      const tmpCr32 = this.forwardCr32
+      const tmpCb = this.forwardCb
+      const tmpCb32 = this.forwardCb32
 
-      this.forwardY = this.currentY;
-      this.forwardY32 = this.currentY32;
-      this.forwardCr = this.currentCr;
-      this.forwardCr32 = this.currentCr32;
-      this.forwardCb = this.currentCb;
-      this.forwardCb32 = this.currentCb32;
+      this.forwardY = this.currentY
+      this.forwardY32 = this.currentY32
+      this.forwardCr = this.currentCr
+      this.forwardCr32 = this.currentCr32
+      this.forwardCb = this.currentCb
+      this.forwardCb32 = this.currentCb32
 
-      this.currentY = tmpY;
-      this.currentY32 = tmpY32;
-      this.currentCr = tmpCr;
-      this.currentCr32 = tmpCr32;
-      this.currentCb = tmpCb;
-      this.currentCb32 = tmpCb32;
+      this.currentY = tmpY
+      this.currentY32 = tmpY32
+      this.currentCr = tmpCr
+      this.currentCr32 = tmpCr32
+      this.currentCb = tmpCb
+      this.currentCb32 = tmpCb32
     }
   }
 
   decodeSlice(slice) {
-    this.sliceBegin = true;
-    this.macroblockAddress = (slice - 1) * this.mbWidth - 1;
+    this.sliceBegin = true
+    this.macroblockAddress = (slice - 1) * this.mbWidth - 1
 
     // Reset motion vectors and DC predictors
-    this.motionFwH = this.motionFwHPrev = 0;
-    this.motionFwV = this.motionFwVPrev = 0;
-    this.dcPredictorY = 128;
-    this.dcPredictorCr = 128;
-    this.dcPredictorCb = 128;
+    this.motionFwH = this.motionFwHPrev = 0
+    this.motionFwV = this.motionFwVPrev = 0
+    this.dcPredictorY = 128
+    this.dcPredictorCr = 128
+    this.dcPredictorCb = 128
 
-    this.quantizerScale = this.bits.read(5);
+    this.quantizerScale = this.bits.read(5)
 
     // skip extra bits
     while (this.bits.read(1)) {
-      this.bits.skip(8);
+      this.bits.skip(8)
     }
 
     do {
-      this.decodeMacroblock();
-    } while (!this.bits.nextBytesAreStartCode());
+      this.decodeMacroblock()
+    } while (!this.bits.nextBytesAreStartCode())
   }
 
   decodeMacroblock() {
     // Decode macroblock_address_increment
-    let increment = 0;
-    let t = this.readHuffman(MPEG1.MACROBLOCK_ADDRESS_INCREMENT);
+    let increment = 0
+    let t = this.readHuffman(MPEG1.MACROBLOCK_ADDRESS_INCREMENT)
 
     while (t === 34) {
       // macroblock_stuffing
-      t = this.readHuffman(MPEG1.MACROBLOCK_ADDRESS_INCREMENT);
+      t = this.readHuffman(MPEG1.MACROBLOCK_ADDRESS_INCREMENT)
     }
     while (t === 35) {
       // macroblock_escape
-      increment += 33;
-      t = this.readHuffman(MPEG1.MACROBLOCK_ADDRESS_INCREMENT);
+      increment += 33
+      t = this.readHuffman(MPEG1.MACROBLOCK_ADDRESS_INCREMENT)
     }
-    increment += t;
+    increment += t
 
     // Process any skipped macroblocks
     if (this.sliceBegin) {
       // The first macroblock_address_increment of each slice is relative
       // to beginning of the preverious row, not the preverious macroblock
-      this.sliceBegin = false;
-      this.macroblockAddress += increment;
-    } else {
+      this.sliceBegin = false
+      this.macroblockAddress += increment
+    }
+    else {
       if (this.macroblockAddress + increment >= this.mbSize) {
         // Illegal (too large) macroblock_address_increment
-        return;
+        return
       }
       if (increment > 1) {
         // Skipped macroblocks reset DC predictors
-        this.dcPredictorY = 128;
-        this.dcPredictorCr = 128;
-        this.dcPredictorCb = 128;
+        this.dcPredictorY = 128
+        this.dcPredictorCr = 128
+        this.dcPredictorCb = 128
 
         // Skipped macroblocks in P-pictures reset motion vectors
         if (this.pictureType === MPEG1.PICTURE_TYPE.PREDICTIVE) {
-          this.motionFwH = this.motionFwHPrev = 0;
-          this.motionFwV = this.motionFwVPrev = 0;
+          this.motionFwH = this.motionFwHPrev = 0
+          this.motionFwV = this.motionFwVPrev = 0
         }
       }
 
       // Predict skipped macroblocks
       while (increment > 1) {
-        this.macroblockAddress++;
-        this.mbRow = (this.macroblockAddress / this.mbWidth) | 0;
-        this.mbCol = this.macroblockAddress % this.mbWidth;
+        this.macroblockAddress++
+        this.mbRow = (this.macroblockAddress / this.mbWidth) | 0
+        this.mbCol = this.macroblockAddress % this.mbWidth
         this.copyMacroblock(
           this.motionFwH,
           this.motionFwV,
           this.forwardY,
           this.forwardCr,
           this.forwardCb,
-        );
-        increment--;
+        )
+        increment--
       }
-      this.macroblockAddress++;
+      this.macroblockAddress++
     }
-    this.mbRow = (this.macroblockAddress / this.mbWidth) | 0;
-    this.mbCol = this.macroblockAddress % this.mbWidth;
+    this.mbRow = (this.macroblockAddress / this.mbWidth) | 0
+    this.mbCol = this.macroblockAddress % this.mbWidth
 
     // Process the current macroblock
-    const mbTable = MPEG1.MACROBLOCK_TYPE[this.pictureType];
-    this.macroblockType = this.readHuffman(mbTable);
-    this.macroblockIntra = this.macroblockType & 0x01;
-    this.macroblockMotFw = this.macroblockType & 0x08;
+    const mbTable = MPEG1.MACROBLOCK_TYPE[this.pictureType]
+    this.macroblockType = this.readHuffman(mbTable)
+    this.macroblockIntra = this.macroblockType & 0x01
+    this.macroblockMotFw = this.macroblockType & 0x08
 
     // Quantizer scale
     if ((this.macroblockType & 0x10) !== 0) {
-      this.quantizerScale = this.bits.read(5);
+      this.quantizerScale = this.bits.read(5)
     }
 
     if (this.macroblockIntra) {
       // Intra-coded macroblocks reset motion vectors
-      this.motionFwH = this.motionFwHPrev = 0;
-      this.motionFwV = this.motionFwVPrev = 0;
-    } else {
+      this.motionFwH = this.motionFwHPrev = 0
+      this.motionFwV = this.motionFwVPrev = 0
+    }
+    else {
       // Non-intra macroblocks reset DC predictors
-      this.dcPredictorY = 128;
-      this.dcPredictorCr = 128;
-      this.dcPredictorCb = 128;
+      this.dcPredictorY = 128
+      this.dcPredictorCr = 128
+      this.dcPredictorCb = 128
 
-      this.decodeMotionVectors();
+      this.decodeMotionVectors()
       this.copyMacroblock(
         this.motionFwH,
         this.motionFwV,
         this.forwardY,
         this.forwardCr,
         this.forwardCb,
-      );
+      )
     }
 
     // Decode blocks
-    // eslint-disable-next-line no-nested-ternary
+
     const cbp = (this.macroblockType & 0x02) !== 0
       ? this.readHuffman(MPEG1.CODE_BLOCK_PATTERN)
       : this.macroblockIntra
-        ? 0x3f
-        : 0;
+        ? 0x3F
+        : 0
 
     for (let block = 0, mask = 0x20; block < 6; block++) {
       if ((cbp & mask) !== 0) {
-        this.decodeBlock(block);
+        this.decodeBlock(block)
       }
-      mask >>= 1;
+      mask >>= 1
     }
   }
 
   decodeMotionVectors() {
-    let code;
-    let d;
-    let r = 0;
+    let code
+    let d
+    let r = 0
 
     // Forward
     if (this.macroblockMotFw) {
       // Horizontal forward
-      code = this.readHuffman(MPEG1.MOTION);
+      code = this.readHuffman(MPEG1.MOTION)
       if (code !== 0 && this.forwardF !== 1) {
-        r = this.bits.read(this.forwardRSize);
-        d = ((Math.abs(code) - 1) << this.forwardRSize) + r + 1;
+        r = this.bits.read(this.forwardRSize)
+        d = ((Math.abs(code) - 1) << this.forwardRSize) + r + 1
         if (code < 0) {
-          d = -d;
+          d = -d
         }
-      } else {
-        d = code;
+      }
+      else {
+        d = code
       }
 
-      this.motionFwHPrev += d;
+      this.motionFwHPrev += d
       if (this.motionFwHPrev > (this.forwardF << 4) - 1) {
-        this.motionFwHPrev -= this.forwardF << 5;
-      } else if (this.motionFwHPrev < -this.forwardF << 4) {
-        this.motionFwHPrev += this.forwardF << 5;
+        this.motionFwHPrev -= this.forwardF << 5
+      }
+      else if (this.motionFwHPrev < -this.forwardF << 4) {
+        this.motionFwHPrev += this.forwardF << 5
       }
 
-      this.motionFwH = this.motionFwHPrev;
+      this.motionFwH = this.motionFwHPrev
       if (this.fullPelForward) {
-        this.motionFwH <<= 1;
+        this.motionFwH <<= 1
       }
 
       // Vertical forward
-      code = this.readHuffman(MPEG1.MOTION);
+      code = this.readHuffman(MPEG1.MOTION)
       if (code !== 0 && this.forwardF !== 1) {
-        r = this.bits.read(this.forwardRSize);
-        d = ((Math.abs(code) - 1) << this.forwardRSize) + r + 1;
+        r = this.bits.read(this.forwardRSize)
+        d = ((Math.abs(code) - 1) << this.forwardRSize) + r + 1
         if (code < 0) {
-          d = -d;
+          d = -d
         }
-      } else {
-        d = code;
+      }
+      else {
+        d = code
       }
 
-      this.motionFwVPrev += d;
+      this.motionFwVPrev += d
       if (this.motionFwVPrev > (this.forwardF << 4) - 1) {
-        this.motionFwVPrev -= this.forwardF << 5;
-      } else if (this.motionFwVPrev < -this.forwardF << 4) {
-        this.motionFwVPrev += this.forwardF << 5;
+        this.motionFwVPrev -= this.forwardF << 5
+      }
+      else if (this.motionFwVPrev < -this.forwardF << 4) {
+        this.motionFwVPrev += this.forwardF << 5
       }
 
-      this.motionFwV = this.motionFwVPrev;
+      this.motionFwV = this.motionFwVPrev
       if (this.fullPelForward) {
-        this.motionFwV <<= 1;
+        this.motionFwV <<= 1
       }
-    } else if (this.pictureType === MPEG1.PICTURE_TYPE.PREDICTIVE) {
+    }
+    else if (this.pictureType === MPEG1.PICTURE_TYPE.PREDICTIVE) {
       // No motion information in P-picture, reset vectors
-      this.motionFwH = this.motionFwHPrev = 0;
-      this.motionFwV = this.motionFwVPrev = 0;
+      this.motionFwH = this.motionFwHPrev = 0
+      this.motionFwV = this.motionFwVPrev = 0
     }
   }
 
   copyMacroblock(motionH, motionV, sY, sCr, sCb) {
-    let width;
-    let scan;
-    let H;
-    let V;
-    let oddH;
-    let oddV;
-    let src;
-    let dest;
-    let last;
+    let width
+    let scan
+    let H
+    let V
+    let oddH
+    let oddV
+    let src
+    let dest
+    let last
 
     // We use 32bit writes here
-    const dY = this.currentY32;
-    const dCb = this.currentCb32;
-    const dCr = this.currentCr32;
+    const dY = this.currentY32
+    const dCb = this.currentCb32
+    const dCr = this.currentCr32
 
     // Luminance
-    width = this.codedWidth;
-    scan = width - 16;
+    width = this.codedWidth
+    scan = width - 16
 
-    H = motionH >> 1;
-    V = motionV >> 1;
-    oddH = (motionH & 1) === 1;
-    oddV = (motionV & 1) === 1;
+    H = motionH >> 1
+    V = motionV >> 1
+    oddH = (motionH & 1) === 1
+    oddV = (motionV & 1) === 1
 
-    src = ((this.mbRow << 4) + V) * width + (this.mbCol << 4) + H;
-    dest = (this.mbRow * width + this.mbCol) << 2;
-    last = dest + (width << 2);
+    src = ((this.mbRow << 4) + V) * width + (this.mbCol << 4) + H
+    dest = (this.mbRow * width + this.mbCol) << 2
+    last = dest + (width << 2)
 
-    let x;
-    let y1;
-    let y2;
-    let y;
+    let x
+    let y1
+    let y2
+    let y
     if (oddH) {
       if (oddV) {
         while (dest < last) {
-          y1 = sY[src] + sY[src + width];
-          src++;
+          y1 = sY[src] + sY[src + width]
+          src++
           for (x = 0; x < 4; x++) {
-            y2 = sY[src] + sY[src + width];
-            src++;
-            y = ((y1 + y2 + 2) >> 2) & 0xff;
+            y2 = sY[src] + sY[src + width]
+            src++
+            y = ((y1 + y2 + 2) >> 2) & 0xFF
 
-            y1 = sY[src] + sY[src + width];
-            src++;
-            y |= ((y1 + y2 + 2) << 6) & 0xff00;
+            y1 = sY[src] + sY[src + width]
+            src++
+            y |= ((y1 + y2 + 2) << 6) & 0xFF00
 
-            y2 = sY[src] + sY[src + width];
-            src++;
-            y |= ((y1 + y2 + 2) << 14) & 0xff0000;
+            y2 = sY[src] + sY[src + width]
+            src++
+            y |= ((y1 + y2 + 2) << 14) & 0xFF0000
 
-            y1 = sY[src] + sY[src + width];
-            src++;
-            y |= ((y1 + y2 + 2) << 22) & 0xff000000;
+            y1 = sY[src] + sY[src + width]
+            src++
+            y |= ((y1 + y2 + 2) << 22) & 0xFF000000
 
-            dY[dest++] = y;
+            dY[dest++] = y
           }
-          dest += scan >> 2;
-          src += scan - 1;
+          dest += scan >> 2
+          src += scan - 1
         }
-      } else {
+      }
+      else {
         while (dest < last) {
-          y1 = sY[src++];
+          y1 = sY[src++]
           for (x = 0; x < 4; x++) {
-            y2 = sY[src++];
-            y = ((y1 + y2 + 1) >> 1) & 0xff;
+            y2 = sY[src++]
+            y = ((y1 + y2 + 1) >> 1) & 0xFF
 
-            y1 = sY[src++];
-            y |= ((y1 + y2 + 1) << 7) & 0xff00;
+            y1 = sY[src++]
+            y |= ((y1 + y2 + 1) << 7) & 0xFF00
 
-            y2 = sY[src++];
-            y |= ((y1 + y2 + 1) << 15) & 0xff0000;
+            y2 = sY[src++]
+            y |= ((y1 + y2 + 1) << 15) & 0xFF0000
 
-            y1 = sY[src++];
-            y |= ((y1 + y2 + 1) << 23) & 0xff000000;
+            y1 = sY[src++]
+            y |= ((y1 + y2 + 1) << 23) & 0xFF000000
 
-            dY[dest++] = y;
+            dY[dest++] = y
           }
-          dest += scan >> 2;
-          src += scan - 1;
+          dest += scan >> 2
+          src += scan - 1
         }
       }
-    } else if (oddV) {
+    }
+    else if (oddV) {
       while (dest < last) {
         for (x = 0; x < 4; x++) {
-          y = ((sY[src] + sY[src + width] + 1) >> 1) & 0xff;
-          src++;
-          y |= ((sY[src] + sY[src + width] + 1) << 7) & 0xff00;
-          src++;
-          y |= ((sY[src] + sY[src + width] + 1) << 15) & 0xff0000;
-          src++;
-          y |= ((sY[src] + sY[src + width] + 1) << 23) & 0xff000000;
-          src++;
+          y = ((sY[src] + sY[src + width] + 1) >> 1) & 0xFF
+          src++
+          y |= ((sY[src] + sY[src + width] + 1) << 7) & 0xFF00
+          src++
+          y |= ((sY[src] + sY[src + width] + 1) << 15) & 0xFF0000
+          src++
+          y |= ((sY[src] + sY[src + width] + 1) << 23) & 0xFF000000
+          src++
 
-          dY[dest++] = y;
+          dY[dest++] = y
         }
-        dest += scan >> 2;
-        src += scan;
+        dest += scan >> 2
+        src += scan
       }
-    } else {
+    }
+    else {
       while (dest < last) {
         for (x = 0; x < 4; x++) {
-          y = sY[src];
-          src++;
-          y |= sY[src] << 8;
-          src++;
-          y |= sY[src] << 16;
-          src++;
-          y |= sY[src] << 24;
-          src++;
+          y = sY[src]
+          src++
+          y |= sY[src] << 8
+          src++
+          y |= sY[src] << 16
+          src++
+          y |= sY[src] << 24
+          src++
 
-          dY[dest++] = y;
+          dY[dest++] = y
         }
-        dest += scan >> 2;
-        src += scan;
+        dest += scan >> 2
+        src += scan
       }
     }
 
     // Chrominance
 
-    width = this.halfWidth;
-    scan = width - 8;
+    width = this.halfWidth
+    scan = width - 8
 
-    H = (motionH / 2) >> 1;
-    V = (motionV / 2) >> 1;
-    oddH = ((motionH / 2) & 1) === 1;
-    oddV = ((motionV / 2) & 1) === 1;
+    H = (motionH / 2) >> 1
+    V = (motionV / 2) >> 1
+    oddH = ((motionH / 2) & 1) === 1
+    oddV = ((motionV / 2) & 1) === 1
 
-    src = ((this.mbRow << 3) + V) * width + (this.mbCol << 3) + H;
-    dest = (this.mbRow * width + this.mbCol) << 1;
-    last = dest + (width << 1);
+    src = ((this.mbRow << 3) + V) * width + (this.mbCol << 3) + H
+    dest = (this.mbRow * width + this.mbCol) << 1
+    last = dest + (width << 1)
 
-    let cr1;
-    let cr2;
-    let cr;
-    let cb1;
-    let cb2;
-    let cb;
+    let cr1
+    let cr2
+    let cr
+    let cb1
+    let cb2
+    let cb
     if (oddH) {
       if (oddV) {
         while (dest < last) {
-          cr1 = sCr[src] + sCr[src + width];
-          cb1 = sCb[src] + sCb[src + width];
-          src++;
+          cr1 = sCr[src] + sCr[src + width]
+          cb1 = sCb[src] + sCb[src + width]
+          src++
           for (x = 0; x < 2; x++) {
-            cr2 = sCr[src] + sCr[src + width];
-            cb2 = sCb[src] + sCb[src + width];
-            src++;
-            cr = ((cr1 + cr2 + 2) >> 2) & 0xff;
-            cb = ((cb1 + cb2 + 2) >> 2) & 0xff;
+            cr2 = sCr[src] + sCr[src + width]
+            cb2 = sCb[src] + sCb[src + width]
+            src++
+            cr = ((cr1 + cr2 + 2) >> 2) & 0xFF
+            cb = ((cb1 + cb2 + 2) >> 2) & 0xFF
 
-            cr1 = sCr[src] + sCr[src + width];
-            cb1 = sCb[src] + sCb[src + width];
-            src++;
-            cr |= ((cr1 + cr2 + 2) << 6) & 0xff00;
-            cb |= ((cb1 + cb2 + 2) << 6) & 0xff00;
+            cr1 = sCr[src] + sCr[src + width]
+            cb1 = sCb[src] + sCb[src + width]
+            src++
+            cr |= ((cr1 + cr2 + 2) << 6) & 0xFF00
+            cb |= ((cb1 + cb2 + 2) << 6) & 0xFF00
 
-            cr2 = sCr[src] + sCr[src + width];
-            cb2 = sCb[src] + sCb[src + width];
-            src++;
-            cr |= ((cr1 + cr2 + 2) << 14) & 0xff0000;
-            cb |= ((cb1 + cb2 + 2) << 14) & 0xff0000;
+            cr2 = sCr[src] + sCr[src + width]
+            cb2 = sCb[src] + sCb[src + width]
+            src++
+            cr |= ((cr1 + cr2 + 2) << 14) & 0xFF0000
+            cb |= ((cb1 + cb2 + 2) << 14) & 0xFF0000
 
-            cr1 = sCr[src] + sCr[src + width];
-            cb1 = sCb[src] + sCb[src + width];
-            src++;
-            cr |= ((cr1 + cr2 + 2) << 22) & 0xff000000;
-            cb |= ((cb1 + cb2 + 2) << 22) & 0xff000000;
+            cr1 = sCr[src] + sCr[src + width]
+            cb1 = sCb[src] + sCb[src + width]
+            src++
+            cr |= ((cr1 + cr2 + 2) << 22) & 0xFF000000
+            cb |= ((cb1 + cb2 + 2) << 22) & 0xFF000000
 
-            dCr[dest] = cr;
-            dCb[dest] = cb;
-            dest++;
+            dCr[dest] = cr
+            dCb[dest] = cb
+            dest++
           }
-          dest += scan >> 2;
-          src += scan - 1;
+          dest += scan >> 2
+          src += scan - 1
         }
-      } else {
+      }
+      else {
         while (dest < last) {
-          cr1 = sCr[src];
-          cb1 = sCb[src];
-          src++;
+          cr1 = sCr[src]
+          cb1 = sCb[src]
+          src++
           for (x = 0; x < 2; x++) {
-            cr2 = sCr[src];
-            cb2 = sCb[src++];
-            cr = ((cr1 + cr2 + 1) >> 1) & 0xff;
-            cb = ((cb1 + cb2 + 1) >> 1) & 0xff;
+            cr2 = sCr[src]
+            cb2 = sCb[src++]
+            cr = ((cr1 + cr2 + 1) >> 1) & 0xFF
+            cb = ((cb1 + cb2 + 1) >> 1) & 0xFF
 
-            cr1 = sCr[src];
-            cb1 = sCb[src++];
-            cr |= ((cr1 + cr2 + 1) << 7) & 0xff00;
-            cb |= ((cb1 + cb2 + 1) << 7) & 0xff00;
+            cr1 = sCr[src]
+            cb1 = sCb[src++]
+            cr |= ((cr1 + cr2 + 1) << 7) & 0xFF00
+            cb |= ((cb1 + cb2 + 1) << 7) & 0xFF00
 
-            cr2 = sCr[src];
-            cb2 = sCb[src++];
-            cr |= ((cr1 + cr2 + 1) << 15) & 0xff0000;
-            cb |= ((cb1 + cb2 + 1) << 15) & 0xff0000;
+            cr2 = sCr[src]
+            cb2 = sCb[src++]
+            cr |= ((cr1 + cr2 + 1) << 15) & 0xFF0000
+            cb |= ((cb1 + cb2 + 1) << 15) & 0xFF0000
 
-            cr1 = sCr[src];
-            cb1 = sCb[src++];
-            cr |= ((cr1 + cr2 + 1) << 23) & 0xff000000;
-            cb |= ((cb1 + cb2 + 1) << 23) & 0xff000000;
+            cr1 = sCr[src]
+            cb1 = sCb[src++]
+            cr |= ((cr1 + cr2 + 1) << 23) & 0xFF000000
+            cb |= ((cb1 + cb2 + 1) << 23) & 0xFF000000
 
-            dCr[dest] = cr;
-            dCb[dest] = cb;
-            dest++;
+            dCr[dest] = cr
+            dCb[dest] = cb
+            dest++
           }
-          dest += scan >> 2;
-          src += scan - 1;
+          dest += scan >> 2
+          src += scan - 1
         }
       }
-    } else if (oddV) {
+    }
+    else if (oddV) {
       while (dest < last) {
         for (x = 0; x < 2; x++) {
-          cr = ((sCr[src] + sCr[src + width] + 1) >> 1) & 0xff;
-          cb = ((sCb[src] + sCb[src + width] + 1) >> 1) & 0xff;
-          src++;
+          cr = ((sCr[src] + sCr[src + width] + 1) >> 1) & 0xFF
+          cb = ((sCb[src] + sCb[src + width] + 1) >> 1) & 0xFF
+          src++
 
-          cr |= ((sCr[src] + sCr[src + width] + 1) << 7) & 0xff00;
-          cb |= ((sCb[src] + sCb[src + width] + 1) << 7) & 0xff00;
-          src++;
+          cr |= ((sCr[src] + sCr[src + width] + 1) << 7) & 0xFF00
+          cb |= ((sCb[src] + sCb[src + width] + 1) << 7) & 0xFF00
+          src++
 
-          cr |= ((sCr[src] + sCr[src + width] + 1) << 15) & 0xff0000;
-          cb |= ((sCb[src] + sCb[src + width] + 1) << 15) & 0xff0000;
-          src++;
+          cr |= ((sCr[src] + sCr[src + width] + 1) << 15) & 0xFF0000
+          cb |= ((sCb[src] + sCb[src + width] + 1) << 15) & 0xFF0000
+          src++
 
-          cr |= ((sCr[src] + sCr[src + width] + 1) << 23) & 0xff000000;
-          cb |= ((sCb[src] + sCb[src + width] + 1) << 23) & 0xff000000;
-          src++;
+          cr |= ((sCr[src] + sCr[src + width] + 1) << 23) & 0xFF000000
+          cb |= ((sCb[src] + sCb[src + width] + 1) << 23) & 0xFF000000
+          src++
 
-          dCr[dest] = cr;
-          dCb[dest] = cb;
-          dest++;
+          dCr[dest] = cr
+          dCb[dest] = cb
+          dest++
         }
-        dest += scan >> 2;
-        src += scan;
+        dest += scan >> 2
+        src += scan
       }
-    } else {
+    }
+    else {
       while (dest < last) {
         for (x = 0; x < 2; x++) {
-          cr = sCr[src];
-          cb = sCb[src];
-          src++;
+          cr = sCr[src]
+          cb = sCb[src]
+          src++
 
-          cr |= sCr[src] << 8;
-          cb |= sCb[src] << 8;
-          src++;
+          cr |= sCr[src] << 8
+          cb |= sCb[src] << 8
+          src++
 
-          cr |= sCr[src] << 16;
-          cb |= sCb[src] << 16;
-          src++;
+          cr |= sCr[src] << 16
+          cb |= sCb[src] << 16
+          src++
 
-          cr |= sCr[src] << 24;
-          cb |= sCb[src] << 24;
-          src++;
+          cr |= sCr[src] << 24
+          cb |= sCb[src] << 24
+          src++
 
-          dCr[dest] = cr;
-          dCb[dest] = cb;
-          dest++;
+          dCr[dest] = cr
+          dCb[dest] = cb
+          dest++
         }
-        dest += scan >> 2;
-        src += scan;
+        dest += scan >> 2
+        src += scan
       }
     }
   }
 
   decodeBlock(block) {
-    let n = 0;
-    let quantMatrix;
+    let n = 0
+    let quantMatrix
 
     // Decode DC coefficient of intra-coded blocks
     if (this.macroblockIntra) {
-      let predictor;
-      let dctSize;
+      let predictor
+      let dctSize
 
       // DC prediction
 
       if (block < 4) {
-        predictor = this.dcPredictorY;
-        dctSize = this.readHuffman(MPEG1.DCT_DC_SIZE_LUMINANCE);
-      } else {
-        predictor = block === 4 ? this.dcPredictorCr : this.dcPredictorCb;
-        dctSize = this.readHuffman(MPEG1.DCT_DC_SIZE_CHROMINANCE);
+        predictor = this.dcPredictorY
+        dctSize = this.readHuffman(MPEG1.DCT_DC_SIZE_LUMINANCE)
+      }
+      else {
+        predictor = block === 4
+          ? this.dcPredictorCr
+          : this.dcPredictorCb
+        dctSize = this.readHuffman(MPEG1.DCT_DC_SIZE_CHROMINANCE)
       }
 
       // Read DC coeff
       if (dctSize > 0) {
-        const differential = this.bits.read(dctSize);
+        const differential = this.bits.read(dctSize)
         if ((differential & (1 << (dctSize - 1))) !== 0) {
-          this.blockData[0] = predictor + differential;
-        } else {
-          this.blockData[0] = predictor + ((-1 << dctSize) | (differential + 1));
+          this.blockData[0] = predictor + differential
         }
-      } else {
-        this.blockData[0] = predictor;
+        else {
+          this.blockData[0] = predictor + ((-1 << dctSize) | (differential + 1))
+        }
+      }
+      else {
+        this.blockData[0] = predictor
       }
 
       // Save predictor value
       if (block < 4) {
-        // eslint-disable-next-line prefer-destructuring
-        this.dcPredictorY = this.blockData[0];
-      } else if (block === 4) {
-        // eslint-disable-next-line prefer-destructuring
-        this.dcPredictorCr = this.blockData[0];
-      } else {
-        // eslint-disable-next-line prefer-destructuring
-        this.dcPredictorCb = this.blockData[0];
+        this.dcPredictorY = this.blockData[0]
+      }
+      else if (block === 4) {
+        this.dcPredictorCr = this.blockData[0]
+      }
+      else {
+        this.dcPredictorCb = this.blockData[0]
       }
 
       // Dequantize + premultiply
-      this.blockData[0] <<= 3 + 5;
+      this.blockData[0] <<= 3 + 5
 
-      quantMatrix = this.intraQuantMatrix;
-      n = 1;
-    } else {
-      quantMatrix = this.nonIntraQuantMatrix;
+      quantMatrix = this.intraQuantMatrix
+      n = 1
+    }
+    else {
+      quantMatrix = this.nonIntraQuantMatrix
     }
 
     // Decode AC coefficients (+DC for non-intra)
-    let level = 0;
-    // eslint-disable-next-line no-constant-condition
+    let level = 0
+
     while (true) {
-      let run = 0;
-      const coeff = this.readHuffman(MPEG1.DCT_COEFF);
+      let run = 0
+      const coeff = this.readHuffman(MPEG1.DCT_COEFF)
 
       if (coeff === 0x0001 && n > 0 && this.bits.read(1) === 0) {
         // end_of_block
-        break;
+        break
       }
-      if (coeff === 0xffff) {
+      if (coeff === 0xFFFF) {
         // escape
-        run = this.bits.read(6);
-        level = this.bits.read(8);
+        run = this.bits.read(6)
+        level = this.bits.read(8)
         if (level === 0) {
-          level = this.bits.read(8);
-        } else if (level === 128) {
-          level = this.bits.read(8) - 256;
-        } else if (level > 128) {
-          level -= 256;
+          level = this.bits.read(8)
         }
-      } else {
-        run = coeff >> 8;
-        level = coeff & 0xff;
+        else if (level === 128) {
+          level = this.bits.read(8) - 256
+        }
+        else if (level > 128) {
+          level -= 256
+        }
+      }
+      else {
+        run = coeff >> 8
+        level = coeff & 0xFF
         if (this.bits.read(1)) {
-          level = -level;
+          level = -level
         }
       }
 
-      n += run;
-      const dezigZagged = MPEG1.ZIG_ZAG[n];
-      n++;
+      n += run
+      const dezigZagged = MPEG1.ZIG_ZAG[n]
+      n++
 
       // Dequantize, oddify, clip
-      level <<= 1;
+      level <<= 1
       if (!this.macroblockIntra) {
-        level += level < 0 ? -1 : 1;
+        level += level < 0
+          ? -1
+          : 1
       }
-      level = (level * this.quantizerScale * quantMatrix[dezigZagged]) >> 4;
+      level = (level * this.quantizerScale * quantMatrix[dezigZagged]) >> 4
       if ((level & 1) === 0) {
-        level -= level > 0 ? 1 : -1;
+        level -= level > 0
+          ? 1
+          : -1
       }
       if (level > 2047) {
-        level = 2047;
-      } else if (level < -2048) {
-        level = -2048;
+        level = 2047
+      }
+      else if (level < -2048) {
+        level = -2048
       }
 
       // Save premultiplied coefficient
-      this.blockData[dezigZagged] = level * MPEG1.PREMULTIPLIER_MATRIX[dezigZagged];
+      this.blockData[dezigZagged] = level * MPEG1.PREMULTIPLIER_MATRIX[dezigZagged]
     }
 
     // Move block to its place
-    let destArray;
-    let destIndex;
-    let scan;
+    let destArray
+    let destIndex
+    let scan
 
     if (block < 4) {
-      destArray = this.currentY;
-      scan = this.codedWidth - 8;
-      destIndex = (this.mbRow * this.codedWidth + this.mbCol) << 4;
+      destArray = this.currentY
+      scan = this.codedWidth - 8
+      destIndex = (this.mbRow * this.codedWidth + this.mbCol) << 4
       if ((block & 1) !== 0) {
-        destIndex += 8;
+        destIndex += 8
       }
       if ((block & 2) !== 0) {
-        destIndex += this.codedWidth << 3;
+        destIndex += this.codedWidth << 3
       }
-    } else {
-      destArray = block === 4 ? this.currentCb : this.currentCr;
-      scan = (this.codedWidth >> 1) - 8;
-      destIndex = ((this.mbRow * this.codedWidth) << 2) + (this.mbCol << 3);
+    }
+    else {
+      destArray = block === 4
+        ? this.currentCb
+        : this.currentCr
+      scan = (this.codedWidth >> 1) - 8
+      destIndex = ((this.mbRow * this.codedWidth) << 2) + (this.mbCol << 3)
     }
 
     if (this.macroblockIntra) {
       // Overwrite (no prediction)
       if (n === 1) {
-        MPEG1.CopyValueToDestination((this.blockData[0] + 128) >> 8, destArray, destIndex, scan);
-        this.blockData[0] = 0;
-      } else {
-        MPEG1.IDCT(this.blockData);
-        MPEG1.CopyBlockToDestination(this.blockData, destArray, destIndex, scan);
-        Fill(this.blockData, 0);
+        MPEG1.CopyValueToDestination((this.blockData[0] + 128) >> 8, destArray, destIndex, scan)
+        this.blockData[0] = 0
       }
-    } else {
+      else {
+        MPEG1.IDCT(this.blockData)
+        MPEG1.CopyBlockToDestination(this.blockData, destArray, destIndex, scan)
+        Fill(this.blockData, 0)
+      }
+    }
+    else {
       // Add data to the predicted macroblock
-      // eslint-disable-next-line no-lonely-if
+
       if (n === 1) {
-        MPEG1.AddValueToDestination((this.blockData[0] + 128) >> 8, destArray, destIndex, scan);
-        this.blockData[0] = 0;
-      } else {
-        MPEG1.IDCT(this.blockData);
-        MPEG1.AddBlockToDestination(this.blockData, destArray, destIndex, scan);
-        Fill(this.blockData, 0);
+        MPEG1.AddValueToDestination((this.blockData[0] + 128) >> 8, destArray, destIndex, scan)
+        this.blockData[0] = 0
+      }
+      else {
+        MPEG1.IDCT(this.blockData)
+        MPEG1.AddBlockToDestination(this.blockData, destArray, destIndex, scan)
+        Fill(this.blockData, 0)
       }
     }
 
-    n = 0;
+    n = 0
   }
 
   static CopyBlockToDestination(block, dest, index, scan) {
     for (let n = 0; n < 64; n += 8, index += scan + 8) {
-      dest[index + 0] = block[n + 0];
-      dest[index + 1] = block[n + 1];
-      dest[index + 2] = block[n + 2];
-      dest[index + 3] = block[n + 3];
-      dest[index + 4] = block[n + 4];
-      dest[index + 5] = block[n + 5];
-      dest[index + 6] = block[n + 6];
-      dest[index + 7] = block[n + 7];
+      dest[index + 0] = block[n + 0]
+      dest[index + 1] = block[n + 1]
+      dest[index + 2] = block[n + 2]
+      dest[index + 3] = block[n + 3]
+      dest[index + 4] = block[n + 4]
+      dest[index + 5] = block[n + 5]
+      dest[index + 6] = block[n + 6]
+      dest[index + 7] = block[n + 7]
     }
   }
 
   static AddBlockToDestination(block, dest, index, scan) {
     for (let n = 0; n < 64; n += 8, index += scan + 8) {
-      dest[index + 0] += block[n + 0];
-      dest[index + 1] += block[n + 1];
-      dest[index + 2] += block[n + 2];
-      dest[index + 3] += block[n + 3];
-      dest[index + 4] += block[n + 4];
-      dest[index + 5] += block[n + 5];
-      dest[index + 6] += block[n + 6];
-      dest[index + 7] += block[n + 7];
+      dest[index + 0] += block[n + 0]
+      dest[index + 1] += block[n + 1]
+      dest[index + 2] += block[n + 2]
+      dest[index + 3] += block[n + 3]
+      dest[index + 4] += block[n + 4]
+      dest[index + 5] += block[n + 5]
+      dest[index + 6] += block[n + 6]
+      dest[index + 7] += block[n + 7]
     }
   }
 
   static CopyValueToDestination(value, dest, index, scan) {
     for (let n = 0; n < 64; n += 8, index += scan + 8) {
-      dest[index + 0] = value;
-      dest[index + 1] = value;
-      dest[index + 2] = value;
-      dest[index + 3] = value;
-      dest[index + 4] = value;
-      dest[index + 5] = value;
-      dest[index + 6] = value;
-      dest[index + 7] = value;
+      dest[index + 0] = value
+      dest[index + 1] = value
+      dest[index + 2] = value
+      dest[index + 3] = value
+      dest[index + 4] = value
+      dest[index + 5] = value
+      dest[index + 6] = value
+      dest[index + 7] = value
     }
   }
 
   static AddValueToDestination(value, dest, index, scan) {
     for (let n = 0; n < 64; n += 8, index += scan + 8) {
-      dest[index + 0] += value;
-      dest[index + 1] += value;
-      dest[index + 2] += value;
-      dest[index + 3] += value;
-      dest[index + 4] += value;
-      dest[index + 5] += value;
-      dest[index + 6] += value;
-      dest[index + 7] += value;
+      dest[index + 0] += value
+      dest[index + 1] += value
+      dest[index + 2] += value
+      dest[index + 3] += value
+      dest[index + 4] += value
+      dest[index + 5] += value
+      dest[index + 6] += value
+      dest[index + 7] += value
     }
   }
 
@@ -884,159 +915,418 @@ class MPEG1 extends BaseDecoder {
     // See http://vsr.informatik.tu-chemnitz.de/~jan/MPEG/HTML/IDCT.html
     // for more info.
 
-    let b1;
-    let b3;
-    let b4;
-    let b6;
-    let b7;
-    let tmp1;
-    let tmp2;
-    let m0;
-    let x0;
-    let x1;
-    let x2;
-    let x3;
-    let x4;
-    let y3;
-    let y4;
-    let y5;
-    let y6;
-    let y7;
+    let b1
+    let b3
+    let b4
+    let b6
+    let b7
+    let tmp1
+    let tmp2
+    let m0
+    let x0
+    let x1
+    let x2
+    let x3
+    let x4
+    let y3
+    let y4
+    let y5
+    let y6
+    let y7
 
     // Transform columns
     for (let i = 0; i < 8; ++i) {
-      b1 = block[4 * 8 + i];
-      b3 = block[2 * 8 + i] + block[6 * 8 + i];
-      b4 = block[5 * 8 + i] - block[3 * 8 + i];
-      tmp1 = block[1 * 8 + i] + block[7 * 8 + i];
-      tmp2 = block[3 * 8 + i] + block[5 * 8 + i];
-      b6 = block[1 * 8 + i] - block[7 * 8 + i];
-      b7 = tmp1 + tmp2;
-      m0 = block[0 * 8 + i];
-      x4 = ((b6 * 473 - b4 * 196 + 128) >> 8) - b7;
-      x0 = x4 - (((tmp1 - tmp2) * 362 + 128) >> 8);
-      x1 = m0 - b1;
-      x2 = (((block[2 * 8 + i] - block[6 * 8 + i]) * 362 + 128) >> 8) - b3;
-      x3 = m0 + b1;
-      y3 = x1 + x2;
-      y4 = x3 + b3;
-      y5 = x1 - x2;
-      y6 = x3 - b3;
-      y7 = -x0 - ((b4 * 473 + b6 * 196 + 128) >> 8);
-      block[0 * 8 + i] = b7 + y4;
-      block[1 * 8 + i] = x4 + y3;
-      block[2 * 8 + i] = y5 - x0;
-      block[3 * 8 + i] = y6 - y7;
-      block[4 * 8 + i] = y6 + y7;
-      block[5 * 8 + i] = x0 + y5;
-      block[6 * 8 + i] = y3 - x4;
-      block[7 * 8 + i] = y4 - b7;
+      b1 = block[4 * 8 + i]
+      b3 = block[2 * 8 + i] + block[6 * 8 + i]
+      b4 = block[5 * 8 + i] - block[3 * 8 + i]
+      tmp1 = block[1 * 8 + i] + block[7 * 8 + i]
+      tmp2 = block[3 * 8 + i] + block[5 * 8 + i]
+      b6 = block[1 * 8 + i] - block[7 * 8 + i]
+      b7 = tmp1 + tmp2
+      m0 = block[0 * 8 + i]
+      x4 = ((b6 * 473 - b4 * 196 + 128) >> 8) - b7
+      x0 = x4 - (((tmp1 - tmp2) * 362 + 128) >> 8)
+      x1 = m0 - b1
+      x2 = (((block[2 * 8 + i] - block[6 * 8 + i]) * 362 + 128) >> 8) - b3
+      x3 = m0 + b1
+      y3 = x1 + x2
+      y4 = x3 + b3
+      y5 = x1 - x2
+      y6 = x3 - b3
+      y7 = -x0 - ((b4 * 473 + b6 * 196 + 128) >> 8)
+      block[0 * 8 + i] = b7 + y4
+      block[1 * 8 + i] = x4 + y3
+      block[2 * 8 + i] = y5 - x0
+      block[3 * 8 + i] = y6 - y7
+      block[4 * 8 + i] = y6 + y7
+      block[5 * 8 + i] = x0 + y5
+      block[6 * 8 + i] = y3 - x4
+      block[7 * 8 + i] = y4 - b7
     }
 
     // Transform rows
     for (let i = 0; i < 64; i += 8) {
-      b1 = block[4 + i];
-      b3 = block[2 + i] + block[6 + i];
-      b4 = block[5 + i] - block[3 + i];
-      tmp1 = block[1 + i] + block[7 + i];
-      tmp2 = block[3 + i] + block[5 + i];
-      b6 = block[1 + i] - block[7 + i];
-      b7 = tmp1 + tmp2;
-      m0 = block[0 + i];
-      x4 = ((b6 * 473 - b4 * 196 + 128) >> 8) - b7;
-      x0 = x4 - (((tmp1 - tmp2) * 362 + 128) >> 8);
-      x1 = m0 - b1;
-      x2 = (((block[2 + i] - block[6 + i]) * 362 + 128) >> 8) - b3;
-      x3 = m0 + b1;
-      y3 = x1 + x2;
-      y4 = x3 + b3;
-      y5 = x1 - x2;
-      y6 = x3 - b3;
-      y7 = -x0 - ((b4 * 473 + b6 * 196 + 128) >> 8);
-      block[0 + i] = (b7 + y4 + 128) >> 8;
-      block[1 + i] = (x4 + y3 + 128) >> 8;
-      block[2 + i] = (y5 - x0 + 128) >> 8;
-      block[3 + i] = (y6 - y7 + 128) >> 8;
-      block[4 + i] = (y6 + y7 + 128) >> 8;
-      block[5 + i] = (x0 + y5 + 128) >> 8;
-      block[6 + i] = (y3 - x4 + 128) >> 8;
-      block[7 + i] = (y4 - b7 + 128) >> 8;
+      b1 = block[4 + i]
+      b3 = block[2 + i] + block[6 + i]
+      b4 = block[5 + i] - block[3 + i]
+      tmp1 = block[1 + i] + block[7 + i]
+      tmp2 = block[3 + i] + block[5 + i]
+      b6 = block[1 + i] - block[7 + i]
+      b7 = tmp1 + tmp2
+      m0 = block[0 + i]
+      x4 = ((b6 * 473 - b4 * 196 + 128) >> 8) - b7
+      x0 = x4 - (((tmp1 - tmp2) * 362 + 128) >> 8)
+      x1 = m0 - b1
+      x2 = (((block[2 + i] - block[6 + i]) * 362 + 128) >> 8) - b3
+      x3 = m0 + b1
+      y3 = x1 + x2
+      y4 = x3 + b3
+      y5 = x1 - x2
+      y6 = x3 - b3
+      y7 = -x0 - ((b4 * 473 + b6 * 196 + 128) >> 8)
+      block[0 + i] = (b7 + y4 + 128) >> 8
+      block[1 + i] = (x4 + y3 + 128) >> 8
+      block[2 + i] = (y5 - x0 + 128) >> 8
+      block[3 + i] = (y6 - y7 + 128) >> 8
+      block[4 + i] = (y6 + y7 + 128) >> 8
+      block[5 + i] = (x0 + y5 + 128) >> 8
+      block[6 + i] = (y3 - x4 + 128) >> 8
+      block[7 + i] = (y4 - b7 + 128) >> 8
     }
   }
 }
 
 // Sequence Layer
-MPEG1.prototype.frameRate = 30;
+MPEG1.prototype.frameRate = 30
 
 // Picture Layer
-MPEG1.prototype.currentY = null;
-MPEG1.prototype.currentCr = null;
-MPEG1.prototype.currentCb = null;
-MPEG1.prototype.pictureType = 0;
+MPEG1.prototype.currentY = null
+MPEG1.prototype.currentCr = null
+MPEG1.prototype.currentCb = null
+MPEG1.prototype.pictureType = 0
 
 // Buffers for motion compensation
-MPEG1.prototype.forwardY = null;
-MPEG1.prototype.forwardCr = null;
-MPEG1.prototype.forwardCb = null;
+MPEG1.prototype.forwardY = null
+MPEG1.prototype.forwardCr = null
+MPEG1.prototype.forwardCb = null
 
-MPEG1.prototype.fullPelForward = false;
-MPEG1.prototype.forwardFCode = 0;
-MPEG1.prototype.forwardRSize = 0;
-MPEG1.prototype.forwardF = 0;
+MPEG1.prototype.fullPelForward = false
+MPEG1.prototype.forwardFCode = 0
+MPEG1.prototype.forwardRSize = 0
+MPEG1.prototype.forwardF = 0
 
 // Slice Layer
-MPEG1.prototype.quantizerScale = 0;
-MPEG1.prototype.sliceBegin = false;
+MPEG1.prototype.quantizerScale = 0
+MPEG1.prototype.sliceBegin = false
 
 // Macroblock Layer
-MPEG1.prototype.macroblockAddress = 0;
-MPEG1.prototype.mbRow = 0;
-MPEG1.prototype.mbCol = 0;
+MPEG1.prototype.macroblockAddress = 0
+MPEG1.prototype.mbRow = 0
+MPEG1.prototype.mbCol = 0
 
-MPEG1.prototype.macroblockType = 0;
-MPEG1.prototype.macroblockIntra = false;
-MPEG1.prototype.macroblockMotFw = false;
+MPEG1.prototype.macroblockType = 0
+MPEG1.prototype.macroblockIntra = false
+MPEG1.prototype.macroblockMotFw = false
 
-MPEG1.prototype.motionFwH = 0;
-MPEG1.prototype.motionFwV = 0;
-MPEG1.prototype.motionFwHPrev = 0;
-MPEG1.prototype.motionFwVPrev = 0;
+MPEG1.prototype.motionFwH = 0
+MPEG1.prototype.motionFwV = 0
+MPEG1.prototype.motionFwHPrev = 0
+MPEG1.prototype.motionFwVPrev = 0
 
 // Block layer
-MPEG1.prototype.dcPredictorY = 0;
-MPEG1.prototype.dcPredictorCr = 0;
-MPEG1.prototype.dcPredictorCb = 0;
+MPEG1.prototype.dcPredictorY = 0
+MPEG1.prototype.dcPredictorCr = 0
+MPEG1.prototype.dcPredictorCb = 0
 
-MPEG1.prototype.blockData = null;
+MPEG1.prototype.blockData = null
 
 // VLC Tables and Constants
 MPEG1.PICTURE_RATE = [
-  0.0, 23.976, 24.0, 25.0, 29.97, 30.0, 50.0, 59.94, 60.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-];
+  0.0,
+  23.976,
+  24.0,
+  25.0,
+  29.97,
+  30.0,
+  50.0,
+  59.94,
+  60.0,
+  0.0,
+  0.0,
+  0.0,
+  0.0,
+  0.0,
+  0.0,
+  0.0,
+]
 
 MPEG1.ZIG_ZAG = new Uint8Array([
-  0, 1, 8, 16, 9, 2, 3, 10, 17, 24, 32, 25, 18, 11, 4, 5, 12, 19, 26, 33, 40, 48, 41, 34, 27, 20,
-  13, 6, 7, 14, 21, 28, 35, 42, 49, 56, 57, 50, 43, 36, 29, 22, 15, 23, 30, 37, 44, 51, 58, 59, 52,
-  45, 38, 31, 39, 46, 53, 60, 61, 54, 47, 55, 62, 63,
-]);
+  0,
+  1,
+  8,
+  16,
+  9,
+  2,
+  3,
+  10,
+  17,
+  24,
+  32,
+  25,
+  18,
+  11,
+  4,
+  5,
+  12,
+  19,
+  26,
+  33,
+  40,
+  48,
+  41,
+  34,
+  27,
+  20,
+  13,
+  6,
+  7,
+  14,
+  21,
+  28,
+  35,
+  42,
+  49,
+  56,
+  57,
+  50,
+  43,
+  36,
+  29,
+  22,
+  15,
+  23,
+  30,
+  37,
+  44,
+  51,
+  58,
+  59,
+  52,
+  45,
+  38,
+  31,
+  39,
+  46,
+  53,
+  60,
+  61,
+  54,
+  47,
+  55,
+  62,
+  63,
+])
 
 MPEG1.DEFAULT_INTRA_QUANT_MATRIX = new Uint8Array([
-  8, 16, 19, 22, 26, 27, 29, 34, 16, 16, 22, 24, 27, 29, 34, 37, 19, 22, 26, 27, 29, 34, 34, 38, 22,
-  22, 26, 27, 29, 34, 37, 40, 22, 26, 27, 29, 32, 35, 40, 48, 26, 27, 29, 32, 35, 40, 48, 58, 26,
-  27, 29, 34, 38, 46, 56, 69, 27, 29, 35, 38, 46, 56, 69, 83,
-]);
+  8,
+  16,
+  19,
+  22,
+  26,
+  27,
+  29,
+  34,
+  16,
+  16,
+  22,
+  24,
+  27,
+  29,
+  34,
+  37,
+  19,
+  22,
+  26,
+  27,
+  29,
+  34,
+  34,
+  38,
+  22,
+  22,
+  26,
+  27,
+  29,
+  34,
+  37,
+  40,
+  22,
+  26,
+  27,
+  29,
+  32,
+  35,
+  40,
+  48,
+  26,
+  27,
+  29,
+  32,
+  35,
+  40,
+  48,
+  58,
+  26,
+  27,
+  29,
+  34,
+  38,
+  46,
+  56,
+  69,
+  27,
+  29,
+  35,
+  38,
+  46,
+  56,
+  69,
+  83,
+])
 
 MPEG1.DEFAULT_NON_INTRA_QUANT_MATRIX = new Uint8Array([
-  16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16,
-  16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16,
-  16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16,
-]);
+  16,
+  16,
+  16,
+  16,
+  16,
+  16,
+  16,
+  16,
+  16,
+  16,
+  16,
+  16,
+  16,
+  16,
+  16,
+  16,
+  16,
+  16,
+  16,
+  16,
+  16,
+  16,
+  16,
+  16,
+  16,
+  16,
+  16,
+  16,
+  16,
+  16,
+  16,
+  16,
+  16,
+  16,
+  16,
+  16,
+  16,
+  16,
+  16,
+  16,
+  16,
+  16,
+  16,
+  16,
+  16,
+  16,
+  16,
+  16,
+  16,
+  16,
+  16,
+  16,
+  16,
+  16,
+  16,
+  16,
+  16,
+  16,
+  16,
+  16,
+  16,
+  16,
+  16,
+  16,
+])
 
 MPEG1.PREMULTIPLIER_MATRIX = new Uint8Array([
-  32, 44, 42, 38, 32, 25, 17, 9, 44, 62, 58, 52, 44, 35, 24, 12, 42, 58, 55, 49, 42, 33, 23, 12, 38,
-  52, 49, 44, 38, 30, 20, 10, 32, 44, 42, 38, 32, 25, 17, 9, 25, 35, 33, 30, 25, 20, 14, 7, 17, 24,
-  23, 20, 17, 14, 9, 5, 9, 12, 12, 10, 9, 7, 5, 2,
-]);
+  32,
+  44,
+  42,
+  38,
+  32,
+  25,
+  17,
+  9,
+  44,
+  62,
+  58,
+  52,
+  44,
+  35,
+  24,
+  12,
+  42,
+  58,
+  55,
+  49,
+  42,
+  33,
+  23,
+  12,
+  38,
+  52,
+  49,
+  44,
+  38,
+  30,
+  20,
+  10,
+  32,
+  44,
+  42,
+  38,
+  32,
+  25,
+  17,
+  9,
+  25,
+  35,
+  33,
+  30,
+  25,
+  20,
+  14,
+  7,
+  17,
+  24,
+  23,
+  20,
+  17,
+  14,
+  9,
+  5,
+  9,
+  12,
+  12,
+  10,
+  9,
+  7,
+  5,
+  2,
+])
 
 // MPEG-1 VLC
 
@@ -1269,7 +1559,7 @@ MPEG1.MACROBLOCK_ADDRESS_INCREMENT = new Int16Array([
   0,
   0,
   22, //  74  0000 0100 011.
-]);
+])
 
 //  macroblock_type bitmap:
 //    0x10  macroblock_quant
@@ -1292,7 +1582,7 @@ MPEG1.MACROBLOCK_TYPE_INTRA = new Int8Array([
   0,
   0,
   0x11, //   3  01.
-]);
+])
 
 MPEG1.MACROBLOCK_TYPE_PREDICTIVE = new Int8Array([
   1 * 3,
@@ -1303,7 +1593,7 @@ MPEG1.MACROBLOCK_TYPE_PREDICTIVE = new Int8Array([
   0, //  1  0
   0,
   0,
-  0x0a, //  2  1.
+  0x0A, //  2  1.
   5 * 3,
   6 * 3,
   0, //  3  00
@@ -1330,14 +1620,14 @@ MPEG1.MACROBLOCK_TYPE_PREDICTIVE = new Int8Array([
   0x12, // 10  00001.
   0,
   0,
-  0x1a, // 11  00010.
+  0x1A, // 11  00010.
   0,
   0,
   0x01, // 12  00011.
   0,
   0,
   0x11, // 13  000001.
-]);
+])
 
 MPEG1.MACROBLOCK_TYPE_B = new Int8Array([
   1 * 3,
@@ -1354,13 +1644,13 @@ MPEG1.MACROBLOCK_TYPE_B = new Int8Array([
   0, //  3  00
   0,
   0,
-  0x0c, //  4  10.
+  0x0C, //  4  10.
   9 * 3,
   10 * 3,
   0, //  5  01
   0,
   0,
-  0x0e, //  6  11.
+  0x0E, //  6  11.
   13 * 3,
   14 * 3,
   0, //  7  001
@@ -1384,7 +1674,7 @@ MPEG1.MACROBLOCK_TYPE_B = new Int8Array([
   0x08, // 13  0010.
   0,
   0,
-  0x0a, // 14  0011.
+  0x0A, // 14  0011.
   -1,
   19 * 3,
   0, // 15  00000
@@ -1396,7 +1686,7 @@ MPEG1.MACROBLOCK_TYPE_B = new Int8Array([
   0, // 17  00001
   0,
   0,
-  0x1e, // 18  00010.
+  0x1E, // 18  00010.
   0,
   0,
   0x11, // 19  000001.
@@ -1405,15 +1695,15 @@ MPEG1.MACROBLOCK_TYPE_B = new Int8Array([
   0x16, // 20  000010.
   0,
   0,
-  0x1a, // 21  000011.
-]);
+  0x1A, // 21  000011.
+])
 
 MPEG1.MACROBLOCK_TYPE = [
   null,
   MPEG1.MACROBLOCK_TYPE_INTRA,
   MPEG1.MACROBLOCK_TYPE_PREDICTIVE,
   MPEG1.MACROBLOCK_TYPE_B,
-];
+]
 
 MPEG1.CODE_BLOCK_PATTERN = new Int16Array([
   2 * 3,
@@ -1794,7 +2084,7 @@ MPEG1.CODE_BLOCK_PATTERN = new Int16Array([
   0,
   0,
   31, // 125  0000 0011 1.
-]);
+])
 
 MPEG1.MOTION = new Int16Array([
   1 * 3,
@@ -1998,7 +2288,7 @@ MPEG1.MOTION = new Int16Array([
   0,
   0,
   -13, //  66  0000 0011 111.
-]);
+])
 
 MPEG1.DCT_DC_SIZE_LUMINANCE = new Int8Array([
   2 * 3,
@@ -2055,7 +2345,7 @@ MPEG1.DCT_DC_SIZE_LUMINANCE = new Int8Array([
   0,
   0,
   8, //  17  1111 110.
-]);
+])
 
 MPEG1.DCT_DC_SIZE_CHROMINANCE = new Int8Array([
   2 * 3,
@@ -2112,7 +2402,7 @@ MPEG1.DCT_DC_SIZE_CHROMINANCE = new Int8Array([
   0,
   0,
   8, //  17  1111 1110.
-]);
+])
 
 //  dct_coeff bitmap:
 //    0xff00  run
@@ -2205,7 +2495,7 @@ MPEG1.DCT_COEFF = new Int32Array([
   0x0701, //  24  0001 00.
   0,
   0,
-  0xffff, //  25  0000 01. -- escape
+  0xFFFF, //  25  0000 01. -- escape
   0,
   0,
   0x0601, //  26  0001 01.
@@ -2271,10 +2561,10 @@ MPEG1.DCT_COEFF = new Int32Array([
   0, //  46  0000 0000
   0,
   0,
-  0x0a01, //  47  0010 0111.
+  0x0A01, //  47  0010 0111.
   0,
   0,
-  0x0d01, //  48  0010 0000.
+  0x0D01, //  48  0010 0000.
   0,
   0,
   0x0006, //  49  0010 0001.
@@ -2289,10 +2579,10 @@ MPEG1.DCT_COEFF = new Int32Array([
   0x0302, //  52  0010 0100.
   0,
   0,
-  0x0b01, //  53  0010 0011.
+  0x0B01, //  53  0010 0011.
   0,
   0,
-  0x0c01, //  54  0010 0010.
+  0x0C01, //  54  0010 0010.
   76 * 3,
   75 * 3,
   0, //  55  0000 0010 0
@@ -2361,10 +2651,10 @@ MPEG1.DCT_COEFF = new Int32Array([
   0x1001, //  76  0000 0010 00.
   0,
   0,
-  0x0f01, //  77  0000 0011 01.
+  0x0F01, //  77  0000 0011 01.
   0,
   0,
-  0x0e01, //  78  0000 0011 10.
+  0x0E01, //  78  0000 0011 10.
   105 * 3,
   107 * 3,
   0, //  79  0000 0000 111
@@ -2454,13 +2744,13 @@ MPEG1.DCT_COEFF = new Int32Array([
   0, // 107  0000 0000 1111
   0,
   0,
-  0x000a, // 108  0000 0001 0011.
+  0x000A, // 108  0000 0001 0011.
   0,
   0,
   0x0009, // 109  0000 0001 1000.
   0,
   0,
-  0x000b, // 110  0000 0001 0000.
+  0x000B, // 110  0000 0001 0000.
   0,
   0,
   0x1501, // 111  0000 0001 0110.
@@ -2547,7 +2837,7 @@ MPEG1.DCT_COEFF = new Int32Array([
   0x0107, // 138  0000 0000 1010 1.
   0,
   0,
-  0x0a02, // 139  0000 0000 1000 0.
+  0x0A02, // 139  0000 0000 1000 0.
   0,
   0,
   0x0902, // 140  0000 0000 1000 1.
@@ -2571,22 +2861,22 @@ MPEG1.DCT_COEFF = new Int32Array([
   0x0304, // 146  0000 0000 1001 1.
   0,
   0,
-  0x000d, // 147  0000 0000 1100 1.
+  0x000D, // 147  0000 0000 1100 1.
   0,
   0,
-  0x000c, // 148  0000 0000 1101 0.
+  0x000C, // 148  0000 0000 1101 0.
   0,
   0,
-  0x000e, // 149  0000 0000 1100 0.
+  0x000E, // 149  0000 0000 1100 0.
   0,
   0,
-  0x000f, // 150  0000 0000 1011 1.
+  0x000F, // 150  0000 0000 1011 1.
   0,
   0,
   0x0205, // 151  0000 0000 1010 0.
   0,
   0,
-  0x1a01, // 152  0000 0000 1101 1.
+  0x1A01, // 152  0000 0000 1101 1.
   0,
   0,
   0x0106, // 153  0000 0000 1011 0.
@@ -2601,7 +2891,7 @@ MPEG1.DCT_COEFF = new Int32Array([
   0, // 156  0000 0000 0011 10
   0,
   0,
-  0x001b, // 157  0000 0000 0101 00.
+  0x001B, // 157  0000 0000 0101 00.
   203 * 3,
   185 * 3,
   0, // 158  0000 0000 0010 01
@@ -2655,19 +2945,19 @@ MPEG1.DCT_COEFF = new Int32Array([
   0, // 174  0000 0000 0011 00
   0,
   0,
-  0x001f, // 175  0000 0000 0100 00.
+  0x001F, // 175  0000 0000 0100 00.
   0,
   0,
-  0x001e, // 176  0000 0000 0100 01.
+  0x001E, // 176  0000 0000 0100 01.
   0,
   0,
-  0x001c, // 177  0000 0000 0100 11.
+  0x001C, // 177  0000 0000 0100 11.
   0,
   0,
-  0x001d, // 178  0000 0000 0100 10.
+  0x001D, // 178  0000 0000 0100 10.
   0,
   0,
-  0x001a, // 179  0000 0000 0101 01.
+  0x001A, // 179  0000 0000 0101 01.
   0,
   0,
   0x0011, // 180  0000 0000 0111 10.
@@ -2718,16 +3008,16 @@ MPEG1.DCT_COEFF = new Int32Array([
   0x0023, // 195  0000 0000 0010 101.
   0,
   0,
-  0x010b, // 196  0000 0000 0011 100.
+  0x010B, // 196  0000 0000 0011 100.
   0,
   0,
   0x0028, // 197  0000 0000 0010 000.
   0,
   0,
-  0x010c, // 198  0000 0000 0011 011.
+  0x010C, // 198  0000 0000 0011 011.
   0,
   0,
-  0x010a, // 199  0000 0000 0011 101.
+  0x010A, // 199  0000 0000 0011 101.
   0,
   0,
   0x0020, // 200  0000 0000 0011 000.
@@ -2742,10 +3032,10 @@ MPEG1.DCT_COEFF = new Int32Array([
   0x0026, // 203  0000 0000 0010 010.
   0,
   0,
-  0x010d, // 204  0000 0000 0011 010.
+  0x010D, // 204  0000 0000 0011 010.
   0,
   0,
-  0x010e, // 205  0000 0000 0011 001.
+  0x010E, // 205  0000 0000 0011 001.
   0,
   0,
   0x0021, // 206  0000 0000 0010 111.
@@ -2754,25 +3044,25 @@ MPEG1.DCT_COEFF = new Int32Array([
   0x0027, // 207  0000 0000 0010 001.
   0,
   0,
-  0x1f01, // 208  0000 0000 0001 1011.
+  0x1F01, // 208  0000 0000 0001 1011.
   0,
   0,
-  0x1b01, // 209  0000 0000 0001 1111.
+  0x1B01, // 209  0000 0000 0001 1111.
   0,
   0,
-  0x1e01, // 210  0000 0000 0001 1100.
+  0x1E01, // 210  0000 0000 0001 1100.
   0,
   0,
   0x1002, // 211  0000 0000 0001 0101.
   0,
   0,
-  0x1d01, // 212  0000 0000 0001 1101.
+  0x1D01, // 212  0000 0000 0001 1101.
   0,
   0,
-  0x1c01, // 213  0000 0000 0001 1110.
+  0x1C01, // 213  0000 0000 0001 1110.
   0,
   0,
-  0x010f, // 214  0000 0000 0001 0011.
+  0x010F, // 214  0000 0000 0001 0011.
   0,
   0,
   0x0112, // 215  0000 0000 0001 0000.
@@ -2787,34 +3077,34 @@ MPEG1.DCT_COEFF = new Int32Array([
   0x0603, // 218  0000 0000 0001 0100.
   0,
   0,
-  0x0b02, // 219  0000 0000 0001 1010.
+  0x0B02, // 219  0000 0000 0001 1010.
   0,
   0,
-  0x0e02, // 220  0000 0000 0001 0111.
+  0x0E02, // 220  0000 0000 0001 0111.
   0,
   0,
-  0x0d02, // 221  0000 0000 0001 1000.
+  0x0D02, // 221  0000 0000 0001 1000.
   0,
   0,
-  0x0c02, // 222  0000 0000 0001 1001.
+  0x0C02, // 222  0000 0000 0001 1001.
   0,
   0,
-  0x0f02, // 223  0000 0000 0001 0110.
-]);
+  0x0F02, // 223  0000 0000 0001 0110.
+])
 
 MPEG1.PICTURE_TYPE = {
   INTRA: 1,
   PREDICTIVE: 2,
   B: 3,
-};
+}
 
 MPEG1.START = {
-  SEQUENCE: 0xb3,
+  SEQUENCE: 0xB3,
   SLICE_FIRST: 0x01,
-  SLICE_LAST: 0xaf,
+  SLICE_LAST: 0xAF,
   PICTURE: 0x00,
-  EXTENSION: 0xb5,
-  USER_DATA: 0xb2,
-};
+  EXTENSION: 0xB5,
+  USER_DATA: 0xB2,
+}
 
-export default MPEG1;
+export default MPEG1

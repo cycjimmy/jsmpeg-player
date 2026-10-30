@@ -1,13 +1,15 @@
-/* eslint import/no-extraneous-dependencies: ["error", {"devDependencies": true}] */
-/* eslint import/extensions: ["error", "ignorePackages", {"mjs": off}] */
-import browsersync from 'rollup-plugin-browsersync';
-import copy from 'rollup-plugin-copy';
+import browsersync from 'rollup-plugin-browsersync'
+import copy from 'rollup-plugin-copy'
 
-import pkg from '../package.cjs';
+import pkg from '../package.cjs'
 
 import {
-  input, IS_DEVELOPMENT, IS_DEPLOYMENT, name, plugins,
-} from './rollup.common.mjs';
+  input,
+  IS_DEPLOYMENT,
+  IS_DEVELOPMENT,
+  name,
+  plugins,
+} from './rollup.common.mjs'
 
 export default [
   {
@@ -22,20 +24,20 @@ export default [
       ...plugins,
 
       IS_DEPLOYMENT
-        && copy({
-          hook: 'writeBundle',
-          targets: [
-            {
-              src: ['static/**/*', 'dist/**.umd.js'],
-              dest: '.publish',
-            },
-          ],
-        }),
+      && copy({
+        hook: 'writeBundle',
+        targets: [
+          {
+            src: ['static/**/*', 'dist/**.umd.js'],
+            dest: '.publish',
+          },
+        ],
+      }),
       IS_DEVELOPMENT
-        && browsersync({
-          server: ['static', 'dist'],
-          watch: true,
-        }),
+      && browsersync({
+        server: ['static', 'dist'],
+        watch: true,
+      }),
     ],
   },
-];
+]
