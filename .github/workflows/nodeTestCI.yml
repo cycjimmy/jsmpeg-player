@@ -33,12 +33,14 @@ jobs:
           node-version: ${{ matrix.node }}
           cache: npm
       - run: npm ci
+      - run: npm run lint
+      - run: npm run lint:style
       - run: npm test
       - run: npm run package
 
       - name: Semantic Release Test
         if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
-        uses: cycjimmy/semantic-release-action@v6
+        uses: cycjimmy/semantic-release-action@v8
         with:
           dry_run: true
           branches: |
