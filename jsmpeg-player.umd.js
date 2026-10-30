@@ -4986,7 +4986,7 @@
       this.maxAudioLag = options.maxAudioLag || 0.25;
       this.loop = options.loop !== false;
       this.autoplay = !!options.autoplay || options.streaming;
-      this.demuxer = new TS(options);
+      this.demuxer = new TS();
       this.source.connect(this.demuxer);
       if (!options.disableWebAssembly && WASM.IsSupported()) {
         this.wasmModule = WASM.GetModule();
@@ -5000,7 +5000,7 @@
       }
       if (options.audio !== false && WebAudioOut.IsSupported()) {
         this.audio = options.wasmModule ? new MP2WASM(options) : new MP2(options);
-        this.audioOut = new WebAudioOut(options);
+        this.audioOut = new WebAudioOut();
         this.demuxer.connect(TS.STREAM.AUDIO_1, this.audio);
         this.audio.connect(this.audioOut);
       }
