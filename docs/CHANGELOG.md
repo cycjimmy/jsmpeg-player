@@ -1,3 +1,10 @@
+## [6.1.8](https://github.com/cycjimmy/jsmpeg-player/compare/v6.1.7...v6.1.8) (2026-10-30)
+
+
+### Bug Fixes
+
+* keep the live audio in sync when autoplay suspends the audio context ([69c9bad](https://github.com/cycjimmy/jsmpeg-player/commit/69c9bad72a1723fa4ff2ca5b835885d675ba8900)), closes [#238](https://github.com/cycjimmy/jsmpeg-player/issues/238)
+
 ## [6.1.7](https://github.com/cycjimmy/jsmpeg-player/compare/v6.1.6...v6.1.7) (2026-10-30)
 
 
