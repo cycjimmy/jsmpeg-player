@@ -239,10 +239,10 @@
         this.els.playButton.classList.add(_style.hidden);
       }
 
-      // Set up the unlock audio button for iOS devices. iOS only allows us to
-      // play audio after a user action has initiated playing. For autoplay or
-      // streaming players we set up a muted speaker icon as the button. For all
-      // others, we can simply use the play button.
+      // Set up the unlock audio button for the browsers that do not allow audio
+      // before a user action (iOS, and Chrome/Safari under their autoplay
+      // policy). For autoplay or streaming players we set up a muted speaker
+      // icon as the button. For all others, we can simply use the play button.
       if (this.player.audioOut && !this.player.audioOut.unlocked) {
         var unlockAudioElement = this.els.wrapper;
         if (this.options.autoplay || this.player.options.streaming) {
@@ -255,6 +255,12 @@
         this.unlockAudioBound = this.onUnlockAudio.bind(this, unlockAudioElement);
         unlockAudioElement.addEventListener('touchstart', this.unlockAudioBound, false);
         unlockAudioElement.addEventListener('click', this.unlockAudioBound, true);
+
+        // Any gesture on the page may unlock the audio, so the icon has to go
+        // away even when it was not the element that was clicked.
+        this.player.audioOut.onUnlock = function () {
+          return _this.onAudioUnlocked(unlockAudioElement);
+        };
       }
     };
     _proto.initPlayButton = function initPlayButton() {
@@ -281,6 +287,15 @@
         });
       });
     };
+    _proto.onAudioUnlocked = function onAudioUnlocked(element) {
+      if (this.els.unmuteButton) {
+        this.els.unmuteButton.classList.add(_style.hidden);
+      }
+      if (element && this.unlockAudioBound) {
+        element.removeEventListener('touchstart', this.unlockAudioBound);
+        element.removeEventListener('click', this.unlockAudioBound);
+      }
+    };
     _proto.onUnlockAudio = function onUnlockAudio(element, ev) {
       var _this3 = this;
       if (this.els.unmuteButton) {
@@ -288,11 +303,7 @@
         ev.stopPropagation();
       }
       this.player.audioOut.unlock(function () {
-        if (_this3.els.unmuteButton) {
-          _this3.els.unmuteButton.classList.add(_style.hidden);
-        }
-        element.removeEventListener('touchstart', _this3.unlockAudioBound);
-        element.removeEventListener('click', _this3.unlockAudioBound);
+        return _this3.onAudioUnlocked(element);
       });
     };
     _proto.onClick = function onClick() {
@@ -4053,11 +4064,15 @@
       _this.bufferSize = options.audioBufferSize || 128 * 1024;
       _this.bufferMode = options.streaming ? BitBuffer.MODE.EVICT : BitBuffer.MODE.EXPAND;
       _this.sampleRate = 0;
+      _this.destroyed = false;
       return _this;
     }
     _inheritsLoose(MP2WASM, _BaseDecoder);
     var _proto = MP2WASM.prototype;
     _proto.initializeWasmDecoder = function initializeWasmDecoder() {
+      if (this.destroyed) {
+        return;
+      }
       if (!this.module.instance) {
         console.warn('JSMpeg: WASM module not compiled yet');
         return;
@@ -4067,10 +4082,23 @@
       this.decoder = this.functions._mp2_decoder_create(this.bufferSize, this.bufferMode);
     };
     _proto.destroy = function destroy() {
+      // A source can still deliver one last chunk inside the very callback that
+      // destroys the player, so nothing may reach the module from now on.
+      this.destroyed = true;
       if (!this.decoder) {
         return;
       }
       this.functions._mp2_decoder_destroy(this.decoder);
+      // The pointer refers to a freed block now, and the module may hand the same
+      // address to the decoder of the next player: it must never be used again.
+      this.decoder = null;
+      this.canPlay = false;
+    };
+    _proto.write = function write(pts, buffers) {
+      if (this.destroyed) {
+        return;
+      }
+      _BaseDecoder.prototype.write.call(this, pts, buffers);
     };
     _proto.bufferGetIndex = function bufferGetIndex() {
       if (!this.decoder) {
@@ -4086,8 +4114,15 @@
       this.functions._mp2_decoder_set_index(this.decoder, index);
     };
     _proto.bufferWrite = function bufferWrite(buffers) {
+      if (this.destroyed) {
+        return 0;
+      }
       if (!this.decoder) {
         this.initializeWasmDecoder();
+      }
+      if (!this.decoder) {
+        // The module is not compiled yet; nothing can be written.
+        return 0;
       }
       var totalLength = 0;
       for (var i = 0; i < buffers.length; i++) {
@@ -4445,6 +4480,9 @@
     return CanvasRenderer;
   }();
 
+  // Chrome grants the user activation on pointerup/touchend, not on the
+  // touchstart/pointerdown that precedes them, so the touch events are paired.
+  var UNLOCK_EVENTS = ['pointerdown', 'pointerup', 'keydown', 'touchend'];
   var WebAudioOut = /*#__PURE__*/function () {
     function WebAudioOut() {
       this.context = WebAudioOut.CachedContext = WebAudioOut.CachedContext || new (window.AudioContext || window.webkitAudioContext)();
@@ -4460,13 +4498,27 @@
       this.wallclockStartTime = 0;
       this.volume = 1;
       this.enabled = true;
-      this.unlocked = !WebAudioOut.NeedsUnlocking();
+      this.sources = [];
+      this.skippedAudio = false;
+      this.destroyed = false;
+      this.gestureListener = null;
+      this.unlockCallback = null;
+      this.onUnlock = null;
+      this.unlocked = !WebAudioOut.NeedsUnlocking() && WebAudioOut.IsRunning(this.context);
       Object.defineProperty(this, 'enqueuedTime', {
         get: this.getEnqueuedTime
       });
+      if (!this.unlocked) {
+        this.listenForGesture();
+      }
     }
     var _proto = WebAudioOut.prototype;
     _proto.destroy = function destroy() {
+      this.destroyed = true;
+      this.unlockCallback = null;
+      this.onUnlock = null;
+      this.removeGestureListener();
+      this.stopSources();
       this.gain.disconnect();
       this.context._connections--;
       if (this.context._connections === 0) {
@@ -4475,19 +4527,45 @@
       }
     };
     _proto.play = function play(sampleRate, left, right) {
-      if (!this.enabled) {
+      var _this = this;
+      if (!this.enabled || this.destroyed) {
         return;
       }
 
-      // If the context is not unlocked yet, we simply advance the start time
-      // to "fake" actually playing audio. This will keep the video in sync.
-      if (!this.unlocked) {
+      // Browsers that need no explicit unlock resume the context by themselves
+      // once the page has been interacted with, so the unlock does not necessarily
+      // go through unlock(). iOS keeps requiring the gesture.
+      if (!this.unlocked && !WebAudioOut.NeedsUnlocking() && WebAudioOut.IsRunning(this.context)) {
+        this.onUnlocked();
+      }
+
+      // A context that is not running, or that has not been unlocked yet, cannot
+      // play anything: the browser autoplay policy keeps it suspended until the
+      // page has received a user gesture, and its currentTime does not advance
+      // meanwhile. Scheduling buffers against it would queue all the audio
+      // decoded in the meantime and play it back from the very beginning once
+      // the context resumes. We simply advance the start time to "fake"
+      // actually playing audio instead. This will keep the video in sync.
+      if (!this.isPlayable()) {
+        this.listenForGesture();
         var ts = Now();
         if (this.wallclockStartTime < ts) {
           this.wallclockStartTime = ts;
         }
         this.wallclockStartTime += left.length / sampleRate;
+        this.skippedAudio = true;
         return;
+      }
+
+      // The audio is available again: whatever was queued while it could not be
+      // played is dropped and the time base is rebuilt, so the audio joins the
+      // picture at the current point in time instead of staying behind it. The
+      // audio decoded meanwhile is lost once, which is what keeps it in sync
+      // with the picture.
+      if (this.skippedAudio) {
+        this.skippedAudio = false;
+        this.stopSources();
+        this.resetEnqueuedTime();
       }
       this.gain.gain.value = this.volume;
       var buffer = this.context.createBuffer(2, left.length, sampleRate);
@@ -4496,6 +4574,13 @@
       var source = this.context.createBufferSource();
       source.buffer = buffer;
       source.connect(this.destination);
+      source.onended = function () {
+        var index = _this.sources.indexOf(source);
+        if (index !== -1) {
+          _this.sources.splice(index, 1);
+        }
+      };
+      this.sources.push(source);
       var now = this.context.currentTime;
       var duration = buffer.duration;
       if (this.startTime < now) {
@@ -4507,11 +4592,13 @@
       this.wallclockStartTime += duration;
     };
     _proto.stop = function stop() {
-      // Meh; there seems to be no simple way to get a list of currently
-      // active source nodes from the Audio Context, and maintaining this
-      // list ourselfs would be a pain, so we just set the gain to 0
-      // to cut off all enqueued audio instantly.
+      // Cut off everything that is still queued: the gain alone would only mute
+      // the buffers that are already scheduled, and they would become audible
+      // again as soon as play() restores it. The time base is rebuilt so the
+      // next buffer joins the current context time instead of the old queue.
       this.gain.gain.value = 0;
+      this.stopSources();
+      this.resetEnqueuedTime();
     };
     _proto.getEnqueuedTime = function getEnqueuedTime() {
       // The AudioContext.currentTime is only updated every so often, so if we
@@ -4522,16 +4609,65 @@
       this.startTime = this.context.currentTime;
       this.wallclockStartTime = Now();
     };
+    _proto.isPlayable = function isPlayable() {
+      return this.unlocked && WebAudioOut.IsRunning(this.context);
+    };
+    _proto.stopSources = function stopSources() {
+      var sources = this.sources;
+      this.sources = [];
+      sources.forEach(function (source) {
+        try {
+          source.stop();
+        } catch (e) {
+          // The source has already ended and cannot be stopped any more.
+        }
+        try {
+          source.disconnect();
+        } catch (e) {
+          // It was never connected to anything.
+        }
+      });
+    };
+    _proto.listenForGesture = function listenForGesture() {
+      var _this2 = this;
+      if (this.gestureListener || this.isPlayable() || this.destroyed || WebAudioOut.NeedsUnlocking() || typeof document === 'undefined') {
+        return;
+      }
+
+      // Chrome and desktop Safari keep the context suspended until it is resumed
+      // inside a user gesture, and they do not resume it by themselves when the
+      // page is tapped somewhere else. iOS keeps requiring the unlock icon.
+      this.gestureListener = function () {
+        return _this2.unlock();
+      };
+      UNLOCK_EVENTS.forEach(function (type) {
+        document.addEventListener(type, _this2.gestureListener, true);
+      });
+    };
+    _proto.removeGestureListener = function removeGestureListener() {
+      var _this3 = this;
+      if (!this.gestureListener) {
+        return;
+      }
+      UNLOCK_EVENTS.forEach(function (type) {
+        document.removeEventListener(type, _this3.gestureListener, true);
+      });
+      this.gestureListener = null;
+    };
     _proto.unlock = function unlock(callback) {
-      if (this.unlocked) {
+      var _this4 = this;
+      // Nothing to do while the audio plays; a context that was suspended again
+      // still has to be resumed, and a destroyed one has nothing left to unlock.
+      if (this.isPlayable() || this.destroyed || this.context.state === 'closed') {
         if (callback) {
           callback();
         }
         return;
       }
-      this.unlockCallback = callback;
+      this.unlockCallback = callback || this.unlockCallback;
 
-      // Create empty buffer and play it
+      // Create empty buffer and play it, so the browsers that only start their
+      // audio pipeline from within a user gesture (iOS Safari) really unlock.
       var buffer = this.context.createBuffer(1, 1, 22050);
       var source = this.context.createBufferSource();
       source.buffer = buffer;
@@ -4543,22 +4679,72 @@
       } else {
         source.noteOn(0);
       }
+
+      // Chrome and desktop Safari keep the context suspended until it is resumed
+      // explicitly, and resume() only takes effect inside a user gesture - which
+      // is exactly where unlock() is called from.
+      var resumed = null;
+      try {
+        resumed = this.context.resume && this.context.resume();
+      } catch (e) {
+        // An unsupported or interrupted context: fall through to the polling
+        // check, which also covers the browsers that resume on their own.
+      }
+      if (resumed && resumed.then) {
+        resumed.then(function () {
+          return _this4.checkIfUnlocked(source, 0);
+        }, function () {
+          return _this4.checkIfUnlocked(source, 0);
+        });
+        return;
+      }
       setTimeout(this.checkIfUnlocked.bind(this, source, 0), 0);
     };
     _proto.checkIfUnlocked = function checkIfUnlocked(source, attempt) {
-      if (source.playbackState === source.PLAYING_STATE || source.playbackState === source.FINISHED_STATE) {
-        this.unlocked = true;
-        if (this.unlockCallback) {
-          this.unlockCallback();
-          this.unlockCallback = null;
-        }
+      if (this.destroyed || this.context.state === 'closed') {
+        // The player was destroyed while waiting for the unlock.
+        this.unlockCallback = null;
+        return;
+      }
+
+      // `playbackState` and its constants were removed from the Web Audio API,
+      // and comparing two undefined values is always true, so the legacy check
+      // may only be used when the browser actually exposes it.
+      var legacyUnlocked = source.playbackState !== undefined && (source.playbackState === source.PLAYING_STATE || source.playbackState === source.FINISHED_STATE);
+      var unlocked = this.context.state ? this.context.state === 'running' : legacyUnlocked;
+      if (unlocked) {
+        this.onUnlocked();
       } else if (attempt < 10) {
         // Jeez, what a shit show. Thanks iOS!
         setTimeout(this.checkIfUnlocked.bind(this, source, attempt + 1), 100);
       }
     };
+    _proto.onUnlocked = function onUnlocked() {
+      if (this.destroyed) {
+        return;
+      }
+      this.removeGestureListener();
+
+      // The output may be unlocked again after its context had been suspended, so
+      // a pending callback is always served; only the onUnlock hook, which drives
+      // the unlock UI, is limited to the first time.
+      var firstUnlock = !this.unlocked;
+      this.unlocked = true;
+      var callbacks = [this.unlockCallback, firstUnlock ? this.onUnlock : null];
+      this.unlockCallback = null;
+      callbacks.forEach(function (callback) {
+        if (callback) {
+          callback();
+        }
+      });
+    };
     WebAudioOut.NeedsUnlocking = function NeedsUnlocking() {
       return /iPhone|iPad|iPod/i.test(navigator.userAgent);
+    };
+    WebAudioOut.IsRunning = function IsRunning(context) {
+      // Old WebKit versions expose no state at all; there, NeedsUnlocking()
+      // alone decides whether the context has to be unlocked.
+      return !context.state || context.state === 'running';
     };
     WebAudioOut.IsSupported = function IsSupported() {
       return window.AudioContext || window.webkitAudioContext;
@@ -4891,10 +5077,11 @@
       this.isPlaying = false;
       this.paused = true;
       if (this.audio && this.audio.canPlay) {
-        // Seek to the currentTime again - audio may already be enqueued a bit
-        // further, so we have to rewind it.
+        // Seek back to the frame that is being heard: stop() drops the queue that
+        // was already enqueued further ahead, so the time has to be read first.
+        var time = this.currentTime;
         this.audioOut.stop();
-        this.seek(this.currentTime);
+        this.seek(time);
       }
       if (this.hooks.pause) {
         this.hooks.pause();
