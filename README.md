@@ -58,7 +58,7 @@ new JSMpeg.VideoElement(videoWrapper, videoUrl [, options] [, overlayOptions])
       * `stop`: [Function] The hook function when the video stop.
       * `load`: [Function] The hook function when the video established.
   * `overlayOptions`: [Object] More options can view the [jsmpeg options](https://github.com/phoboslab/jsmpeg#usage)
-    * `protocols`: [String | Array<String>] WebSocket subprotocols, forwarded to `new WebSocket(url, protocols)` (`wss://` URLs only). Can carry a Bearer token. Default `undefined`. See [WebSocket authentication](#websocket-authentication).
+    * `protocols`: [String | Array<String>] WebSocket subprotocols, forwarded to `new WebSocket(url, protocols)` (`ws://` and `wss://` URLs only). Can carry a Bearer token. Default `undefined`. See [WebSocket authentication](#websocket-authentication).
     * `preserveDrawingBuffer`: [Boolean] Keep the WebGL drawing buffer so the canvas can be read back, e.g. to take a snapshot with `canvas.toDataURL()`. Default `false`. See [Snapshot](#snapshot).
 
 * `JSMpeg.VideoElement` instance supports the following methods:
