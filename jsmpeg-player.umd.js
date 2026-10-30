@@ -397,6 +397,11 @@
       // Nothing to do here
     };
     _proto.destroy = function destroy() {
+      // destroy() may run before start(), e.g. when a player is torn down while
+      // the WASM module is still compiling and the source was never started.
+      if (!this.request) {
+        return;
+      }
       this.request.abort();
     };
     _proto.onProgress = function onProgress(ev) {
@@ -591,6 +596,12 @@
     _proto.destroy = function destroy() {
       clearTimeout(this.reconnectTimeoutId);
       this.shouldAttemptReconnect = false;
+
+      // destroy() may run before start(), e.g. when a player is torn down while
+      // the WASM module is still compiling and the socket was never opened.
+      if (!this.socket) {
+        return;
+      }
       this.socket.close();
     };
     _proto.start = function start() {
@@ -4816,6 +4827,7 @@
         set: this.setVolume
       });
       this.paused = true;
+      this.destroyed = false;
       this.unpauseOnShow = false;
       if (options.pauseWhenHidden !== false) {
         // Keep the bound reference so destroy() can remove this listener again,
@@ -4841,6 +4853,13 @@
     }
     var _proto = Player.prototype;
     _proto.startLoading = function startLoading() {
+      // The WASM module is compiled asynchronously, so this may still run through
+      // the module's init callback after destroy() has already torn the player
+      // down. Starting the source then would open a connection that nothing owns
+      // any more and restart the decode loop.
+      if (this.destroyed) {
+        return;
+      }
       this.source.start();
       if (this.autoplay) {
         this.play();
@@ -4903,6 +4922,9 @@
       }
     };
     _proto.destroy = function destroy() {
+      // Nothing may start the source from here on: the WASM init callback may
+      // still fire later, and destroy() itself may run before the source started.
+      this.destroyed = true;
       this.pause();
       this.source.destroy();
       this.video && this.video.destroy();
@@ -5107,6 +5129,12 @@
       // Nothing to do here
     };
     _proto.abort = function abort() {
+      this.aborted = true;
+    };
+    _proto.destroy = function destroy() {
+      // The player always calls source.destroy(); without this the Fetch source
+      // would throw on teardown. The pump loop cancels the reader once it sees
+      // the flag on the next chunk.
       this.aborted = true;
     };
     return FetchSource;
