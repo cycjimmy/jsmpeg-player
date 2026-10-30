@@ -102,6 +102,7 @@ export default class Player {
     });
 
     this.paused = true;
+    this.destroyed = false;
     this.unpauseOnShow = false;
     if (options.pauseWhenHidden !== false) {
       // Keep the bound reference so destroy() can remove this listener again,
@@ -129,6 +130,14 @@ export default class Player {
   }
 
   startLoading() {
+    // The WASM module is compiled asynchronously, so this may still run through
+    // the module's init callback after destroy() has already torn the player
+    // down. Starting the source then would open a connection that nothing owns
+    // any more and restart the decode loop.
+    if (this.destroyed) {
+      return;
+    }
+
     this.source.start();
     if (this.autoplay) {
       this.play();
@@ -204,6 +213,9 @@ export default class Player {
   }
 
   destroy() {
+    // Nothing may start the source from here on: the WASM init callback may
+    // still fire later, and destroy() itself may run before the source started.
+    this.destroyed = true;
     this.pause();
     this.source.destroy();
     this.video && this.video.destroy();

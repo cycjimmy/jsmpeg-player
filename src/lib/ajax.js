@@ -43,6 +43,12 @@ export default class AjaxSource {
   }
 
   destroy() {
+    // destroy() may run before start(), e.g. when a player is torn down while
+    // the WASM module is still compiling and the source was never started.
+    if (!this.request) {
+      return;
+    }
+
     this.request.abort();
   }
 

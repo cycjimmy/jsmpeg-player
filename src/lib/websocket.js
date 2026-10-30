@@ -34,6 +34,13 @@ export default class WSSource {
   destroy() {
     clearTimeout(this.reconnectTimeoutId);
     this.shouldAttemptReconnect = false;
+
+    // destroy() may run before start(), e.g. when a player is torn down while
+    // the WASM module is still compiling and the socket was never opened.
+    if (!this.socket) {
+      return;
+    }
+
     this.socket.close();
   }
 

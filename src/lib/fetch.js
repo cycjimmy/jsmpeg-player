@@ -80,4 +80,11 @@ export default class FetchSource {
   abort() {
     this.aborted = true;
   }
+
+  destroy() {
+    // The player always calls source.destroy(); without this the Fetch source
+    // would throw on teardown. The pump loop cancels the reader once it sees
+    // the flag on the next chunk.
+    this.aborted = true;
+  }
 }
