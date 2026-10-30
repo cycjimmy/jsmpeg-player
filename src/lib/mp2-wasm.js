@@ -17,9 +17,14 @@ class MP2WASM extends BaseDecoder {
     this.bufferMode = options.streaming ? BitBuffer.MODE.EVICT : BitBuffer.MODE.EXPAND;
 
     this.sampleRate = 0;
+    this.destroyed = false;
   }
 
   initializeWasmDecoder() {
+    if (this.destroyed) {
+      return;
+    }
+
     if (!this.module.instance) {
       console.warn('JSMpeg: WASM module not compiled yet');
       return;
@@ -30,10 +35,26 @@ class MP2WASM extends BaseDecoder {
   }
 
   destroy() {
+    // A source can still deliver one last chunk inside the very callback that
+    // destroys the player, so nothing may reach the module from now on.
+    this.destroyed = true;
+
     if (!this.decoder) {
       return;
     }
     this.functions._mp2_decoder_destroy(this.decoder);
+    // The pointer refers to a freed block now, and the module may hand the same
+    // address to the decoder of the next player: it must never be used again.
+    this.decoder = null;
+    this.canPlay = false;
+  }
+
+  write(pts, buffers) {
+    if (this.destroyed) {
+      return;
+    }
+
+    super.write(pts, buffers);
   }
 
   bufferGetIndex() {
@@ -52,8 +73,17 @@ class MP2WASM extends BaseDecoder {
   }
 
   bufferWrite(buffers) {
+    if (this.destroyed) {
+      return 0;
+    }
+
     if (!this.decoder) {
       this.initializeWasmDecoder();
+    }
+
+    if (!this.decoder) {
+      // The module is not compiled yet; nothing can be written.
+      return 0;
     }
 
     let totalLength = 0;

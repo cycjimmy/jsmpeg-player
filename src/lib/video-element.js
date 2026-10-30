@@ -157,10 +157,10 @@ export default class VideoElement {
       this.els.playButton.classList.add(_style.hidden);
     }
 
-    // Set up the unlock audio button for iOS devices. iOS only allows us to
-    // play audio after a user action has initiated playing. For autoplay or
-    // streaming players we set up a muted speaker icon as the button. For all
-    // others, we can simply use the play button.
+    // Set up the unlock audio button for the browsers that do not allow audio
+    // before a user action (iOS, and Chrome/Safari under their autoplay
+    // policy). For autoplay or streaming players we set up a muted speaker
+    // icon as the button. For all others, we can simply use the play button.
     if (this.player.audioOut && !this.player.audioOut.unlocked) {
       let unlockAudioElement = this.els.wrapper;
 
@@ -175,6 +175,10 @@ export default class VideoElement {
       this.unlockAudioBound = this.onUnlockAudio.bind(this, unlockAudioElement);
       unlockAudioElement.addEventListener('touchstart', this.unlockAudioBound, false);
       unlockAudioElement.addEventListener('click', this.unlockAudioBound, true);
+
+      // Any gesture on the page may unlock the audio, so the icon has to go
+      // away even when it was not the element that was clicked.
+      this.player.audioOut.onUnlock = () => this.onAudioUnlocked(unlockAudioElement);
     }
   }
 
@@ -205,18 +209,23 @@ export default class VideoElement {
     }));
   }
 
+  onAudioUnlocked(element) {
+    if (this.els.unmuteButton) {
+      this.els.unmuteButton.classList.add(_style.hidden);
+    }
+
+    if (element && this.unlockAudioBound) {
+      element.removeEventListener('touchstart', this.unlockAudioBound);
+      element.removeEventListener('click', this.unlockAudioBound);
+    }
+  }
+
   onUnlockAudio(element, ev) {
     if (this.els.unmuteButton) {
       ev.preventDefault();
       ev.stopPropagation();
     }
-    this.player.audioOut.unlock(() => {
-      if (this.els.unmuteButton) {
-        this.els.unmuteButton.classList.add(_style.hidden);
-      }
-      element.removeEventListener('touchstart', this.unlockAudioBound);
-      element.removeEventListener('click', this.unlockAudioBound);
-    });
+    this.player.audioOut.unlock(() => this.onAudioUnlocked(element));
   }
 
   onClick() {

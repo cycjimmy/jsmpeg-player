@@ -12,7 +12,7 @@
 * **[jsmpeg-player](https://github.com/cycdpo/jsmpeg-player) has been renamed to @cycjimmy/jsmpeg-player for scoped NPM package.**
 * JSMpeg player is based on [jsmpeg](https://github.com/phoboslab/jsmpeg).
 * The video must be compressed into the TS format of MPEG1 / MP2.
-* Apple device automatically plays without sound, you need to guide the user to click on the video in the lower right corner of the video icon to unlock the sound. (no similar problem in non-autoplay mode)
+* Autoplay with sound is blocked by the browser until the page receives a user gesture: Apple device automatically plays without sound, you need to guide the user to click on the video in the lower right corner of the video icon to unlock the sound. Chrome and Safari follow the same autoplay policy, where the sound stays in sync with the picture and starts as soon as the user interacts with the page, or can be unlocked right away through the same icon. (no similar problem in non-autoplay mode)
 * [Demo][github-pages-url]
 
 ## How to use

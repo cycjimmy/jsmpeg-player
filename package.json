@@ -14,6 +14,7 @@
     "start": "npm run dev",
     "lint": "eslint --ext .js,.cjs,.mjs -c .eslintrc .",
     "lint:fix": "eslint --ext .js,.cjs,.mjs --fix -c .eslintrc .",
+    "test": "node --test",
     "dev": "cross-env NODE_ENV=development rollup -c rollup/rollup.config.dev.mjs --watch",
     "build": "trash dist && npm run build:prod:umd && npm run build:prod",
     "build:prod": "cross-env NODE_ENV=production rollup -c rollup/rollup.config.prod.mjs",

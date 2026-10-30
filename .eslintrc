@@ -5,6 +5,19 @@
     "browser": true,
     "node": true
   },
+  "overrides": [
+    {
+      "files": [
+        "test/**/*.mjs"
+      ],
+      "parserOptions": {
+        "ecmaVersion": 2022
+      },
+      "env": {
+        "es2022": true
+      }
+    }
+  ],
   "rules": {
     "import/no-cycle": 0,
     "no-param-reassign": 0,

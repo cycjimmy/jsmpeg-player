@@ -88,6 +88,7 @@ export default class Player {
     if (options.audio !== false && WebAudioOut.IsSupported()) {
       this.audio = options.wasmModule ? new MP2WASM(options) : new MP2(options);
       this.audioOut = new WebAudioOut(options);
+
       this.demuxer.connect(TS.STREAM.AUDIO_1, this.audio);
       this.audio.connect(this.audioOut);
     }
@@ -175,10 +176,11 @@ export default class Player {
     this.paused = true;
 
     if (this.audio && this.audio.canPlay) {
-      // Seek to the currentTime again - audio may already be enqueued a bit
-      // further, so we have to rewind it.
+      // Seek back to the frame that is being heard: stop() drops the queue that
+      // was already enqueued further ahead, so the time has to be read first.
+      const time = this.currentTime;
       this.audioOut.stop();
-      this.seek(this.currentTime);
+      this.seek(time);
     }
 
     if (this.hooks.pause) {
