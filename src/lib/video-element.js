@@ -5,7 +5,7 @@ import functionToPromise from '@cycjimmy/awesome-js-funcs/esm/typeConversion/fun
 // button view
 import { PLAY_BUTTON, UNMUTE_BUTTON } from '../buttonView'
 // style
-import _style from '../theme/style.scss'
+import _style from '../theme/style.module.scss'
 
 // service
 import Player from './player'

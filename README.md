@@ -4,7 +4,7 @@
 [![libraries dependency status][libraries-status-image]][libraries-status-url]
 [![libraries sourcerank][libraries-sourcerank-image]][libraries-sourcerank-url]
 [![Release date][release-date-image]][release-url]
-[![rollup][rollup-image]][rollup-url]
+[![vite][vite-image]][vite-url]
 [![semantic-release][semantic-image]][semantic-url]
 [![npm license][license-image]][download-url]
 
@@ -144,8 +144,36 @@ To keep many cameras on screen:
 ## CDN
 To use via a CDN include this in your HTML:
 ```text
-<script src="https://cdn.jsdelivr.net/npm/@cycjimmy/jsmpeg-player@6/dist/jsmpeg-player.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@cycjimmy/jsmpeg-player@7/dist/jsmpeg-player.umd.min.js"></script>
 ```
+
+## Migrating to v7
+
+v7 drops the CommonJS build and raises the Node and browser targets. `import` and the browser global are unchanged, so most consumers need no change at all.
+
+* `dist/jsmpeg-player.cjs` is no longer produced and `exports` no longer exposes a `require` condition. `require('@cycjimmy/jsmpeg-player')` keeps working on Node >= 20.19, because Node can `require()` an ES module, but it returns the module namespace: use `require('@cycjimmy/jsmpeg-player').default`.
+* `main` and `module` both point at `dist/jsmpeg-player.esm.js`. The `browser` field still points at the UMD build for CDN and legacy tooling.
+* `engines.node` is now `^20.19.0 || >=22.12.0`.
+* The build targets `es2015` with the `defaults` browserslist, so IE is no longer supported. Babel down-leveling is gone, which makes `jsmpeg-player.esm.js` about 24% smaller and `jsmpeg-player.umd.min.js` slightly smaller than v6.
+* Deep paths keep working through the `./dist/*` export.
+* The runtime CSS is still injected as a `<style>` element; there is no stylesheet to import.
+
+```javascript
+// CommonJS consumers, Node >= 20.19 only
+const JSMpeg = require('@cycjimmy/jsmpeg-player').default
+```
+
+## Development
+
+```shell
+$ npm run dev          # Vite dev server on top of the root index.html
+$ npm run lint         # ESLint (flat config, @antfu/eslint-config)
+$ npm run lint:style   # Stylelint for src/**/*.{css,scss}
+$ npm test             # node --test
+$ npm run package      # build dist/ and assemble .release/
+```
+
+`index.html` in the repository root is the development entry: it imports `src/` through Vite, so changes show up without a build. `static/index.html` is the GitHub Pages demo and loads the pre-built `jsmpeg-player.umd.js` with a plain `<script>` tag; `npm run build:deployment` assembles it in `.publish/`. See [CONTRIBUTING.md](CONTRIBUTING.md) for the checks the CI runs.
 
 ## Encoding Video/Audio for [jsmpeg](https://github.com/phoboslab/jsmpeg) by [ffmpeg](https://ffmpeg.org/). E.g:
 ```shell
@@ -185,8 +213,8 @@ $ ffmpeg -i input.mp4 -f mpegts \
 [release-date-image]: https://img.shields.io/github/release-date/cycjimmy/jsmpeg-player
 [release-url]: https://github.com/cycjimmy/jsmpeg-player/releases
 
-[rollup-image]: https://img.shields.io/github/package-json/dependency-version/cycjimmy/jsmpeg-player/dev/rollup
-[rollup-url]: https://github.com/rollup/rollup
+[vite-image]: https://img.shields.io/github/package-json/dependency-version/cycjimmy/jsmpeg-player/dev/vite
+[vite-url]: https://github.com/vitejs/vite
 
 [semantic-image]: https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg
 [semantic-url]: https://github.com/semantic-release/semantic-release
