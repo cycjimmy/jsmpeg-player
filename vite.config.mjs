@@ -24,6 +24,14 @@ function injectCss({ banner = null } = {}) {
   return {
     name: 'inject-css',
     enforce: 'post',
+
+    configResolved(config) {
+      // Prepending to `chunk.code` shifts every line, so the maps Rolldown
+      // already produced would point at the wrong source.
+      if (config.build.sourcemap)
+        throw new Error('inject-css prepends code to the entry chunk, which invalidates the source maps. Implement the offset before enabling build.sourcemap.')
+    },
+
     generateBundle(_options, bundle) {
       const cssAssets = Object.keys(bundle).filter(name => name.endsWith('.css'))
       if (cssAssets.length === 0)
@@ -107,6 +115,10 @@ const builds = {
 
 export default defineConfig(({ mode }) => {
   const build = builds[mode]
+
+  // `development` is the Vite dev server: it needs no library build config.
+  if (!build && mode !== 'development')
+    throw new Error(`Unknown mode "${mode}". Expected one of: ${Object.keys(builds).join(', ')}`)
 
   return {
     // Avoid copying static/ (or any public dir) into dist and polluting .release.
