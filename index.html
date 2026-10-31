@@ -24,7 +24,6 @@
       display: flex;
       justify-content: center;
       align-items: center;
-
       margin: 0 10px;
       border: 1px solid #666;
       border-radius: 10px;
@@ -48,29 +47,27 @@
   // Exposed on the global for the manual console experiments.
   window.JSMpeg = JSMpeg
 
-  const videoUrl = 'https://cycjimmy.github.io/staticFiles/media/big_buck_bunny_640x360.ts';
+  const videoUrl = 'https://cycjimmy.github.io/staticFiles/media/big_buck_bunny_640x360.ts'
 
   const video = new JSMpeg.VideoElement('#videoWrapper', videoUrl, {
-    poster: 'https://cycjimmy.github.io/staticFiles/images/screenshot/big_buck_bunny_640x360.jpg'
-  });
+    poster: 'https://cycjimmy.github.io/staticFiles/images/screenshot/big_buck_bunny_640x360.jpg',
+  })
 
-  console.log(video);
+  console.log(video)
 
   document.querySelector('.buttons-wrapper').addEventListener('click', function (e) {
-    const target = e.target;
+    const target = e.target
 
-    if (target === this) {
-      return;
-    }
+    if (target === this)
+      return
 
-    const sAction = target.dataset.action;
+    const sAction = target.dataset.action
 
-    if (!sAction) {
-      return;
-    }
+    if (!sAction)
+      return
 
-    video[sAction]();
-  });
+    video[sAction]()
+  })
 </script>
 </body>
 </html>
