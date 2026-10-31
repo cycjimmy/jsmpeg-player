@@ -153,13 +153,13 @@ v7 drops the CommonJS build and raises the Node and browser targets. `import` an
 
 * `dist/jsmpeg-player.cjs` is no longer produced and `exports` no longer exposes a `require` condition. `require('@cycjimmy/jsmpeg-player')` keeps working on Node >= 20.19, because Node can `require()` an ES module, but it returns the module namespace: use `require('@cycjimmy/jsmpeg-player').default`.
 * `main` and `module` both point at `dist/jsmpeg-player.esm.js`. The `browser` field still points at the UMD build for CDN and legacy tooling.
-* `engines.node` is now `^20.19.0 || >=22.12.0`.
+* `engines.node` is now `^22.22.2 || >=24.15.0`, the floor of the new build toolchain. `engines` is stripped from the published tarball, so it only constrains contributors and CI, not consumers.
 * The build targets `es2015` with the `defaults` browserslist, so IE is no longer supported. Babel down-leveling is gone, which makes `jsmpeg-player.esm.js` about 24% smaller and `jsmpeg-player.umd.min.js` slightly smaller than v6.
 * Deep paths keep working through the `./dist/*` export.
 * The runtime CSS is still injected as a `<style>` element; there is no stylesheet to import.
 
 ```javascript
-// CommonJS consumers, Node >= 20.19 only
+// CommonJS consumers: require() can load an ES module from Node 20.19 on
 const JSMpeg = require('@cycjimmy/jsmpeg-player').default
 ```
 

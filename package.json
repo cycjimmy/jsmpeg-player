@@ -29,7 +29,7 @@
   "main": "dist/jsmpeg-player.esm.js",
   "module": "dist/jsmpeg-player.esm.js",
   "engines": {
-    "node": "^20.19.0 || >=22.12.0"
+    "node": "^22.22.2 || >=24.15.0"
   },
   "scripts": {
     "start": "npm run dev",

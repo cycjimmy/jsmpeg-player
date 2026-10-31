@@ -5,7 +5,10 @@ permissions:
   pull-requests: write
 jobs:
   auto-merge:
-    if: github.actor == 'dependabot[bot]'
+    # Fork pull requests never receive a write token, so gate on the same-repo branch too.
+    if: >-
+      github.actor == 'dependabot[bot]' &&
+      github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     steps:
       - id: metadata
