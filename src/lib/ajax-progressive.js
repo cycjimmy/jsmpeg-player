@@ -1,81 +1,85 @@
-import { Now } from '../utils';
+import { Now } from '../utils'
 
 // The `?start-end` suffix keeps caches from handing out a full body for a
 // ranged request, but it must never be added to a URL that already has a query
 // string: signed URLs (e.g. `...?sign=...`) are rejected once anything is
 // appended to their query.
-const RangeURL = (url, start, end) => {
-  const hashIndex = url.indexOf('#');
-  const base = hashIndex === -1 ? url : url.slice(0, hashIndex);
-  const hash = hashIndex === -1 ? '' : url.slice(hashIndex);
+function RangeURL(url, start, end) {
+  const hashIndex = url.indexOf('#')
+  const base = hashIndex === -1
+    ? url
+    : url.slice(0, hashIndex)
+  const hash = hashIndex === -1
+    ? ''
+    : url.slice(hashIndex)
 
-  if (base.indexOf('?') !== -1) {
-    return url;
+  if (base.includes('?')) {
+    return url
   }
 
-  return `${base}?${start}-${end}${hash}`;
-};
+  return `${base}?${start}-${end}${hash}`
+}
 
 export default class AjaxProgressiveSource {
   constructor(url, options) {
-    this.url = url;
-    this.destination = null;
-    this.request = null;
-    this.streaming = false;
+    this.url = url
+    this.destination = null
+    this.request = null
+    this.streaming = false
 
-    this.completed = false;
-    this.established = false;
-    this.progress = 0;
+    this.completed = false
+    this.established = false
+    this.progress = 0
 
-    this.fileSize = 0;
-    this.loadedSize = 0;
-    this.chunkSize = options.chunkSize || 1024 * 1024;
+    this.fileSize = 0
+    this.loadedSize = 0
+    this.chunkSize = options.chunkSize || 1024 * 1024
 
-    this.isLoading = false;
-    this.loadStartTime = 0;
+    this.isLoading = false
+    this.loadStartTime = 0
     // Counter for the retries in loadNextChunk; it has to start at 0, an
     // undefined value would make `this.loadFails++ < 3` always false.
-    this.loadFails = 0;
-    this.throttled = options.throttled !== false;
-    this.aborted = false;
+    this.loadFails = 0
+    this.throttled = options.throttled !== false
+    this.aborted = false
 
-    this.onEstablishedCallback = options.onSourceEstablished;
-    this.onCompletedCallback = options.onSourceCompleted;
+    this.onEstablishedCallback = options.onSourceEstablished
+    this.onCompletedCallback = options.onSourceCompleted
 
     if (options.hookOnEstablished) {
-      this.hookOnEstablished = options.hookOnEstablished;
+      this.hookOnEstablished = options.hookOnEstablished
     }
   }
 
   connect(destination) {
-    this.destination = destination;
+    this.destination = destination
   }
 
   start() {
-    this.request = new XMLHttpRequest();
+    this.request = new XMLHttpRequest()
 
     this.request.onreadystatechange = () => {
       if (this.request.readyState === this.request.DONE) {
-        this.fileSize = parseInt(this.request.getResponseHeader('Content-Length'), 10);
-        this.loadNextChunk();
+        this.fileSize = parseInt(this.request.getResponseHeader('Content-Length'), 10)
+        this.loadNextChunk()
       }
-    };
+    }
 
-    this.request.onprogress = this.onProgress.bind(this);
-    this.request.open('HEAD', this.url);
-    this.request.send();
+    this.request.onprogress = this.onProgress.bind(this)
+    this.request.open('HEAD', this.url)
+    this.request.send()
   }
 
   resume(secondsHeadroom) {
     if (this.isLoading || !this.throttled) {
-      return;
+      return
     }
 
     // Guess the worst case loading time with lots of safety margin. This is
     // somewhat arbitrary...
-    const worstCaseLoadingTime = this.loadTime * 8 + 2;
+    const worstCaseLoadingTime = this.loadTime * 8 + 2
     if (worstCaseLoadingTime > secondsHeadroom) {
-      this.loadNextChunk();
+      this.loadNextChunk()
     }
   }
 
@@ -83,31 +87,31 @@ export default class AjaxProgressiveSource {
     // Mark the source as gone *before* aborting: abort() fires
     // `readystatechange` synchronously, and with the retry in loadNextChunk now
     // actually working, that callback would start a fresh request otherwise.
-    this.aborted = true;
-    this.isLoading = false;
+    this.aborted = true
+    this.isLoading = false
 
     if (this.request) {
-      this.request.onreadystatechange = null;
-      this.request.onprogress = null;
-      this.request.abort();
+      this.request.onreadystatechange = null
+      this.request.onprogress = null
+      this.request.abort()
     }
   }
 
   loadNextChunk() {
-    const start = this.loadedSize;
-    const end = Math.min(this.loadedSize + this.chunkSize - 1, this.fileSize - 1);
+    const start = this.loadedSize
+    const end = Math.min(this.loadedSize + this.chunkSize - 1, this.fileSize - 1)
 
     if (start >= this.fileSize || this.aborted) {
-      this.completed = true;
+      this.completed = true
       if (this.onCompletedCallback) {
-        this.onCompletedCallback(this);
+        this.onCompletedCallback(this)
       }
-      return;
+      return
     }
 
-    this.isLoading = true;
-    this.loadStartTime = Now();
-    this.request = new XMLHttpRequest();
+    this.isLoading = true
+    this.loadStartTime = Now()
+    this.request = new XMLHttpRequest()
 
     this.request.onreadystatechange = () => {
       if (
@@ -115,53 +119,54 @@ export default class AjaxProgressiveSource {
         && this.request.status >= 200
         && this.request.status < 300
       ) {
-        this.onChunkLoad(this.request.response);
-      } else if (this.request.readyState === this.request.DONE) {
+        this.onChunkLoad(this.request.response)
+      }
+      else if (this.request.readyState === this.request.DONE) {
         // Retry?
         if (this.loadFails++ < 3) {
-          this.loadNextChunk();
+          this.loadNextChunk()
         }
       }
-    };
-
-    if (start === 0) {
-      this.request.onprogress = this.onProgress.bind(this);
     }
 
-    this.request.open('GET', RangeURL(this.url, start, end));
-    this.request.setRequestHeader('Range', `bytes=${start}-${end}`);
-    this.request.responseType = 'arraybuffer';
-    this.request.send();
+    if (start === 0) {
+      this.request.onprogress = this.onProgress.bind(this)
+    }
+
+    this.request.open('GET', RangeURL(this.url, start, end))
+    this.request.setRequestHeader('Range', `bytes=${start}-${end}`)
+    this.request.responseType = 'arraybuffer'
+    this.request.send()
   }
 
   onProgress(ev) {
-    this.progress = ev.loaded / ev.total;
+    this.progress = ev.loaded / ev.total
   }
 
   onChunkLoad(data) {
-    const isFirstChunk = !this.established;
-    this.established = true;
-    this.progress = 1;
+    const isFirstChunk = !this.established
+    this.established = true
+    this.progress = 1
 
-    this.loadedSize += data.byteLength;
-    this.loadFails = 0;
-    this.isLoading = false;
+    this.loadedSize += data.byteLength
+    this.loadFails = 0
+    this.isLoading = false
 
     if (isFirstChunk && this.hookOnEstablished) {
-      this.hookOnEstablished();
+      this.hookOnEstablished()
     }
 
     if (isFirstChunk && this.onEstablishedCallback) {
-      this.onEstablishedCallback(this);
+      this.onEstablishedCallback(this)
     }
 
     if (this.destination) {
-      this.destination.write(data);
+      this.destination.write(data)
     }
 
-    this.loadTime = Now() - this.loadStartTime;
+    this.loadTime = Now() - this.loadStartTime
     if (!this.throttled) {
-      this.loadNextChunk();
+      this.loadNextChunk()
     }
   }
 }

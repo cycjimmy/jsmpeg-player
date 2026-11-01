@@ -17,13 +17,13 @@ on:
 jobs:
   test:
     runs-on: ${{ matrix.os }}
+    # Read-only on purpose: `npm ci` runs install scripts from the dependency tree.
     permissions:
-      id-token: write # for semantic-release to verify npm auth via trusted publishing (OIDC)
-      contents: write # for semantic-release to verify Git push access during dry-run
+      contents: read
     strategy:
       fail-fast: false
       matrix:
-        node: [ 20, 24 ]
+        node: [22, 24]
         os: [ubuntu-latest, windows-latest, macOS-latest]
 
     steps:
@@ -33,12 +33,35 @@ jobs:
           node-version: ${{ matrix.node }}
           cache: npm
       - run: npm ci
+      - run: npm run lint
+      - run: npm run lint:style
       - run: npm test
       - run: npm run package
 
+  # Split out of `test` so the write token never reaches the steps that run
+  # repository code, and so the dry-run executes once instead of per matrix cell.
+  release-dry-run:
+    needs: test
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write # for semantic-release to verify npm auth via trusted publishing (OIDC)
+      contents: write # for semantic-release to verify Git push access during dry-run
+
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      # `release.config.js` imports @cycjimmy/config-lib and @semantic-release/npm
+      # reads pkgRoot (.release), so this job rebuilds instead of inheriting the
+      # test job's filesystem.
+      - run: npm ci
+      - run: npm run package
+
       - name: Semantic Release Test
-        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
-        uses: cycjimmy/semantic-release-action@v6
+        uses: cycjimmy/semantic-release-action@v8
         with:
           dry_run: true
           branches: |

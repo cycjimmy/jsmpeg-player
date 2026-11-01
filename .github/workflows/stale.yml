@@ -27,7 +27,7 @@ jobs:
           days-before-close: 14
           # needs-info issues have their own shorter lifecycle (see below)
           exempt-issue-labels: 'triaged,needs-info'
-          stale-issue-label: 'stale'
+          stale-issue-label: stale
           stale-issue-message: >
             This issue has been automatically marked as stale because it has not
             had recent activity. It will be closed in 14 days if no further
@@ -46,11 +46,11 @@ jobs:
           days-before-pr-stale: -1
           days-before-pr-close: -1
           # Only issues carrying the needs-info label
-          any-of-labels: 'needs-info'
+          any-of-labels: needs-info
           days-before-stale: 7
           # Close immediately once the 7-day window has passed
           days-before-close: 0
-          stale-issue-label: 'stale'
+          stale-issue-label: stale
           close-issue-message: >
             This issue was closed because the requested information was not
             provided within 7 days. Please reopen it or open a new issue with

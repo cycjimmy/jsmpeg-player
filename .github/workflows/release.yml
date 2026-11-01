@@ -27,7 +27,12 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - run: npm run package
+      - run: npm run lint
+
+      - run: npm run lint:style
+
+      - name: Build package
+        run: npm run package
 
   release:
     name: release
@@ -56,7 +61,7 @@ jobs:
         run: npm run package
 
       - name: Semantic Release
-        uses: cycjimmy/semantic-release-action@v6
+        uses: cycjimmy/semantic-release-action@v8
         id: semantic
         with:
           branches: |
@@ -87,13 +92,14 @@ jobs:
         with:
           node-version: 24
           registry-url: 'https://npm.pkg.github.com'
-          scope: 'cycjimmy'
+          scope: cycjimmy
 
       - name: Publish To GitHub Package Registry
         if: steps.semantic.outputs.new_release_published == 'true'
-        run: npm publish ./.release
+        run: npm publish ./.release --tag "$RELEASE_TAG"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_TAG: ${{ steps.semantic.outputs.new_release_channel || 'latest' }}
 
       - name: Push updates to branch for major version
         if: steps.semantic.outputs.new_release_published == 'true'

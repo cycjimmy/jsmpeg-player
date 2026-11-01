@@ -4,8 +4,38 @@ updates:
     directory: /
     schedule:
       interval: daily
+    commit-message:
+      prefix: ci
+    labels:
+      - dependencies
+      - ci
+    groups:
+      github-actions:
+        patterns:
+          - '*'
 
   - package-ecosystem: npm
     directory: /
     schedule:
       interval: daily
+    commit-message:
+      prefix: chore
+    labels:
+      - dependencies
+    open-pull-requests-limit: 10
+    groups:
+      lint:
+        patterns:
+          - eslint
+          - '@antfu/*'
+          - stylelint
+          - stylelint-config-*
+      build:
+        patterns:
+          - vite
+          - sass
+          - autoprefixer
+          - terser
+          - trash-cli
+          - fs-extra
+          - '@cycjimmy/config-lib'
