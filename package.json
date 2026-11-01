@@ -1,7 +1,7 @@
 {
   "name": "@cycjimmy/jsmpeg-player",
   "type": "module",
-  "version": "6.1.8",
+  "version": "7.0.0",
   "description": "MPEG1 Video Player Based On JSMpeg",
   "browser": "dist/jsmpeg-player.umd.min.js",
   "author": "cycjimmy <cycjimmy@gmail.com> (https://github.com/cycjimmy)",

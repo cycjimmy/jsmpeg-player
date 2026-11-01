@@ -1,3 +1,13 @@
+# [7.0.0](https://github.com/cycjimmy/jsmpeg-player/compare/v6.1.8...v7.0.0) (2026-11-01)
+
+
+* feat!: migrate the toolchain to Vite 8, ESLint 10 and Stylelint ([757447a](https://github.com/cycjimmy/jsmpeg-player/commit/757447a35b83f04c7eab7581a6f6d012f7e44bc3))
+
+
+### BREAKING CHANGES
+
+* the package now ships ESM and UMD only. The CommonJS bundle dist/jsmpeg-player.cjs is removed, `exports` no longer exposes a `require` condition, `main` points at the ESM build (so `require()` returns the module namespace and needs `.default`), `engines.node` is tightened to ^22.22.2 || >=24.15.0 and the browser target drops IE and Safari < 12.
+
 ## [6.1.8](https://github.com/cycjimmy/jsmpeg-player/compare/v6.1.7...v6.1.8) (2026-10-30)
 
 
