@@ -51,7 +51,7 @@
   },
   "dependencies": {
     "@cycjimmy/awesome-js-funcs": "^4.0.9",
-    "@cycjimmy/sass-lib": "^4.0.0"
+    "@cycjimmy/sass-lib": "^5.0.1"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^10.0.0",
