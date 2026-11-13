@@ -60,7 +60,7 @@
     "eslint": "^10.0.0",
     "fs-extra": "^11.2.0",
     "sass": "^1.77.8",
-    "stylelint": "^17.0.0",
+    "stylelint": "^18.0.0",
     "stylelint-config-idiomatic-order": "^10.0.0",
     "stylelint-config-standard-scss": "^17.0.0",
     "terser": "^5.51.2",
