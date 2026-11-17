@@ -1,6 +1,6 @@
 // utils
-import isString from '@cycjimmy/awesome-js-funcs/esm/judgeBasic/isString'
-import functionToPromise from '@cycjimmy/awesome-js-funcs/esm/typeConversion/functionToPromise'
+import { isString } from '@cycjimmy/awesome-js-funcs/judgeBasic'
+import { functionToPromise } from '@cycjimmy/awesome-js-funcs/typeConversion'
 
 // button view
 import { PLAY_BUTTON, UNMUTE_BUTTON } from '../buttonView'
