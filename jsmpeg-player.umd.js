@@ -47,35 +47,34 @@
 			if (this.destination) this.destination.write(data);
 		}
 	};
-	// node_modules/@cycjimmy/awesome-js-funcs/esm/judgeBasic/isString.js
-	/**
-	* determine a string type
-	* @param str
-	* @returns {boolean}
-	*/
-	var isString_default = (str) => typeof str === "string" && str.constructor === String;
-	// node_modules/@cycjimmy/awesome-js-funcs/esm/judgeBasic/isPromise.js
+	// node_modules/@cycjimmy/awesome-js-funcs/dist/judgeBasic/isPromise.js
 	/**
 	* determine a promise type
 	* @param promise
 	* @returns {boolean}
 	*/
 	var isPromise_default = (promise) => Object.prototype.toString.call(promise).slice(8, -1) === "Promise";
-	// node_modules/@cycjimmy/awesome-js-funcs/esm/typeConversion/functionToPromise.js
+	// node_modules/@cycjimmy/awesome-js-funcs/dist/judgeBasic/isString.js
+	/**
+	* determine a string type
+	* @param str
+	* @returns {boolean}
+	*/
+	var isString_default = (str) => typeof str === "string" && str.constructor === String;
+	// node_modules/@cycjimmy/awesome-js-funcs/dist/typeConversion/functionToPromise.js
 	/**
 	* function to promise
 	* @param normalFunction
 	* @param timeout
 	* @returns {Promise<any>}
 	*/
-	var functionToPromise_default = (function(normalFunction) {
-		var timeout = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : 0;
+	var functionToPromise_default = (normalFunction, timeout = 0) => {
 		if (isPromise_default(normalFunction)) return normalFunction;
 		return new Promise((resolve) => {
 			normalFunction();
 			setTimeout(resolve, timeout);
 		});
-	});
+	};
 	// src/buttonView.js
 	/**
 	* PLAY_BUTTON HTML
