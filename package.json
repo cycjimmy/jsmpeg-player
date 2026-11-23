@@ -55,7 +55,7 @@
   },
   "devDependencies": {
     "@antfu/eslint-config": "^10.0.0",
-    "@cycjimmy/config-lib": "^3.2.1",
+    "@cycjimmy/config-lib": "^4.0.0",
     "autoprefixer": "^10.4.19",
     "eslint": "^10.0.0",
     "fs-extra": "^11.2.0",
