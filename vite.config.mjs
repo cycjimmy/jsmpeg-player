@@ -1,6 +1,6 @@
 import { createRequire } from 'node:module'
-import myBanner from '@cycjimmy/config-lib/esm/chore/myBanner.js'
-import terserOption from '@cycjimmy/config-lib/esm/terser/4.x/production.js'
+import myBanner from '@cycjimmy/config-lib/dist/chore/myBanner.js'
+import terserOption from '@cycjimmy/config-lib/dist/terser/4.x/production.js'
 import autoprefixer from 'autoprefixer'
 import { defineConfig } from 'vite'
 
